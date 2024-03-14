@@ -1,9 +1,14 @@
 <script setup>
-import { reactive, ref, watch, toRaw } from "vue";
+import { reactive, ref, watch, toRaw, computed } from "vue";
 import bg from "@/assets/login/bg.png";
 import left from "@/assets/login/left.png";
 // import avatar from "@/assets/login/avatar.svg?component";
 import illustration from "@/assets/login/illustration.svg?component";
+import { loginRules } from "./utils/rule";
+import regist from "./components/regist.vue";
+import update from "./components/update.vue";
+import email from "./components/email.vue";
+import { useUserStore } from "@/store/user";
 
 const loginForm = reactive({
   act: "",
@@ -12,43 +17,9 @@ const loginForm = reactive({
 const loginLoading = ref(false);
 const checked = ref(false);
 const loginFormRef = ref(null);
-
-const validateTel = (rule, value, callback) => {
-  if (!/^1[3-9]\d{9}$/.test(value)) {
-    callback(new Error("请输入正确的学号或者手机号"));
-  } else {
-    callback();
-  }
-};
-const validatePwd = (rule, value, callback) => {
-  if (value.length < 4 || value.length > 16) {
-    callback(new Error("密码的长度在4~16之间"));
-  } else {
-    callback();
-  }
-};
-const loginRules = {
-  act: [
-    { require: true, message: "账号不能为空", trigger: "blur" },
-    {
-      min: 4,
-      max: 16,
-      message: "账号长度为6-17个字符",
-      trigger: "blur",
-    },
-    { validator: validateTel, trigger: "blur" },
-  ],
-  pwd: [
-    { require: true, message: "密码不能为空", trigger: "blur" },
-    {
-      min: 4,
-      max: 16,
-      message: "密码长度为4-16个字符",
-      trigger: "blur",
-    },
-    { validator: validatePwd, trigger: "blur" },
-  ],
-};
+const currentPage = computed(() => {
+  return useUserStore().state.currentPage;
+});
 
 const handleLogin = () => {};
 </script>
@@ -76,10 +47,11 @@ const handleLogin = () => {};
         </div>
       </div>
       <div class="right">
-        <div class="welcome">
+        <div class="welcome" v-if="currentPage === 0">
           <span>欢迎使用基地管理系统</span>
         </div>
         <el-form
+          v-if="currentPage === 0"
           :rules="loginRules"
           ref="loginFormRef"
           class="login_form"
@@ -89,7 +61,7 @@ const handleLogin = () => {};
             <el-input
               v-model="loginForm.act"
               clearable
-              placeholder="请输入学号或者手机号"
+              placeholder="请输入学号"
             >
               <template #prefix>
                 <IconifyIcon
@@ -121,7 +93,7 @@ const handleLogin = () => {};
 
           <el-form-item>
             <div class="w-full h-[20px] flex justify-between items-center">
-              <!-- <el-checkbox v-model="checked">
+              <el-checkbox v-model="checked">
                 <span class="flex">
                   7天免登录
                   <el-tooltip
@@ -132,9 +104,17 @@ const handleLogin = () => {};
                     <IconifyIcon icon="ri:information-line" width="14" />
                   </el-tooltip>
                 </span>
-              </el-checkbox> -->
-              <el-button link @click=""> 免费注册 </el-button>
-              <el-button link type="primary" @click=""> 忘记密码？ </el-button>
+              </el-checkbox>
+              <el-button link @click="useUserStore().setCurrentPage(1)">
+                免费注册
+              </el-button>
+              <el-button
+                link
+                type="primary"
+                @click="useUserStore().setCurrentPage(3)"
+              >
+                忘记密码？
+              </el-button>
             </div>
             <el-button
               type="primary"
@@ -150,6 +130,13 @@ const handleLogin = () => {};
               <p class="text-gray-500 text-xs">快捷登陆方式</p>
             </el-divider>
             <div class="w-full flex justify-evenly">
+              <span @click="useUserStore().setCurrentPage(2)">
+                <IconifyIcon
+                  icon="ic:baseline-email"
+                  width="20"
+                  class="cursor-pointer text-gray-500 hover:text-blue-400"
+                />
+              </span>
               <span>
                 <IconifyIcon
                   icon="ri:wechat-fill"
@@ -161,17 +148,14 @@ const handleLogin = () => {};
                   icon="ri:qq-fill"
                   width="20"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
-                /> </span
-              ><span>
-                <IconifyIcon
-                  icon="ic:baseline-email"
-                  width="20"
-                  class="cursor-pointer text-gray-500 hover:text-blue-400"
                 />
               </span>
             </div>
           </el-form-item>
         </el-form>
+        <regist v-if="currentPage === 1" />
+        <email v-if="currentPage === 2" />
+        <update v-if="currentPage === 3" />
       </div>
     </div>
   </div>
