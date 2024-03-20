@@ -1,15 +1,23 @@
 <script setup>
 import { reactive, ref, watch, toRaw, computed } from "vue";
-import bg from "@/assets/login/bg.png";
-import left from "@/assets/login/left.png";
-// import avatar from "@/assets/login/avatar.svg?component";
-import illustration from "@/assets/login/illustration.svg?component";
+import { useUserStore } from "@/store/user";
+import { usePermissionStore } from "@/store/permission";
 import { loginRules } from "./utils/rule";
+import { useRouter} from "vue-router";
+
 import regist from "./components/regist.vue";
 import update from "./components/update.vue";
 import email from "./components/email.vue";
-import { useUserStore } from "@/store/user";
 
+import bg from "@/assets/login/bg.png";
+import left from "@/assets/login/left.png";
+import illustration from "@/assets/login/illustration.svg?component";
+import Lock from "@iconify-icons/ri/lock-fill";
+import User from "@iconify-icons/ri/user-3-fill";
+import Info from "@iconify-icons/ri/information-line";
+
+const router = useRouter();
+const permissionStore = usePermissionStore();
 const loginForm = reactive({
   act: "",
   pwd: "",
@@ -21,7 +29,11 @@ const currentPage = computed(() => {
   return useUserStore().state.currentPage;
 });
 
-const handleLogin = () => {};
+const handleLogin = () => {
+  permissionStore.getPermissionRoutes();
+  permissionStore.getPermissions();
+  router.push('/welcome')
+};
 </script>
 
 <template>
@@ -64,8 +76,8 @@ const handleLogin = () => {};
               placeholder="请输入学号"
             >
               <template #prefix>
-                <IconifyIcon
-                  icon="ri:user-3-fill"
+                <IconifyIconOffline
+                  :icon="User"
                   width="14"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
                 />
@@ -82,8 +94,8 @@ const handleLogin = () => {};
               @keyup.enter.native="handleLogin"
             >
               <template #prefix>
-                <IconifyIcon
-                  icon="ri:lock-fill"
+                <IconifyIconOffline
+                  :icon="Lock"
                   width="14"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
                 />
@@ -101,7 +113,7 @@ const handleLogin = () => {};
                     placement="top"
                     content="勾选并登录后，规定天数内无需输入用户名和密码会自动登入系统"
                   >
-                    <IconifyIcon icon="ri:information-line" width="14" />
+                    <IconifyIconOffline :icon="Info" width="14" />
                   </el-tooltip>
                 </span>
               </el-checkbox>
@@ -131,20 +143,20 @@ const handleLogin = () => {};
             </el-divider>
             <div class="w-full flex justify-evenly">
               <span @click="useUserStore().setCurrentPage(2)">
-                <IconifyIcon
+                <IconifyIconOnline
                   icon="ic:baseline-email"
                   width="20"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
                 />
               </span>
               <span>
-                <IconifyIcon
+                <IconifyIconOnline
                   icon="ri:wechat-fill"
                   width="20"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
                 /> </span
               ><span>
-                <IconifyIcon
+                <IconifyIconOnline
                   icon="ri:qq-fill"
                   width="20"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
@@ -234,3 +246,6 @@ const handleLogin = () => {};
   padding: 0px 30px;
 }
 </style>
+import { usePermissionStore } from "../../store/permission";import { usePermissionStore } from "../../store/permission";
+import { useRouter } from "vue-router";
+

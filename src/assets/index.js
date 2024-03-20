@@ -7,10 +7,8 @@ export const constantRoutes = [
         path: '/login',
         name: '登录',
         component: () => import('@/views/Login'),
-        meta: {
-            hidden: true,
-            hiddenTab: true
-        }
+        hidden: true,
+        hiddenTab: true
     }, {
         path: "/",
         component: Layout,

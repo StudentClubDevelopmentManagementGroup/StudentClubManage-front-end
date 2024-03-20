@@ -13,6 +13,7 @@ import "./style/index.scss";
 import "./style/tailwind.css";
 import 'element-plus/dist/index.css'
 
+
 const app = createApp(App)
 
 import { createPinia } from 'pinia'
@@ -20,9 +21,16 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
+import { usePermissionStore } from "@/store/permission";
 
-import IconifyIcon from '@/components/Icon/iconifyIcon'
-app.component('IconifyIcon',IconifyIcon)
+const permissionStore = usePermissionStore();
+permissionStore.getPermissionRoutes()
+permissionStore.getRoutes()
+
+import iconifyIconOnline from '@/components/Icon/iconifyIconOnline'
+import iconifyIconOffline from '@/components/Icon/iconifyIconOffline'
+app.component('IconifyIconOnline',iconifyIconOnline)
+app.component('IconifyIconOffline',iconifyIconOffline)
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
