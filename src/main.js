@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router'
+import router from './routes'
 import ElementPlus from 'element-plus'
 
 import 'dayjs/locale/zh-cn'
@@ -22,11 +22,15 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 
 import IconifyIcon from '@/components/Icon/iconifyIcon'
-app.component('IconifyIcon',IconifyIcon)
+app.component('IconifyIcon', IconifyIcon)
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
+
+// 添加全局属性
+import axios from 'axios'
+app.config.globalProperties.$axios = axios
 
 app.use(router).use(ElementPlus, { zhCn }).mount('#app')
