@@ -99,6 +99,10 @@ const handleReset = () => {
   console.log("这是重置操作");
 };
 
+const handleAdd = () => {
+  console.log("这里是新增操作");
+};
+
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(100);
@@ -171,7 +175,9 @@ const data = ref(null);
         <!-- 操作按钮 -->
         <template #header>
           <div id="operation">
-            <el-button type="primary" :icon="CirclePlus">新增</el-button>
+            <el-button type="primary" :icon="CirclePlus" @click="handleAdd"
+              >新增</el-button
+            >
           </div>
         </template>
         <!-- 数据表格 -->
@@ -179,39 +185,49 @@ const data = ref(null);
           <el-table
             ref="TableRef"
             :data="tableData"
-            border
             height="545"
             table-layout="auto"
             size="large"
+            :fit="false"
           >
             <el-table-column type="selection" align="center" />
             <el-table-column
               property="club_name"
               label="基地/社团名称"
               align="center"
+              width="300"
             />
             <el-table-column
               property="department_name"
               label="学院名称"
               align="center"
+              width="350"
             />
             <el-table-column
               property="total_num"
               label="总人数"
               align="center"
+              width="150"
             />
-            <el-table-column property="manager" label="负责人" align="center" />
+            <el-table-column
+              property="manager"
+              label="负责人"
+              align="center"
+              width="150"
+            />
             <el-table-column
               property="is_deleted"
               label="启用/未启用"
               align="center"
+              width="200"
             />
             <el-table-column
               property="state"
               label="正在招新/终止招新"
               align="center"
+              width="200"
             />
-            <el-table-column width="200">
+            <el-table-column>
               <template #default="scope">
                 <div>测试</div>
               </template>
@@ -249,9 +265,6 @@ const data = ref(null);
 }
 /* 检索关键字区域样式 */
 #up-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   padding: 20px 40px;
 }
 .search-container {
@@ -271,13 +284,9 @@ const data = ref(null);
 
 /*  数据表格展示及操作区域样式 */
 #down-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   padding: 10px 40px;
 }
 .table-container {
-  width: 100%;
   height: 100%;
 }
 #operation {
@@ -294,6 +303,14 @@ const data = ref(null);
   padding: 0px;
   /* padding-top: 0px;
   padding-bottom: 0px; */
+}
+.table-container:deep() .el-scrollbar__view {
+  /* 修复未指定列的宽度，导致在界面展开/收起时发生的宽度异常，而破坏容器 */
+  width: 100%;
+}
+.table-container:deep() .el-table__body {
+  /* 修复未指定列的宽度，导致在界面展开/收起时发生的宽度异常，而破坏容器 */
+  width: 100% !important;
 }
 #pager {
   display: flex;
