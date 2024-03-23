@@ -1,13 +1,9 @@
 <script setup>
-
+import test from "./components/test.vue";
 </script>
 
 <template>
-    <div>
-        2
-    </div>
+  <test icon="测试icon" title="测试标题" />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -52,19 +52,19 @@ const handleCommand = (command) => {
           @open="handleOpen"
           @close="handleClose"
         >
-          <el-menu-item index="base">
+          <el-menu-item index="/bm/base">
             <el-icon><OfficeBuilding /></el-icon>
             <template #title>基地管理</template>
           </el-menu-item>
-          <el-menu-item index="user">
+          <el-menu-item index="/um/user">
             <el-icon><Avatar /></el-icon>
             <template #title>人员管理</template>
           </el-menu-item>
-          <el-menu-item index="person">
+          <el-menu-item index="/pm/person">
             <el-icon><User /></el-icon>
             <template #title>个人信息</template>
           </el-menu-item>
-          <el-menu-item index="operation">
+          <el-menu-item index="/om/operation">
             <el-icon><document /></el-icon>
             <template #title>操作日志</template>
           </el-menu-item>
