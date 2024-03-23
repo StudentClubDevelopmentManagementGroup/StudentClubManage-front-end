@@ -1,13 +1,14 @@
 <script setup>
 import { reactive, ref, watch, toRaw, computed } from "vue";
-import {
-  Document,
-  Menu as IconMenu,
-  Location,
-  Setting,
-} from "@element-plus/icons-vue";
+import { Document, Menu as IconMenu, Location, Setting } from "@element-plus/icons-vue";
+import { useRouter } from "vue-router";
+import { appStore } from "@/store/app";
 
-const isCollapse = ref(false);
+const router = useRouter();
+
+const isCollapse = computed(() => {
+  return appStore().state.isCollapse;
+});
 //TODO：待处理的折叠/展开菜单方法
 const handleOpen = (key, keyPath) => {
   console.log(key, keyPath);
@@ -17,7 +18,11 @@ const handleClose = (key, keyPath) => {
 };
 //TODO: 待处理的下拉菜单方法
 const handleCommand = (command) => {
-  console.log(command);
+  if (command === "a") {
+  } else if (command === "b") {
+  } else if (command === "c") {
+    router.push("/");
+  }
 };
 </script>
 
@@ -72,7 +77,7 @@ const handleCommand = (command) => {
       <el-affix>
         <div id="header">
           <div id="header-left">
-            <el-switch v-model="isCollapse"></el-switch>
+            <el-switch v-model="appStore().state.isCollapse"></el-switch>
           </div>
           <div id="header-right">
             <el-dropdown @command="handleCommand">
@@ -95,7 +100,7 @@ const handleCommand = (command) => {
         </div>
       </el-affix>
       <!-- 预留页头标签页 -->
-      <el-affix offset="60">
+      <el-affix :offset="60">
         <div id="tags"></div>
       </el-affix>
       <!-- 功能界面 -->
@@ -163,6 +168,7 @@ const handleCommand = (command) => {
 }
 #header {
   height: 60px;
+  min-width: 1600px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -201,6 +207,7 @@ const handleCommand = (command) => {
 }
 #tags {
   height: 30px;
+  min-width: 1600px;
   background: yellow;
 }
 #body {
