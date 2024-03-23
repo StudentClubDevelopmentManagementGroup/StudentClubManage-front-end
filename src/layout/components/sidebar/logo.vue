@@ -1,36 +1,29 @@
+<template>
+  <div class="sidebar-logo-container" :class="{ collapses: props.collapse }">
+    <transition name="sidebarLogoFade">
+      <router-link
+        v-if="collapse"
+        key="collapse"
+        class="sidebar-logo-link"
+        to="/"
+      >
+        <img v-if="logo" :src="logo" class="sidebar-logo" />
+        <span v-else class="sidebar-title">欢迎您！车立钧</span>
+      </router-link>
+      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
+        <img v-if="logo" :src="logo" class="sidebar-logo" />
+        <span class="sidebar-title">欢迎您！车立钧</span>
+      </router-link>
+    </transition>
+  </div>
+</template>
+
 <script setup lang="ts">
 import logo from "@/assets/logo.png";
 const props = defineProps({
   collapse: Boolean,
 });
 </script>
-
-<template>
-  <div class="sidebar-logo-container" :class="{ collapses: props.collapse }">
-    <transition name="sidebarLogoFade">
-      <router-link
-        v-if="props.collapse"
-        key="props.collapse"
-        title="欢迎您"
-        class="sidebar-logo-link"
-        :to="'/'"
-      >
-        <img :src="logo" alt="logo" />
-        <span class="sidebar-title">欢迎您</span>
-      </router-link>
-      <router-link
-        v-else
-        key="expand"
-        title="欢迎您"
-        class="sidebar-logo-link"
-        :to="'/'"
-      >
-        <img :src="logo" alt="logo" />
-        <span class="sidebar-title">欢迎您</span>
-      </router-link>
-    </transition>
-  </div>
-</template>
 
 <style lang="scss" scoped>
 .sidebar-logo-container {
@@ -49,6 +42,7 @@ const props = defineProps({
     img {
       display: inline-block;
       height: 32px;
+      border-radius: 4px;
     }
 
     .sidebar-title {
@@ -59,10 +53,11 @@ const props = defineProps({
       font-size: 18px;
       font-weight: 600;
       line-height: 32px;
-      color: black;
+      color: #000000d9;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
   }
 }
 </style>
+

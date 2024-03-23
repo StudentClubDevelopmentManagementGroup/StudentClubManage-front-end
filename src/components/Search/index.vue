@@ -1,7 +1,7 @@
 <template>
   <div id="Serach" class="search-container">
     <el-select
-      v-model="value"
+      v-model="state.value"
       :remote-method="querySearch"
       filterable
       default-first-option
@@ -10,10 +10,14 @@
       @change="handleChange"
     >
       <template #prefix>
-        <el-icon class="el-input__icon"><search /></el-icon>
+        <IconifyIconOffline
+          :icon="Search"
+          width="14"
+          class="cursor-pointer text-gray-500 hover:text-blue-400"
+        />
       </template>
       <el-option
-        v-for="{ item } in options"
+        v-for="{ item } in state.options"
         :key="item.path"
         :value="item"
         :label="item.title.join(' > ')"
@@ -27,8 +31,9 @@ import { computed, ref, watchEffect } from "vue";
 import Fuse from "fuse.js";
 import path from "path-browserify";
 import { useRouter } from "vue-router";
-import { Search } from "@element-plus/icons-vue";
 import { usePermissionStore } from "@/store/permission";
+
+import Search from "@iconify-icons/ri/search-line";
 
 const permissionStore = usePermissionStore();
 const router = useRouter();
@@ -72,28 +77,33 @@ const querySearch = (query: string) => {
   }
 };
 
-const generateList = (
-  routers: any,
-  basePath = "/",
-  prefixTitle: string[] = []
-) => {
-  let list: dataType[] = [];
+const generateList = (routers, basePath = "/", prefixTitle = []) => {
+  let list = [];
   for (const route of routers) {
     if (!route?.meta?.hidden) {
-      const data: dataType = {
+      const data = {
         path: path.resolve(basePath, route.path),
         title: [...prefixTitle],
       };
       if (route?.meta?.title) {
         data.title = [...data.title, route.meta.title];
-        list.push(data);
       }
       if (route.children) {
-        const childList = generateList(route.children, data.path, data.title);
-        list = [...list, ...childList];
+        if (route.children.length === 1 && !route.children[0].children) {
+          // 当只有一个子路由且该子路由没有自己的子路由时，直接使用父路由的路径和标题
+          data.path = path.resolve(data.path, route.children[0].path);
+          list.push(data);
+        } else {
+          // 否则，递归生成子路由列表
+          const childList = generateList(route.children, data.path, data.title);
+          list = [...list, ...childList];
+        }
+      } else {
+        list.push(data);
       }
     }
   }
+  console.log(list);
   return list;
 };
 
@@ -110,7 +120,8 @@ watchEffect(() => {
 </script>
 
 <style lang="scss" scoped>
-.search-container{
+.search-container {
+  width: 200px;
   :deep(.el-input__inner) {
     border-radius: 0;
     border: 0;

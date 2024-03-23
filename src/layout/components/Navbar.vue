@@ -1,17 +1,113 @@
+<script setup lang="ts">
+import { computed, ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import Hamburger from "@/components/Hamburger/Hamburger.vue";
+import Breadcrumb from "@/components/Breadcrumb/index.vue";
+import Search from "@/components/Search/index.vue";
+import avatar from "@/assets/avatar-default.jpg";
+import { toFullScreen, exitFullScreen } from "@/utils/screen";
+import useStore from "@/store";
+import Full from "@iconify-icons/ri/fullscreen-fill";
+import ExitFull from "@iconify-icons/ri/fullscreen-exit-fill";
+
+const props = defineProps({
+  primary: {
+    default: "#fff",
+    type: String,
+  },
+});
+
+const router = useRouter();
+
+const opened = computed(() => useStore.appStore.getSidebarOpened);
+const fullScreen = ref(false);
+const nickname = ref("极客恰恰");
+const messageNum = ref(5);
+onMounted(() => {
+  const userInfo = localStorage.getItem("userInfo");
+  if (userInfo) {
+    nickname.value = JSON.parse(userInfo).userName;
+  }
+});
+
+// methods
+const toggleSideBar = () => {
+
+  useStore.appStore.toggle_sidebar();
+};
+
+const toShowFullScreen = () => {
+  toFullScreen();
+  fullScreen.value = true;
+};
+
+const toExitFullScreen = () => {
+  exitFullScreen();
+  fullScreen.value = false;
+};
+
+const logout = () => {
+  sessionStorage.removeItem("auth");
+  sessionStorage.removeItem("accessToken");
+  router.replace("/login");
+};
+</script>
+
 <template>
   <div class="navbar">
-    <el-header height="50px">
-      <Hamburger id="Hamburger" :is-active="opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <Hamburger
+        id="Hamburger"
+        :is-active="opened"
+        class="hamburger-container"
+        @toggleClick="toggleSideBar"
+      />
       <breadcrumb class="breadcrumb-container" />
       <div class="right-menu">
         <search></search>
+        <div id="Message" class="right-menu-box">
+          <el-dropdown>
+            <el-badge
+              :value="messageNum"
+              :max="99"
+              class="message-badge"
+              type="danger"
+            >
+              <el-button class="message">
+                <el-icon><Message /></el-icon>
+              </el-button>
+            </el-badge>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="a"
+                  >mike 回复了你的邮件</el-dropdown-item
+                >
+                <el-dropdown-item command="b">您有5个新任务</el-dropdown-item>
+                <el-dropdown-item command="c"
+                  >您已经和Jone成为了好友</el-dropdown-item
+                >
+                <el-dropdown-item command="d">项目验收通知</el-dropdown-item>
+                <el-dropdown-item command="e" divided
+                  >新会议通知</el-dropdown-item
+                >
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
         <div id="fullScreen" class="right-menu-box">
           <el-button class="full-screen">
             <el-tooltip content="全屏预览" effect="dark" placement="left">
-              <el-icon v-show="fullScreen == false" @click="toShowFullScreen()"><full-screen /></el-icon>
+              <IconifyIconOffline
+                :icon="Full"
+                v-show="fullScreen == false"
+                @click="toShowFullScreen()"
+              />
             </el-tooltip>
             <el-tooltip content="退出全屏" effect="dark" placement="left">
-              <el-icon v-show="fullScreen == true" @click="toExitFullScreen()"><bottom-left /></el-icon>
+              <IconifyIconOffline
+                :icon="ExitFull"
+                v-show="fullScreen == true"
+                @click="toExitFullScreen()"
+              />
             </el-tooltip>
           </el-button>
         </div>
@@ -38,60 +134,8 @@
           </template>
         </el-dropdown>
       </div>
-    </el-header>
   </div>
 </template>
-<script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
-import { FullScreen, BottomLeft } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
-import Hamburger from '@/components/Hamburger/Hamburger.vue'
-import Breadcrumb from '@/components/Breadcrumb/index.vue'
-import Search from '@/components/Search/index.vue'
-import avatar from '@/assets/avatar-default.jpg'
-import { toFullScreen, exitFullScreen } from '@/utils/screen'
-
-const props = defineProps({
-  primary: {
-    default: '#fff',
-    type: String
-  }
-})
-
-const router = useRouter()
-const opened = computed(() => true)
-const fullScreen = ref(false)
-const nickname = ref('极客恰恰')
-
-onMounted(() => {
-  const userInfo = localStorage.getItem('userInfo')
-  if (userInfo) {
-    nickname.value = JSON.parse(userInfo).userName
-  }
-})
-
-// methods
-const toggleSideBar = () => {
-  store.dispatch('appModule/toggleSideBar')
-}
-
-const toShowFullScreen = () => {
-  toFullScreen()
-  fullScreen.value = true
-}
-
-const toExitFullScreen = () => {
-  exitFullScreen()
-  fullScreen.value = false
-}
-
-const logout = () => {
-  sessionStorage.removeItem('auth')
-  sessionStorage.removeItem('accessToken')
-  router.replace('/login')
-}
-
-</script>
 
 <style lang="scss" scoped>
 .navbar {
@@ -121,7 +165,7 @@ const logout = () => {
 
   .nickname {
     float: right;
-    padding: 0px 25px 0px 25px;
+    padding: 0px 10px;
     line-height: 40px;
     outline: none;
   }

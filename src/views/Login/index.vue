@@ -19,7 +19,7 @@ import Info from "@iconify-icons/ri/information-line";
 const router = useRouter();
 const permissionStore = usePermissionStore();
 const loginForm = reactive({
-  act: "",
+  user_id: "",
   pwd: "",
 });
 const loginLoading = ref(false);
@@ -71,7 +71,7 @@ const handleLogin = () => {
         >
           <el-form-item prop="act">
             <el-input
-              v-model="loginForm.act"
+              v-model="loginForm.user_id"
               clearable
               placeholder="请输入学号"
             >

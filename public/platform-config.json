@@ -1,6 +1,5 @@
 {
   "Version": "5.1.0",
-  "Title": "Manager",
   "FixedHeader": true,
   "HiddenSideBar": false,
   "MultiTagsCache": false,
@@ -14,6 +13,7 @@
   "Weak": false,
   "HideTabs": false,
   "HideFooter": false,
+  "HideHeader": false,
   "SidebarStatus": true,
   "EpThemeColor": "#409EFF",
   "ShowLogo": true,

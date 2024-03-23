@@ -1,65 +1,52 @@
-import axios from "axios";
-
-let config = {};
-const VITE_PUBLIC_PATH = import.meta.env.VITE_PUBLIC_PATH;
-
-const setConfig = (cfg) => {
-  config = Object.assign(config, cfg);
-};
-
-const getConfig = (key) => {
-  if (typeof key === "string") {
-    const arr = key.split(".");
-    if (arr && arr.length) {
-      let data = config;
-      arr.forEach((v) => {
-        if (data && typeof data[v] !== "undefined") {
-          data = data[v];
-        } else {
-          data = null;
-        }
-      });
-      return data;
+const getConfig = () => {
+  return {
+    "Version": "5.1.0",
+    "FixedHeader": true,
+    "HiddenSideBar": false,
+    "MultiTagsCache": false,
+    "KeepAlive": true,
+    "Locale": "zh",
+    "Layout": "vertical",
+    "Theme": "light",
+    "DarkMode": false,
+    "OverallStyle": "light",
+    "Grey": false,
+    "Weak": false,
+    "HideTabs": false,
+    "HideFooter": false,
+    "HideHeader": false,
+    "SidebarStatus": true,
+    "EpThemeColor": "#409EFF",
+    "ShowLogo": true,
+    "ShowModel": "smart",
+    "MenuArrowIconNoTransition": false,
+    "CachingAsyncRoutes": false,
+    "TooltipEffect": "light",
+    "ResponsiveStorageNameSpace": "responsive-",
+    "MenuSearchHistory": 6,
+    "MapConfigure": {
+      "amapKey": "97b3248d1553172e81f168cf94ea667e",
+      "options": {
+        "resizeEnable": true,
+        "center": [113.6401, 34.72468],
+        "zoom": 12
+      }
     }
   }
-  return config;
-};
+}
 
-// 获取项目动态全局配置
-export const getPlatformConfig = async (app) => {
-  app.config.globalProperties.$config = getConfig();
-  try {
-    const response = await axios({
-      method: "get",
-      url: `${VITE_PUBLIC_PATH}platform-config.json`,
-    });
-    let $config = app.config.globalProperties.$config;
-    // 自动注入项目配置
-    if (app && $config && typeof response.data === "object") {
-      $config = Object.assign($config, response.data);
-      app.config.globalProperties.$config = $config;
-      // 设置全局配置
-      setConfig($config);
-    }
-    return $config;
-  } catch (error) {
-    throw new Error("请在public文件夹下添加platform-config.json配置文件");
-  }
-};
-
-// 本地响应式存储的命名空间
 const responsiveStorageNameSpace = () => getConfig().ResponsiveStorageNameSpace;
 
 const CONFIG = {
   development: {
-    baseUrl: 'http://121.37.9.218:8500',
+    baseUrl: 'http://10.34.70.184:3333',
     logo: 'http://localhost:5173/icon.jpeg',
     avatar: 'http://localhost:8080/header4.gif',
     emptyImg: 'http://localhost:8080/empty.png',
     qrCodeUrlPrefix: 'http://localhost:8080?target=',
   },
   production: {
-    baseUrl: 'http://121.37.9.218:8500',
+    baseUrl: 'http://10.34.70.184:3333',
     logo: 'http://121.37.9.218/logo.png',
     avatar: 'http://121.37.9.218/header4.gif',
     emptyImg: 'http://121.37.9.218/empty.png',
@@ -69,5 +56,5 @@ const CONFIG = {
   }
 }
 
-export { getConfig, setConfig, responsiveStorageNameSpace };
+export { getConfig,responsiveStorageNameSpace };
 export default CONFIG[process.env.NODE_ENV];

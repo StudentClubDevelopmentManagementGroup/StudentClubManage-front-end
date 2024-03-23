@@ -1,19 +1,28 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, toRaw } from "vue";
+import { ref, computed, onMounted, toRaw, useAttrs } from "vue";
 import linkItem from "./linkItem.vue";
-import path from 'path'
-import { isExternal } from '@/utils/validate'
+import Text from "@/components/Text";
+import path from "path";
+import { isExternal } from "@/utils/validate";
+import useStore from "@/store";
+// import { useRenderIcon } from "@/components/Icon/hooks";
+import { getConfig } from "@/config";
+
+import ArrowUp from "@iconify-icons/ep/arrow-up-bold";
+import EpArrowDown from "@iconify-icons/ep/arrow-down-bold";
+import ArrowLeft from "@iconify-icons/ep/arrow-left-bold";
+import ArrowRight from "@iconify-icons/ep/arrow-right-bold";
 
 interface childType {
-  path: string
-  name?: string
-  component: Function
+  path: string;
+  name?: string;
+  component: Function;
   meta: {
-    title: Object
-    icon: string
-    hidden?: boolean
-    [key: string]: any
-  }
+    title: Object;
+    icon: string;
+    hidden?: boolean;
+    [key: string]: any;
+  };
 }
 
 const props = defineProps({
@@ -32,32 +41,76 @@ const props = defineProps({
 });
 
 const onlyOneChild = ref(null);
-
-const basePath = computed(() => props.basePath);
-
-onMounted(() => {
-  console.log("basePath.value", basePath.value);
+const attrs = useAttrs();
+const isCollapse = computed(() => !useStore.appStore.getSidebarOpened);
+const layout = computed(() => {
+  getConfig().Layout;
 });
+const tooltipEffect = computed(() => {
+  getConfig().TooltipEffect;
+});
+
+const getDivStyle = computed(() => {
+  return {
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    overflow: "hidden",
+  };
+});
+
+const getNoDropdownStyle = computed((): CSSProperties => {
+  return {
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+  };
+});
+
+const getSubMenuIconStyle = computed((): CSSProperties => {
+  return {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    margin:
+      layout.value === "horizontal"
+        ? "0 5px 0 0"
+        : isCollapse.value
+        ? "0 auto"
+        : "0 5px 0 0",
+  };
+});
+
+// const expandCloseIcon = computed(() => {
+//   if (!getConfig()?.MenuArrowIconNoTransition) return "";
+//   return {
+//     "expand-close-icon": useRenderIcon(EpArrowDown),
+//     "expand-open-icon": useRenderIcon(ArrowUp),
+//     "collapse-close-icon": useRenderIcon(ArrowRight),
+//     "collapse-open-icon": useRenderIcon(ArrowLeft),
+//   };
+// });
 
 const hasOneShowingChild = (children: childType[] = [], parent: any) => {
   // if (children) {
-    const showingChildren = children.filter((item) => {
-      if (item?.meta?.hidden) {
-        return false;
-      } else {
-        onlyOneChild.value = item;
-        return true;
-      }
-    });
-
-    if (showingChildren.length === 1) {
+  const showingChildren = children.filter((item) => {
+    if (item?.meta?.hidden) {
+      return false;
+    } else {
+      onlyOneChild.value = item;
       return true;
     }
+  });
 
-    if (showingChildren.length === 0) {
-      onlyOneChild.value = { ...parent, noShowingChildren: true };
-      return true;
-    }
+  if (showingChildren.length === 1) {
+    return true;
+  }
+
+  if (showingChildren.length === 0) {
+    onlyOneChild.value = { ...parent, noShowingChildren: true };
+    return true;
+  }
   // }
 
   return false;
@@ -65,36 +118,87 @@ const hasOneShowingChild = (children: childType[] = [], parent: any) => {
 
 const resolvePath = (routePath) => {
   if (isExternal(routePath)) {
-    return routePath
+    return routePath;
   }
   if (isExternal(props.basePath)) {
-    return props.basePath
+    return props.basePath;
   }
-  return path.resolve(props.basePath, routePath)
-}
+  return path.resolve(props.basePath, routePath);
+};
 </script>
 
 <template>
-  <div v-if="!item.meta.hidden" class="menu-wrapper">
-    <!--only on child show el-menu -->
-    <template
-      v-if="hasOneShowingChild(item.children, item)"
+  <template v-if="!item.meta.hidden" class="menu-wrapper">
+    <link-item
+      v-if="
+        hasOneShowingChild(item.children, item) &&
+        (!onlyOneChild.children || onlyOneChild.noShowingChildren)
+      "
+      :to="onlyOneChild.path"
     >
-      <link-item v-if="onlyOneChild.meta" :to="onlyOneChild.path">
       <el-menu-item
         :key="onlyOneChild.path"
         :index="onlyOneChild.path"
         :route="onlyOneChild.path"
+        :class="{ 'submenu-title-noDropdown': !isNested }"
+        :style="getNoDropdownStyle"
+        v-bind="attrs"
       >
-        <IconifyIconOnline :icon="toRaw(onlyOneChild.meta.icon)" />
-        <template #title>{{ onlyOneChild.meta.title }}</template>
+        <div
+          v-if="toRaw(item.meta.icon)"
+          class="sub-menu-icon"
+          :style="getSubMenuIconStyle"
+        >
+          <IconifyIconOnline :icon="toRaw(onlyOneChild.meta.icon)" />
+        </div>
+        <template #title
+          ><div :style="getDivStyle">
+            <Text
+              :tippyProps="{
+                offset: [0, -10],
+                theme: tooltipEffect,
+              }"
+              class="!text-inherit"
+            >
+              {{ onlyOneChild.meta.title }}
+            </Text>
+          </div></template
+        >
       </el-menu-item>
-      </link-item>
-    </template>
+    </link-item>
     <el-sub-menu v-else ref="subMenu" :index="item.path" popper-append-to-body>
       <template #title>
-        <IconifyIconOnline :data-index="item.path" :icon="item.meta.icon" />
-        <span>{{ item.meta.title }}</span>
+        <div
+          v-if="toRaw(item.meta.icon)"
+          class="sub-menu-icon"
+          :style="getSubMenuIconStyle"
+        >
+          <IconifyIconOnline :data-index="item.path" :icon="item.meta.icon" />
+        </div>
+        <Text
+          v-if="
+            !(
+              layout === 'vertical' &&
+              isCollapse &&
+              toRaw(props.item.meta.icon) &&
+              props.item.parentId === null
+            )
+          "
+          :tippyProps="{
+            offset: [0, -10],
+            theme: tooltipEffect,
+          }"
+          :class="{
+            '!text-inherit': true,
+            '!px-4':
+              layout !== 'horizontal' &&
+              isCollapse &&
+              !toRaw(props.item.meta.icon) &&
+              props.item.parentId === null,
+          }"
+        >
+          {{ item.meta.title }}
+        </Text>
       </template>
       <!--children 进行递归调用自身组件-->
       <sidebar-item
@@ -106,5 +210,5 @@ const resolvePath = (routePath) => {
         class="nest-menu"
       />
     </el-sub-menu>
-  </div>
+  </template>
 </template>

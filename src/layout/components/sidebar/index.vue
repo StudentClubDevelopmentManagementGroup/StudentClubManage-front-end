@@ -3,25 +3,35 @@ import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { isUrl } from "@pureadmin/utils";
 import sidebarItem from "./sidebarItem.vue";
+import LeftCollapse from "./leftCollapse.vue";
 import logo from "./logo.vue";
-import { usePermissionStore } from "@/store/permission";
+import useStore from "@/store";
+import { getConfig } from "@/config";
 
 const route = useRoute();
-const permissionStore = usePermissionStore();
-const isCollapse = computed(() => false);
-const showLogo = computed(() => true);
-const routes = computed(() => permissionStore.accessRoutes);
-const activeMenu = computed(() => "/home");
 
-console.log(routes.value);
+const isCollapse = computed(() => !useStore.appStore.getSidebarOpened);
+const showLogo = computed(() => useStore.settingStore.getShowLogo);
+const routes = computed(() => useStore.permissionStore.accessRoutes);
+const activeMenu = computed(() => useStore.tabStore.getCurrentIndex);
+const tooltipEffect = computed(() => {
+  getConfig().TooltipEffect;
+});
+
 onMounted(() => {
   const routePath = route.path;
+  console.log(routePath);
+  useStore.tabStore.setCurrentIndex(routePath);
 });
 
 const resolvePath = (routePath) => {
   if (isUrl(routePath)) {
     return routePath;
   }
+};
+
+const toggleSideBar = () => {
+  useStore.appStore.toggle_sidebar();
 };
 </script>
 
@@ -31,15 +41,16 @@ const resolvePath = (routePath) => {
     :class="['sidebar-container', showLogo ? 'has-logo' : 'no-logo']"
   >
     <logo v-if="showLogo" :collapse="isCollapse" />
-    <el-scrollbar wrap-class="scrollbar-wrapper">
+    <el-scrollbar wrap-class="scrollbar-wrapper" class="pc">
       <el-menu
-        :router="true"
-        :unique-opened="false"
-        :default-active="activeMenu"
-        class="el-menu-vertical"
+        router
+        unique-opened
+        mode="vertical"
+        popper-class="pure-scrollbar"
+        class="outer-most select-none"
         :collapse="isCollapse"
-        background-color="#545c64"
-        text-color="#fff"
+        :popper-effect="tooltipEffect"
+        :default-active="activeMenu"
       >
         <!--递归路由对象-->
         <sidebar-item
@@ -47,18 +58,20 @@ const resolvePath = (routePath) => {
           :key="route.path"
           :item="route"
           :base-path="route.path"
+          class="outer-most select-none"
         />
       </el-menu>
     </el-scrollbar>
-    <!-- <leftCollapse
-      :is-active="pureApp.sidebar.opened"
-      @toggleClick="toggleSideBar"
-    /> -->
+    <leftCollapse :is-active="isCollapse" @toggleClick="toggleSideBar" />
   </div>
 </template>
 
 <style scoped>
 :deep(.el-loading-mask) {
   opacity: 0.45;
+}
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 200px;
+  min-height: 400px;
 }
 </style>

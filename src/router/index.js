@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useUserStore } from "@/store/user.js"
+import { useTabStore } from "@/store/tab.js"
 import Layout from "@/layout"
 
 export const constantRoutes = [
@@ -24,6 +25,7 @@ export const constantRoutes = [
             name: "Welcome",
             component: () => import('@/views/Welcome'),
             meta: {
+                icon: "ri:bar-chart-box-fill",
                 title: "首页",
             },
         }]
@@ -112,7 +114,7 @@ export const asyncRoutes = [
             name: "Activity",
             component: () => import('@/views/Activity'),
             meta: {
-                title: "活动发布",
+                title: "活动/比赛发布",
             },
         }, {
             path: "/develop/report",
@@ -156,6 +158,43 @@ export const asyncRoutes = [
                 title: "简介设置",
             },
         }]
+    },{
+        path: "/member",
+        component: Layout,
+        redirect: "/member/signin",
+        meta: {
+            icon: "ri:account-box-fill",
+            title: "成员模块",
+        },
+        children: [{
+            path: "/member/signin",
+            name: "MemberSignin",
+            component: () => import('@/views/Introduce'),
+            meta: {
+                title: "打卡记录",
+            },
+        },{
+            path: "/member/duty",
+            name: "MemberDuty",
+            component: () => import('@/views/Introduce'),
+            meta: {
+                title: "值日查询",
+            },
+        },{
+            path: "/member/seat",
+            name: "MemberSeat",
+            component: () => import('@/views/Introduce'),
+            meta: {
+                title: "座位表查询",
+            },
+        },{
+            path: "/member/report",
+            name: "MemberReport",
+            component: () => import('@/views/Introduce'),
+            meta: {
+                title: "成果汇报",
+            },
+        }]
     },
 ]
 
@@ -167,19 +206,26 @@ const router = createRouter({
     routes: constantRoutes
 })
 
-// router.beforeEach(async (to, from, next) => {
-//     document.title = getPageTitle(to.meta.title)
-//     const userStore = useUserStore()
-//     const hasGetUserInfo = userStore.state.userInfo
-//     if (to.path === '/login') {
-//         next()
-//         return
-//     }
-//     if (!hasGetUserInfo) {
-//         next('/login')
-//     } else {
-//         next()
-//     }
-// })
+router.beforeEach(async (to, from, next) => {
+    document.title = `${to.meta.title}-基地管理系统`
+    const userStore = useUserStore()
+    const tabStore = useTabStore()
+    const flag = tabStore.getTabsOption.findIndex(tab => tab.route === to.path) > -1
+    if (!flag && !to.meta.hiddenTab) {
+        tabStore.addTab({ route: to.path, title: to.meta.title, name: to.name })
+    }
+    tabStore.setCurrentIndex(to.path)
+
+    const hasGetUserInfo = userStore.state.userInfo
+    if (to.path === '/login') {
+        next()
+        return
+    }
+    if (!hasGetUserInfo) {
+        next('/login')
+    } else {
+        next()
+    }
+})
 
 export default router

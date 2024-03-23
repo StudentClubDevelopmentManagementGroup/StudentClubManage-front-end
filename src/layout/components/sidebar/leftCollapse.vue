@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { useGlobal } from "@pureadmin/utils";
-
+import useStore from "@/store";
 import MenuFold from "@iconify-icons/ri/menu-fold-fill";
 
 const props = defineProps({
@@ -10,8 +9,6 @@ const props = defineProps({
     default: false,
   },
 });
-
-const { tooltipEffect } = useNav();
 
 const iconClass = computed(() => {
   return [
@@ -26,8 +23,7 @@ const iconClass = computed(() => {
   ];
 });
 
-const { $storage } = useGlobal<GlobalPropertiesApi>();
-const themeColor = computed(() => $storage.layout?.themeColor);
+const themeColor = computed(() => useStore.themeStore.getThemeColor);
 
 const emit = defineEmits<{
   (e: "toggleClick"): void;
@@ -42,14 +38,14 @@ const toggleClick = () => {
   <div class="collapse-container">
     <IconifyIconOffline
       v-tippy="{
-        content: props.isActive ? '点击折叠' : '点击展开',
-        theme: tooltipEffect,
+        content: isActive ? '点击折叠' : '点击展开',
+        theme: 'light',
         hideOnClick: 'toggle',
         placement: 'right',
       }"
       :icon="MenuFold"
-      :class="[iconClass, themeColor === 'light' ? '' : 'text-primary']"
-      :style="{ transform: props.isActive ? 'none' : 'rotateY(180deg)' }"
+      :class="[iconClass]"
+      :style="{ transform: isActive ? 'none' : 'rotateY(180deg)' }"
       @click="toggleClick"
     />
   </div>
