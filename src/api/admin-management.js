@@ -1,7 +1,7 @@
-import request from '@/utils/request'
+import myRequest from '@/utils/myRequest'
 
 export function getBaseList(params) {
-    return request({
+    return myRequest({
         url: '/api/test',
         method: 'get',
         params

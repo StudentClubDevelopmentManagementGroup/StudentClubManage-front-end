@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 
-export const appStore = defineStore('app', () => {
+export const layoutStore = defineStore('app', () => {
 
     const state = reactive({
-        isCollapse: false
+        isCollapse: true
     })
 
     const setRow = (value) => {

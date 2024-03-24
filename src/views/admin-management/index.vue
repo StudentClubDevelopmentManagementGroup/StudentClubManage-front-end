@@ -2,12 +2,12 @@
 import { reactive, ref, watch, toRaw, computed } from "vue";
 import { Document, Menu as IconMenu, Location, Setting } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
-import { appStore } from "@/store/app";
+import { layoutStore } from "@/store/layout";
 
 const router = useRouter();
 
 const isCollapse = computed(() => {
-  return appStore().state.isCollapse;
+  return !layoutStore().state.isCollapse;
 });
 //TODO：待处理的折叠/展开菜单方法
 const handleOpen = (key, keyPath) => {
@@ -77,7 +77,7 @@ const handleCommand = (command) => {
       <el-affix>
         <div id="header">
           <div id="header-left">
-            <el-switch v-model="appStore().state.isCollapse"></el-switch>
+            <el-switch v-model="layoutStore().state.isCollapse"></el-switch>
           </div>
           <div id="header-right">
             <el-dropdown @command="handleCommand">
