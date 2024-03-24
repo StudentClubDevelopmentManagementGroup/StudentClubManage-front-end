@@ -10,6 +10,7 @@ import Content from "./components/setting/content.vue";
 
 import useStore from "@/store";
 const showSetting = computed(() => useStore.settingStore.getShowSettings);
+const opened = computed(() => useStore.appStore.getSidebarOpened);
 const fixedHeader = computed(() => useStore.settingStore.getFixedHeader);
 const hideHeader = computed(() => useStore.settingStore.getHideHeader);
 const withoutAnimation = computed(
@@ -18,11 +19,13 @@ const withoutAnimation = computed(
 const originalStylesheetCount = computed(
   () => document.styleSheets.length || -1
 );
-const classObj = reactive({
-  hideSidebar: false,
-  openSidebar: true,
-  withoutAnimation: false,
-  mobile: false,
+const classObj = computed(() => {
+  return {
+    hideSidebar: !useStore.appStore.getSidebarOpened,
+    openSidebar: useStore.appStore.getSidebarOpened,
+    withoutAnimation: withoutAnimation,
+    mobile: false,
+  };
 });
 
 const handleClickOutside = () => {

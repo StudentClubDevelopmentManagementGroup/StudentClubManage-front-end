@@ -6,11 +6,12 @@ import Layout from "@/layout"
 export const constantRoutes = [
     {
         path: '/login',
-        name: '登录',
+        name: 'Login',
         component: () => import('@/views/Login'),
         meta: {
             hidden: true,
-            hiddenTab: true
+            hiddenTab: true,
+            title: "登录",
         }
     }, {
         path: "/",
@@ -57,7 +58,8 @@ export const constantRoutes = [
         component: () => import('../views/Error/404.vue'),
         meta: {
             hidden: true,
-            hiddenTab: true
+            hiddenTab: true,
+            title: "404",
         }
     }
 ]
@@ -207,7 +209,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-    document.title = `${to.meta.title}-基地管理系统`
+    document.title = `${to.meta.title}--基地管理系统`
     const userStore = useUserStore()
     const tabStore = useTabStore()
     const flag = tabStore.getTabsOption.findIndex(tab => tab.route === to.path) > -1

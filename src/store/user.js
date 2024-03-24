@@ -1,7 +1,7 @@
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import userApi from '@/api/user'
-import { getToken, setToken, removeToken, getUserInfo, removeUserInfo, setUserInfo, removeRoles, setRoles, getRoles } from '@/utils/auth'
+// import { getToken, setToken, removeToken, getUserInfo, removeUserInfo, setUserInfo, removeRoles, setRoles, getRoles } from '@/utils/auth'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
@@ -10,15 +10,19 @@ export const useUserStore = defineStore('user', () => {
 
   const state = reactive({
     currentPage: 0,
-    token: getToken(),
-    userInfo: getUserInfo(),
-    roles: getRoles()
+    token: "",
+    userInfo: "",
+    roles: ""
   })
+
+  const getCurrentPage = computed(() => state.currentPage);
+  const getToken = computed(() => state.token);
+  const getUserInfo = computed(() => state.userInfo);
+  const getRoles = computed(() => state.roles);
 
   const setCurrentPage = (value) => {
     state.currentPage = value;
   }
-
 
   const ResetState = () => {
     Object.assign(state, getDefaultState())
@@ -79,7 +83,7 @@ export const useUserStore = defineStore('user', () => {
           })
           reject()
         }
-      }).catch(error=> {
+      }).catch(error => {
         ElMessage({
           message: error,
           type: 'error',
@@ -98,9 +102,14 @@ export const useUserStore = defineStore('user', () => {
     SetToken,
     SetUserInfo,
     SetRoles,
+    setCurrentPage,
     Logout,
     Login,
-    UpdateUserInfo
+    UpdateUserInfo,
+    getCurrentPage,
+    getToken,
+    getUserInfo,
+    getRoles,
   }
 }, {
   persistent: true,

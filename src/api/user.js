@@ -1,17 +1,37 @@
 import request from '@/utils/request'
 
 export default {
-  login(userLoginDTO) {
+  login({ user_id, pwd }) {
     return request({
-      url: '/admin/login',
+      url: '/user/login/password',
       method: 'post',
-      data: userLoginDTO
+      params: { user_id, pwd }
+    })
+  },
+  regist(req) {
+    return request({
+      url: '/user/register',
+      method: 'post',
+      data: req
+    })
+  },
+  emailLogin() {
+    return request({
+      url: '/user/login/email',
+      method: 'post'
     })
   },
   logout() {
     return request({
       url: '/user/logout',
-      method: 'get'
+      method: 'post'
+    })
+  },
+  cancel({ user_id, pwd }) {
+    return request({
+      url: '/user/cancel_account',
+      method: 'post',
+      params: { user_id, pwd }
     })
   },
   userList(userListQueryDTO) {

@@ -31,7 +31,8 @@ const props = defineProps({
   width: 100%;
   height: 48px;
   overflow: hidden;
-
+  box-shadow: 0 0 6px -3px var(--el-color-primary);
+  
   .sidebar-logo-link {
     display: flex;
     flex-wrap: nowrap;

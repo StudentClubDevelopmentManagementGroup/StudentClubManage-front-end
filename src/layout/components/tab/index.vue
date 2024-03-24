@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import useStore from "@/store";
-
+import Down from "@iconify-icons/ri/arrow-down-s-line";
 const router = useRouter();
 
 const tabsOption = computed(() => useStore.tabStore.getTabsOption);
@@ -40,6 +40,13 @@ const clickTab = (tabName: { paneName: string }) => {
     @tab-click="clickTab"
     @tab-remove="removeTab"
   >
+    <template #add-icon>
+      <IconifyIconOffline
+        :icon="Down"
+        width="20"
+        class="cursor-pointer text-gray-500 hover:text-blue-400"
+      />
+    </template>
     <el-tab-pane
       v-for="item in tabsOption"
       :key="item.route"

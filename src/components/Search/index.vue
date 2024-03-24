@@ -1,31 +1,3 @@
-<template>
-  <div id="Serach" class="search-container">
-    <el-select
-      v-model="state.value"
-      :remote-method="querySearch"
-      filterable
-      default-first-option
-      remote
-      placeholder="请输入关键字搜索"
-      @change="handleChange"
-    >
-      <template #prefix>
-        <IconifyIconOffline
-          :icon="Search"
-          width="14"
-          class="cursor-pointer text-gray-500 hover:text-blue-400"
-        />
-      </template>
-      <el-option
-        v-for="{ item } in state.options"
-        :key="item.path"
-        :value="item"
-        :label="item.title.join(' > ')"
-      >
-      </el-option>
-    </el-select>
-  </div>
-</template>
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
 import Fuse from "fuse.js";
@@ -103,7 +75,6 @@ const generateList = (routers, basePath = "/", prefixTitle = []) => {
       }
     }
   }
-  console.log(list);
   return list;
 };
 
@@ -118,6 +89,35 @@ watchEffect(() => {
   fuse.value = new Fuse(searchList, config);
 });
 </script>
+
+<template>
+  <div id="Serach" class="search-container">
+    <el-select
+      v-model="state.value"
+      :remote-method="querySearch"
+      filterable
+      default-first-option
+      remote
+      placeholder="请输入关键字搜索"
+      @change="handleChange"
+    >
+      <template #prefix>
+        <IconifyIconOffline
+          :icon="Search"
+          width="14"
+          class="cursor-pointer text-gray-500 hover:text-blue-400"
+        />
+      </template>
+      <el-option
+        v-for="{ item } in state.options"
+        :key="item.path"
+        :value="item"
+        :label="item.title.join(' > ')"
+      >
+      </el-option>
+    </el-select>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .search-container {

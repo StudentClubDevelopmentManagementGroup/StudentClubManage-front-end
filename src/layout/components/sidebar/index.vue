@@ -62,7 +62,7 @@ const toggleSideBar = () => {
         />
       </el-menu>
     </el-scrollbar>
-    <leftCollapse :is-active="isCollapse" @toggleClick="toggleSideBar" />
+    <leftCollapse :is-active="!isCollapse" @toggleClick="toggleSideBar" />
   </div>
 </template>
 

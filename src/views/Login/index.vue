@@ -3,7 +3,10 @@ import { reactive, ref, watch, toRaw, computed } from "vue";
 import { useUserStore } from "@/store/user";
 import { usePermissionStore } from "@/store/permission";
 import { loginRules } from "./utils/rule";
-import { useRouter} from "vue-router";
+import { useRouter } from "vue-router";
+import { message } from "@/utils/message";
+import useStore from "@/store";
+import userApi from "@/api/user";
 
 import regist from "./components/regist.vue";
 import update from "./components/update.vue";
@@ -26,13 +29,25 @@ const loginLoading = ref(false);
 const checked = ref(false);
 const loginFormRef = ref(null);
 const currentPage = computed(() => {
-  return useUserStore().state.currentPage;
+  return useStore.userStore.getCurrentPage;
 });
 
 const handleLogin = () => {
+  loginLoading.value = true;
+  userApi
+    .login(loginForm)
+    .then((data) => {
+      message("登录成功", { type: "success" });
+      loginLoading.value = false;
+      console.log(data);
+    })
+    .catch((e) => {
+      // message("登陆失败", { type: "error" });
+      loginLoading.value = false;
+    });
   permissionStore.getPermissionRoutes();
   permissionStore.getPermissions();
-  router.push('/welcome')
+  // router.push("/welcome");
 };
 </script>
 
@@ -69,7 +84,7 @@ const handleLogin = () => {
           class="login_form"
           :model="loginForm"
         >
-          <el-form-item prop="act">
+          <el-form-item prop="user_id">
             <el-input
               v-model="loginForm.user_id"
               clearable
@@ -117,13 +132,13 @@ const handleLogin = () => {
                   </el-tooltip>
                 </span>
               </el-checkbox>
-              <el-button link @click="useUserStore().setCurrentPage(1)">
+              <el-button link @click="useStore.userStore.setCurrentPage(1)">
                 免费注册
               </el-button>
               <el-button
                 link
                 type="primary"
-                @click="useUserStore().setCurrentPage(3)"
+                @click="useStore.userStore.setCurrentPage(3)"
               >
                 忘记密码？
               </el-button>
@@ -142,7 +157,7 @@ const handleLogin = () => {
               <p class="text-gray-500 text-xs">快捷登陆方式</p>
             </el-divider>
             <div class="w-full flex justify-evenly">
-              <span @click="useUserStore().setCurrentPage(2)">
+              <span @click="useStore.userStore.setCurrentPage(2)">
                 <IconifyIconOnline
                   icon="ic:baseline-email"
                   width="20"
@@ -246,6 +261,6 @@ const handleLogin = () => {
   padding: 0px 30px;
 }
 </style>
-import { usePermissionStore } from "../../store/permission";import { usePermissionStore } from "../../store/permission";
-import { useRouter } from "vue-router";
-
+import { usePermissionStore } from "../../store/permission";import {
+usePermissionStore } from "../../store/permission"; import { useRouter } from
+"vue-router";

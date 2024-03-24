@@ -17,7 +17,7 @@
     "axios": "^1.6.8",
     "dayjs": "^1.11.10",
     "echarts": "^5.5.0",
-    "element-plus": "^2.6.1",
+    "element-plus": "2.5.4",
     "fuse.js": "^7.0.0",
     "iconify": "^1.4.0",
     "js-cookie": "^3.0.5",

@@ -1,29 +1,28 @@
 import axios from 'axios'
 import { ElMessage ,ElMessageBox} from 'element-plus'
 import { useUserStore } from '@/store/user.js'
-import { useRouter } from 'vue-router'
+import router from '@/router'
 import { getToken } from '@/utils/auth'
 import constants from "@/config";
 
-const router = useRouter()
 const service = axios.create({
   baseURL: constants.baseUrl, 
   timeout: 40000 // request timeout
 })
-// 允许携带cookie
-service.defaults.withCredentials = true
-// 请求头信息
-service.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
-// 默认使用 application/json 形式
+// // 允许携带cookie
+// service.defaults.withCredentials = true
+// // 请求头信息
+// service.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
+// // 默认使用 application/json 形式
 service.defaults.headers.post['Content-Type'] = 'application/json'
 
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    const userStore = useUserStore()
-    if (userStore.state.token) {
-      config.headers['token'] = getToken()
-    }
+    // const userStore = useUserStore()
+    // if (userStore.state.token) {
+    //   config.headers['token'] = getToken()
+    // }
     return config
   },
   error => {
@@ -40,10 +39,11 @@ service.interceptors.response.use(
       return response
     }
     const res = response.data
-    if (res.code !== 200) {
+    console.log(res);
+    if (res.status_code !== 200) {
       const userStore = useUserStore()
       // 需要动态刷新token
-      if (res.code === -2 || res.code === -3 || res.code === -4 || res.code === -5) {
+      if (res.status_code === -2 || res.status_code === -3 || res.status_code === -4 || res.status_code === -5) {
         userStore.Logout().then(() => {
           ElMessage({
             message: '您的登录状态过期或者无效，请您重新登录！',
@@ -51,7 +51,7 @@ service.interceptors.response.use(
             duration: 2500
           })
         })
-      } else if (res.code === -1) {
+      } else if (res.status_code === -1) {
         ElMessageBox.confirm('未登录，请先登录！', '提示', {
           confirmButtonText: '登录',
           showCancelButton: false,
@@ -60,7 +60,7 @@ service.interceptors.response.use(
           // 清除数据然后跳转至登录
           router.replace(`/login`)
         })
-      } else if (res.code === 999) {
+      } else if (res.status_code === 999) {
 
       } else {
         ElMessage({
@@ -71,7 +71,7 @@ service.interceptors.response.use(
       }
       return Promise.reject(res.message || "Error")
     } else {
-      return res.data
+      return res
     }
   },
   error => {

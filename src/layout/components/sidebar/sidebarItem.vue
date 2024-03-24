@@ -46,9 +46,6 @@ const isCollapse = computed(() => !useStore.appStore.getSidebarOpened);
 const layout = computed(() => {
   getConfig().Layout;
 });
-const tooltipEffect = computed(() => {
-  getConfig().TooltipEffect;
-});
 
 const getDivStyle = computed(() => {
   return {
@@ -135,6 +132,7 @@ const resolvePath = (routePath) => {
         (!onlyOneChild.children || onlyOneChild.noShowingChildren)
       "
       :to="onlyOneChild.path"
+      v-bind="attrs"
     >
       <el-menu-item
         :key="onlyOneChild.path"
@@ -142,7 +140,6 @@ const resolvePath = (routePath) => {
         :route="onlyOneChild.path"
         :class="{ 'submenu-title-noDropdown': !isNested }"
         :style="getNoDropdownStyle"
-        v-bind="attrs"
       >
         <div
           v-if="toRaw(item.meta.icon)"
@@ -156,7 +153,7 @@ const resolvePath = (routePath) => {
             <Text
               :tippyProps="{
                 offset: [0, -10],
-                theme: tooltipEffect,
+                theme: 'light',
               }"
               class="!text-inherit"
             >
@@ -166,7 +163,7 @@ const resolvePath = (routePath) => {
         >
       </el-menu-item>
     </link-item>
-    <el-sub-menu v-else ref="subMenu" :index="item.path" popper-append-to-body>
+    <el-sub-menu v-else ref="subMenu" :index="item.path" teleported v-bind="attrs">
       <template #title>
         <div
           v-if="toRaw(item.meta.icon)"
@@ -176,25 +173,14 @@ const resolvePath = (routePath) => {
           <IconifyIconOnline :data-index="item.path" :icon="item.meta.icon" />
         </div>
         <Text
-          v-if="
-            !(
-              layout === 'vertical' &&
-              isCollapse &&
-              toRaw(props.item.meta.icon) &&
-              props.item.parentId === null
-            )
-          "
+          v-if="!isCollapse"
           :tippyProps="{
             offset: [0, -10],
-            theme: tooltipEffect,
+            theme: 'light',
           }"
           :class="{
             '!text-inherit': true,
-            '!px-4':
-              layout !== 'horizontal' &&
-              isCollapse &&
-              !toRaw(props.item.meta.icon) &&
-              props.item.parentId === null,
+            '!px-4': isCollapse,
           }"
         >
           {{ item.meta.title }}
