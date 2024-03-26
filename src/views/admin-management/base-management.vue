@@ -134,55 +134,6 @@ const selectStatus = ref(false);
 const handleCancelAllSelected = () => {
   console.log("这里是取消批量操作");
 };
-// 对话框-修改状态
-const dialogDeleted = ref(false);
-const departmentId = ref("");
-const name = ref("");
-const changeStatusParams = computed(() => ({
-  department_id: departmentId.value,
-  name: name.value,
-}));
-
-const changeDeletedStatus = () => {
-  return new Promise((resolve, reject) => {
-    deleteBase(changeStatusParams.value)
-      .then(() => {
-        baseStore().state.row.is_deleted = true;
-        resolve();
-      })
-      .catch((err) => {
-        console.warn(err);
-      });
-  });
-};
-const changeRecoveredStatus = () => {
-  return new Promise((resolve, reject) => {
-    recoverBase(changeStatusParams.value)
-      .then(() => {
-        baseStore().state.row.is_deleted = false;
-        resolve();
-      })
-      .catch((err) => {
-        console.warn(err);
-      });
-  });
-};
-const handleSwitch = (row) => {
-  dialogDeleted.value = true;
-  baseStore().setRow(row);
-  departmentId.value = row.department_id;
-  name.value = row.name;
-  return false;
-};
-const handleConfirmDeleted = () => {
-  dialogDeleted.value = false;
-  if (baseStore().state.row.is_deleted === true) {
-    changeRecoveredStatus();
-  } else {
-    changeDeletedStatus();
-  }
-};
-
 // 对话框-设置基地负责人
 const dialogSetManager = ref(false);
 const setFormRef = ref(null);
@@ -305,15 +256,12 @@ onMounted(() => {
               />
               <el-table-column property="number" label="总人数" align="center" />
               <el-table-column property="manager" label="教师负责人" align="center" />
-              <!-- 编辑 启用/未启用 方法 -->
+              <!-- 显示逻辑删除状态  -->
               <el-table-column label="启用/未启用" align="center">
                 <template #default="scope">
-                  <el-switch
-                    v-model="scope.row.is_deleted"
-                    :active-value="false"
-                    :inactive-value="true"
-                    :before-change="() => handleSwitch(scope.row)"
-                  />
+                  <el-tag :type="!scope.row.is_deleted ? 'success' : 'danger'">{{
+                    !scope.row.is_deleted ? "启用" : "未启用"
+                  }}</el-tag>
                 </template>
               </el-table-column>
               <!-- 显示招新状态 -->
@@ -356,16 +304,6 @@ onMounted(() => {
           </template>
         </el-card>
       </div>
-      <!-- 弹出处理 启用/未启用 状态修改的对话框 -->
-      <el-dialog v-model="dialogDeleted" title="修改基地状态" width="500">
-        <span>请确认要修改状态</span>
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button @click="dialogDeleted = false">取消</el-button>
-            <el-button type="primary" @click="handleConfirmDeleted"> 确认 </el-button>
-          </div>
-        </template>
-      </el-dialog>
       <!--  弹出处理 新增 的对话框 -->
       <el-dialog
         v-model="dialogAdded"
