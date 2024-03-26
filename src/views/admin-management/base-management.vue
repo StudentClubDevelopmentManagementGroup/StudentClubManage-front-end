@@ -1,138 +1,227 @@
 <script setup>
-import { reactive, ref, watch, toRaw, computed } from "vue";
+import { reactive, ref, computed, onMounted } from "vue";
 import { CirclePlus } from "@element-plus/icons-vue";
 import { baseStore } from "@/store/base";
-import { getBaseList } from "@/api/admin-management";
-
+import { addBaseRules, setManagerRules } from "./utils/rule";
+import { baseData, departmentData, departmentSwtichData } from "./test-data/mock";
+import { message } from "@/utils/message";
+import { getBaseList, addBase, deleteBase, recoverBase } from "@/api/admin-management";
 const multipleSelection = ref([]);
+
 // 测试表格数据
-const tableData = reactive([
-  {
-    id: "1",
-    club_name: "名字",
-    department_name: "计算机与信息安全学院",
-    total_num: "10",
-    manager: "赵三",
-    is_deleted: 1,
-    state: 0,
-  },
-  {
-    id: "2",
-    club_name: "名字",
-    department_name: "计算机与信息安全学院",
-    total_num: "10",
-    manager: "赵三",
-    is_deleted: 1,
-    state: 0,
-  },
-  {
-    id: "3",
-    club_name: "名字",
-    department_name: "计算机与信息安全学院",
-    total_num: "10",
-    manager: "赵三",
-    is_deleted: 1,
-    state: 0,
-  },
-  {
-    id: "4",
-    club_name: "名字",
-    department_name: "计算机与信息安全学院",
-    total_num: "10",
-    manager: "赵三",
-    is_deleted: 0,
-    state: 0,
-  },
-  {
-    id: "5",
-    club_name: "名字",
-    department_name: "计算机与信息安全学院",
-    total_num: "10",
-    manager: "赵三",
-    is_deleted: 0,
-    state: 0,
-  },
-]);
+const tableData = ref(baseData);
+// 分页获取基地列表数据 与 检索关键字
+const currentPage = ref(1);
+const pageSize = ref(10);
+const total = ref(100);
+const input1 = ref(null);
+const input2 = ref(null);
+const searchStatus = ref(false); // 查询标志状态
+const getBaseListParams = computed(() => ({
+  pagenum: currentPage.value,
+  size: pageSize.value,
+}));
+const queryBaseListParams = computed(() => ({
+  pagenum: currentPage.value,
+  size: pageSize.value,
+  name: input1.value === "" ? null : input1.value,
+  departmentId: input2.value === "" ? null : input2.value,
+}));
 
-// 检索关键字
-const input1 = ref("");
-const input2 = ref("");
-
+const fetchData = async (value) => {
+  return new Promise((resolve, reject) => {
+    getBaseList(value)
+      .then((data) => {
+        if (data && data.records !== undefined) {
+          // 查询到非空数据
+          tableData.value = [...data.records];
+          total.value = data.total;
+          resolve();
+        } else {
+          // 查询到空数据
+          tableData.value = [];
+          reject();
+        }
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  });
+};
+const handleSizeChange = () => {
+  // TODO:逻辑bug,在total大于size时，从第2页或者后续几页将size调至大于total时触发，导致发生两次查询请求
+  if (searchStatus.value === true) {
+    fetchData(queryBaseListParams.value);
+  } else {
+    fetchData(getBaseListParams.value);
+  }
+};
+const handleCurrentChange = () => {
+  if (searchStatus.value === true) {
+    fetchData(queryBaseListParams.value);
+  } else {
+    fetchData(getBaseListParams.value);
+  }
+};
 const handleSearch = () => {
-  console.log("这是检索操作", "基地：" + input1.value, "院系：" + input2.value);
+  if (
+    (input1.value != null && input1.value !== "") ||
+    (input2.value != null && input2.value !== "")
+  ) {
+    // 有任一检索关键字
+    searchStatus.value = true;
+    fetchData(queryBaseListParams.value);
+  } else {
+    // 没有检索关键字
+    searchStatus.value = false;
+    fetchData(getBaseListParams.value);
+  }
 };
 const handleReset = () => {
-  input1.value = "";
-  input2.value = "";
-  console.log("这是重置操作");
+  input1.value = null;
+  input2.value = null;
 };
-
-// 新增
-const handleAdd = () => {
-  const testData = {
-    id: "11",
-    club_name: "新的名字",
-    department_name: "新的学院",
-    total_num: "20",
-    manager: "新的经理",
-    is_deleted: 0,
-    state: 1,
-  };
-  console.log("这里是新增操作");
-  tableData.push(testData);
+const handleCancelSearch = () => {
+  searchStatus.value = false;
+  fetchData(getBaseListParams.value);
 };
+// 获取院系数据
+const selectData = ref(departmentData);
 
-// 对话框
-const dialogDeleted = ref(false);
+// 对话框-新增基地数据
 const dialogAdded = ref(false);
+const addedBtnLoading = ref(false);
+const addFormRef = ref(null);
+const addBaseParams = reactive({
+  name: null,
+  department_id: null,
+});
+const addNewBase = async (value) => {
+  return new Promise((resolve, reject) => {
+    addBase(value)
+      .then((data) => {
+        setTimeout(() => {
+          message("添加成功", { type: "success" });
+          addedBtnLoading.value = false;
+          dialogAdded.value = false;
+          addBaseParams.name = null;
+          addBaseParams.department_id = null;
+        }, 1000);
+      })
+      .catch((error) => {
+        setTimeout(() => {
+          addedBtnLoading.value = false;
+        }, 1000);
+        console.warn(error);
+      });
+  });
+};
+const handleAdd = () => {
+  dialogAdded.value = true;
+};
+const handleConfirmAdded = () => {
+  addedBtnLoading.value = true;
+  addFormRef.value.validate((valid, fields) => {
+    if (valid) {
+      addNewBase(addBaseParams);
+    } else {
+      addedBtnLoading.value = false;
+    }
+  });
+};
+// 取消批量操作
+const selectStatus = ref(false);
+const handleCancelAllSelected = () => {
+  console.log("这里是取消批量操作");
+};
+// 对话框-修改状态
+const dialogDeleted = ref(false);
+const departmentId = ref("");
+const name = ref("");
+const changeStatusParams = computed(() => ({
+  department_id: departmentId.value,
+  name: name.value,
+}));
 
-const handleSwitchChange2CheckDelete = (row) => {
+const changeDeletedStatus = () => {
+  return new Promise((resolve, reject) => {
+    deleteBase(changeStatusParams.value)
+      .then(() => {
+        baseStore().state.row.is_deleted = true;
+        resolve();
+      })
+      .catch((err) => {
+        console.warn(err);
+      });
+  });
+};
+const changeRecoveredStatus = () => {
+  return new Promise((resolve, reject) => {
+    recoverBase(changeStatusParams.value)
+      .then(() => {
+        baseStore().state.row.is_deleted = false;
+        resolve();
+      })
+      .catch((err) => {
+        console.warn(err);
+      });
+  });
+};
+const handleSwitch = (row) => {
   dialogDeleted.value = true;
   baseStore().setRow(row);
+  departmentId.value = row.department_id;
+  name.value = row.name;
   return false;
 };
 const handleConfirmDeleted = () => {
   dialogDeleted.value = false;
-  console.log(baseStore().state.row.is_deleted);
-  if (baseStore().state.row.is_deleted === 1) {
-    baseStore().state.row.is_deleted = 0;
+  if (baseStore().state.row.is_deleted === true) {
+    changeRecoveredStatus();
   } else {
-    baseStore().state.row.is_deleted = 1;
-  }
-  console.log(baseStore().state.row.is_deleted);
-};
-const handleSwitchChange2CheckAdd = (row) => {
-  dialogAdded.value = true;
-  baseStore().setRow(row);
-  return false;
-};
-const handleConfirmAdded = () => {
-  dialogAdded.value = false;
-  if (baseStore().state.row.state === 1) {
-    baseStore().state.row.state = 0;
-  } else {
-    baseStore().state.row.state = 1;
+    changeDeletedStatus();
   }
 };
 
-const currentPage = ref(1);
-const pageSize = ref(10);
-const total = ref(100);
-
-const handleSizeChange = (val) => {
-  console.log(`${val} items per page`);
+// 对话框-设置基地负责人
+const dialogSetManager = ref(false);
+const setFormRef = ref(null);
+const columnInfo = reactive({
+  name: "",
+  department_name: "",
+});
+const setBtnLoading = ref(false);
+const setBaseManagerParams = reactive({
+  club_id: null,
+  user_id: null,
+});
+const handleClickBtn = (row) => {
+  dialogSetManager.value = true;
+  columnInfo.name = row.name;
+  columnInfo.department_name = row.department_name;
+  setBaseManagerParams.club_id = row.club_id;
 };
-const handleCurrentChange = (val) => {
-  console.log(`current page: ${val}`);
+const handleConfirmSetManager = () => {
+  setBtnLoading.value = true;
+  setFormRef.value.validate((value, fields) => {
+    if (value) {
+      setTimeout(() => {
+        setBtnLoading.value = false;
+      }, 1000);
+    } else {
+      setBtnLoading.value = false;
+    }
+  });
+};
+// 进入基地管理端界面
+const handleClickBtn2 = (row) => {
+  // TODO:进入基地管理端，理论上传入基地id，进一步的等待 车 开发
+  console.log("编辑", row);
 };
 
-// getBaseList()
-//   .then((response) => {
-//     console.log("response", response);
-//   })
-//   .catch((err) => {
-//     console.warn(err);
-//   });
+onMounted(() => {
+  fetchData(getBaseListParams.value);
+});
 </script>
 
 <template>
@@ -151,23 +240,32 @@ const handleCurrentChange = (val) => {
           <div id="search">
             <!-- 搜索输入框 -->
             <div>
-              <span style="margin-right: 5px">基地：</span>
+              <span>基地：</span>
               <el-input
                 v-model="input1"
                 style="width: 240px"
                 placeholder="请输入基地/社团名称"
               />
-              <span style="margin-right: 5px">院系：</span>
-              <el-input
+              <span>院系：</span>
+              <el-select
                 v-model="input2"
+                placeholder="请选择学院名称"
                 style="width: 240px"
-                placeholder="请输入学院名称"
-              />
+              >
+                <el-option
+                  v-for="item in selectData"
+                  :label="item.full_name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
             </div>
             <!-- 操作 -->
             <div>
               <el-button type="primary" style="margin-right: 10px" @click="handleSearch"
                 >查询</el-button
+              >
+              <el-button type="success" v-if="searchStatus" @click="handleCancelSearch"
+                >取消检索</el-button
               >
               <el-button @click="handleReset">重置</el-button>
             </div>
@@ -180,72 +278,62 @@ const handleCurrentChange = (val) => {
           <!-- 操作按钮 -->
           <template #header>
             <div id="operation">
-              <el-button type="primary" :icon="CirclePlus" @click="handleAdd"
-                >新增</el-button
-              >
+              <div id="operation-left">
+                <el-button
+                  v-if="selectStatus"
+                  @click="handleCancelAllSelected"
+                  type="success"
+                  >取消全选</el-button
+                >
+              </div>
+              <div id="operation-right">
+                <el-button type="primary" :icon="CirclePlus" @click="handleAdd"
+                  >新增</el-button
+                >
+              </div>
             </div>
           </template>
           <!-- 数据表格 -->
           <div id="table">
-            <el-table
-              ref="TableRef"
-              :data="tableData"
-              table-layout="auto"
-              size="large"
-              :fit="false"
-            >
+            <el-table ref="TableRef" :data="tableData" table-layout="auto" size="large">
               <el-table-column type="selection" align="center" />
-              <el-table-column
-                property="club_name"
-                label="基地/社团名称"
-                align="center"
-                width="300"
-              />
+              <el-table-column property="name" label="基地/社团名称" align="center" />
               <el-table-column
                 property="department_name"
                 label="学院名称"
                 align="center"
-                width="300"
               />
-              <el-table-column
-                property="total_num"
-                label="总人数"
-                align="center"
-                width="150"
-              />
-              <el-table-column
-                property="manager"
-                label="负责人"
-                align="center"
-                width="150"
-              />
+              <el-table-column property="number" label="总人数" align="center" />
+              <el-table-column property="manager" label="教师负责人" align="center" />
               <!-- 编辑 启用/未启用 方法 -->
-              <el-table-column label="启用/未启用" align="center" width="200">
+              <el-table-column label="启用/未启用" align="center">
                 <template #default="scope">
                   <el-switch
                     v-model="scope.row.is_deleted"
-                    size="small"
-                    :active-value="1"
-                    :inactive-value="0"
-                    :before-change="() => handleSwitchChange2CheckDelete(scope.row)"
+                    :active-value="false"
+                    :inactive-value="true"
+                    :before-change="() => handleSwitch(scope.row)"
                   />
                 </template>
               </el-table-column>
-              <!-- 编辑 正在招新/终止招新 方法 -->
-              <el-table-column label="正在招新/终止招新" align="center" width="200">
+              <!-- 显示招新状态 -->
+              <el-table-column label="招新状态" align="center">
                 <template #default="scope">
-                  <el-switch
-                    v-model="scope.row.state"
-                    size="small"
-                    :active-value="1"
-                    :inactive-value="0"
-                    :before-change="() => handleSwitchChange2CheckAdd(scope.row)"
-                  />
+                  <el-tag :type="!scope.row.state ? 'success' : 'danger'">{{
+                    !scope.row.state ? "正在招新" : "终止招新"
+                  }}</el-tag>
                 </template>
               </el-table-column>
               <el-table-column>
                 <template #default="scope">
-                  <div>测试</div>
+                  <div>
+                    <el-button type="primary" text @click="handleClickBtn(scope.row)"
+                      >设置教师负责人</el-button
+                    >
+                    <el-button type="success" text @click="handleClickBtn2(scope.row)"
+                      >编辑</el-button
+                    >
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -278,13 +366,76 @@ const handleCurrentChange = (val) => {
           </div>
         </template>
       </el-dialog>
-      <!-- 弹出处理 正在招新/终止招新 状态修改的对话框 -->
-      <el-dialog v-model="dialogAdded" title="修改基地招新状态" width="500">
-        <span>请确认要修改状态</span>
+      <!--  弹出处理 新增 的对话框 -->
+      <el-dialog
+        v-model="dialogAdded"
+        title="新增基地"
+        width="500"
+        align-center
+        destroy-on-close
+      >
+        <el-form :model="addBaseParams" ref="addFormRef" :rules="addBaseRules">
+          <el-form-item prop="name" label="名称">
+            <el-input
+              v-model="addBaseParams.name"
+              placeholder="请输入基地/社团名称"
+            ></el-input>
+          </el-form-item>
+          <el-form-item prop="department_id" label="院系">
+            <el-select v-model="addBaseParams.department_id" placeholder="请选择院系">
+              <el-option
+                v-for="item in selectData"
+                :label="item.full_name"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
         <template #footer>
           <div class="dialog-footer">
             <el-button @click="dialogAdded = false">取消</el-button>
-            <el-button type="primary" @click="handleConfirmAdded"> 确认 </el-button>
+            <el-button
+              type="primary"
+              @click="handleConfirmAdded"
+              :loading="addedBtnLoading"
+            >
+              确认
+            </el-button>
+          </div>
+        </template>
+      </el-dialog>
+      <!-- 弹出处理 设置教师负责人 的对话框 -->
+      <el-dialog
+        v-model="dialogSetManager"
+        title="设置基地教师负责人"
+        align-center
+        width="500"
+        destroy-on-close
+      >
+        <el-form :model="setBaseManagerParams" ref="setFormRef" :rules="setManagerRules">
+          <el-form-item id="column-info">
+            <div>基地名称：</div>
+            <div>{{ columnInfo.name }}</div>
+            <div>学院名称：</div>
+            <div>{{ columnInfo.department_name }}</div>
+          </el-form-item>
+          <el-form-item prop="user_id" label="工号">
+            <el-input
+              v-model="setBaseManagerParams.user_id"
+              placeholder="请输入教师负责人工号"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="dialogSetManager = false">取消</el-button>
+            <el-button
+              type="primary"
+              @click="handleConfirmSetManager"
+              :loading="setBtnLoading"
+            >
+              确认
+            </el-button>
           </div>
         </template>
       </el-dialog>
@@ -309,10 +460,15 @@ const handleCurrentChange = (val) => {
   display: flex;
   justify-content: space-between;
 }
-#search div {
+#search span {
+  margin-right: 5px;
+}
+#search span:not(:first-child) {
+  margin-left: 20px;
+}
+#search > div {
   display: flex;
   align-items: center;
-  margin-right: 20px;
 }
 /* 检索关键字区域样式 */
 
@@ -325,7 +481,8 @@ const handleCurrentChange = (val) => {
 }
 #operation {
   display: flex;
-  justify-content: right;
+  align-items: center;
+  justify-content: space-between;
 }
 #table {
   background: red;
@@ -335,8 +492,6 @@ const handleCurrentChange = (val) => {
 }
 .table-container:deep() .el-card__body {
   padding: 0px;
-  /* padding-top: 0px;
-  padding-bottom: 0px; */
 }
 /* 修复未指定列的宽度，导致在界面展开/收起时发生的宽度异常，而破坏容器 */
 .table-container:deep() .el-scrollbar__view {
@@ -347,19 +502,30 @@ const handleCurrentChange = (val) => {
   min-width: 1600px;
 }
 /* 修复未指定列的宽度，导致在界面展开/收起时发生的宽度异常，而破坏容器 */
+
 .table-container:deep() .el-table__inner-wrapper {
   /* 调整el-table 使其在item不足的情况下高度不坍塌 */
   min-height: 545px;
 }
-/* 修复el-switch按钮撑大行外间距导致的UI异常 */
-/* TODO: 这个无法完全修复，再切换路由时样式会复原，现解决办法是将el-switch设置为small */
-.table-container:deep() .el-table_1_column_6 {
+
+/* 修复el-switch开关撑大行外间距导致的UI异常 */
+.table-container:deep() .el-table__cell:nth-child(6) {
   padding: 0px !important;
 }
-.table-container:deep() .el-table_1_column_7 {
+.table-container:deep() .el-table__cell:nth-child(7) {
   padding: 0px !important;
 }
-/* 修复el-switch按钮撑大行外间距导致的UI异常 */
+/* 修复el-switch开关撑大行外间距导致的UI异常 */
+
+/* 修复el-button按钮外边距与高度过大导致的UI异常 */
+.table-container:deep() .el-table__cell:nth-child(8) .el-button {
+  height: auto;
+  padding: 0px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+/* 修复el-button按钮外边距与高度过大导致的UI异常 */
+
 #pager {
   display: flex;
   justify-content: center;
@@ -374,4 +540,30 @@ const handleCurrentChange = (val) => {
   margin-bottom: 16px;
 }
 /*  数据表格展示及操作区域样式 */
+
+/* 弹出对话框样式 */
+#container:deep() .el-dialog__title {
+  color: black;
+  font-weight: bolder;
+  font-size: larger;
+}
+#container:deep() .el-form-item__label {
+  color: black;
+  font-weight: 500;
+  font-size: large;
+}
+#column-info div:not(:first-child):nth-child(odd) {
+  margin-left: 10px;
+}
+#column-info div:nth-child(even) {
+  color: black;
+  font-weight: 500;
+  font-size: medium;
+}
+#column-info div:nth-child(odd) {
+  color: black;
+  font-weight: 600;
+  font-size: medium;
+}
+/* 弹出对话框样式 */
 </style>

@@ -11,6 +11,7 @@ export const adminManagementRoutes = [
                 path: 'base',
                 name: 'Base',
                 component: () => import('@/views/admin-management/base-management'),
+                meta: { title: '基地管理',icon: ""}
             },
         ]
     },
@@ -23,6 +24,7 @@ export const adminManagementRoutes = [
                 path: 'user',
                 name: 'User',
                 component: () => import('@/views/admin-management/user-management'),
+                meta: { title: '人员管理',icon: ""}
             },
         ]
     },
@@ -35,6 +37,7 @@ export const adminManagementRoutes = [
                 path: 'person',
                 name: 'Person',
                 component: () => import('@/views/admin-management/person-information'),
+                meta: { title: '个人信息',icon: ""}
             },
         ]
     },
@@ -47,6 +50,7 @@ export const adminManagementRoutes = [
                 path: 'operation',
                 name: 'Operation',
                 component: () => import('@/views/admin-management/operation-log'),
+                meta: { title: '操作日志',icon: ""}
             }
         ]
     },

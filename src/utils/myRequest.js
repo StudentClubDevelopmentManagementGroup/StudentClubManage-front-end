@@ -1,42 +1,72 @@
 import axios from 'axios';
 
 // 基本配置URL
-const baseURL = ""
+const baseURL = "http://localhost:3333/"
 
 const instance = axios.create({
     baseURL: baseURL,
-    timeout: 5000, // 请求超时
+    timeout: 40000, // 请求超时
 });
 
-// TODO: 添加请求拦截器
-// instance.interceptors.request.use(
-//   (config) => {
-//     // 在发送请求之前做些什么，例如添加 token
-//     const token = localStorage.getItem('token');
-//     if (token) {
-//       config.headers.Authorization = `Bearer ${token}`;
-//     }
-//     return config;
-//   },
-//   (error) => {
-//     // 对请求错误做些什么
-//     return Promise.reject(error);
-//   }
-// );
+// 允许携带cookie
+instance.defaults.withCredentials = true
+// 请求头信息
+instance.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
+// 默认使用 application/json 形式
+instance.defaults.headers.post['Content-Type'] = 'application/json'
 
-// TODO: 添加响应拦截器
-// instance.interceptors.response.use(
-//   (response) => {
-//     // 对响应数据做点什么，例如处理错误码
-//     if (response.data.code !== 200) {
-//       // 处理错误码
-//     }
-//     return response;
-//   },
-//   (error) => {
-//     // 对响应错误做点什么
-//     return Promise.reject(error);
-//   }
-// );
+// 响应拦截器
+instance.interceptors.response.use(
+    response => {
+        // 文件下载
+        if (response.config.responseType === 'blob') {
+            return response
+        }
+
+        const res = response.data
+        if (res.status_code !== 200 && res.status_code !== 404) {
+            const userStore = useUserStore()
+            // 需要动态刷新token
+            if (res.code === -2 || res.code === -3 || res.code === -4 || res.code === -5) {
+                userStore.Logout().then(() => {
+                    ElMessage({
+                        message: '您的登录状态过期或者无效，请您重新登录！',
+                        type: 'error',
+                        duration: 2500
+                    })
+                })
+            } else if (res.code === -1) {
+                ElMessageBox.confirm('未登录，请先登录！', '提示', {
+                    confirmButtonText: '登录',
+                    showCancelButton: false,
+                    type: 'warning',
+                }).then(() => {
+                    // 清除数据然后跳转至登录
+                    router.replace(`/login`)
+                })
+            } else if (res.code === 999) {
+
+            } else {
+                ElMessage({
+                    message: res.message || 'Error',
+                    type: 'error',
+                    duration: 2500
+                })
+            }
+            return Promise.reject(res.message || "Error")
+        } else {
+            return res.data
+        }
+    },
+    error => {
+        console.log('err' + error)
+        ElMessage({
+            message: error.message,
+            type: 'error',
+            duration: 5 * 1000
+        })
+        return Promise.reject(error)
+    }
+)
 
 export default instance;

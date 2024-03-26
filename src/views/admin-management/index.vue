@@ -1,11 +1,10 @@
 <script setup>
 import { reactive, ref, watch, toRaw, computed } from "vue";
-import { Document, Menu as IconMenu, Location, Setting } from "@element-plus/icons-vue";
+import { Document, Menu as IconMenu } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { layoutStore } from "@/store/layout";
 
 const router = useRouter();
-
 const isCollapse = computed(() => {
   return !layoutStore().state.isCollapse;
 });
@@ -45,7 +44,7 @@ const handleCommand = (command) => {
       <!-- 导航栏菜单 -->
       <div id="navi-container">
         <el-menu
-          default-active="base"
+          default-active="/bm/base"
           class="el-menu-vertical-demo"
           :collapse="isCollapse"
           router
@@ -72,7 +71,7 @@ const handleCommand = (command) => {
       </div>
     </el-aside>
     <!-- 主体界面 -->
-    <el-main>
+    <el-main style="overflow: hidden">
       <!-- 头部区域 -->
       <el-affix>
         <div id="header">
@@ -101,7 +100,7 @@ const handleCommand = (command) => {
       </el-affix>
       <!-- 预留页头标签页 -->
       <el-affix :offset="60">
-        <div id="tags"></div>
+        <div id="tags">这是占位的顶部导航栏</div>
       </el-affix>
       <!-- 功能界面 -->
       <div id="body">
@@ -211,10 +210,7 @@ const handleCommand = (command) => {
   background: yellow;
 }
 #body {
-  /* 减去tags与header的高度 */
-  /*  TODO: 响应式布局需要 使用min-height，等完成表格的布局后回来修改这里 */
-  /* min-height: calc(100% - 90px); */
-  height: calc(100% - 90px);
+  height: calc(100% - 90px); /* 减去tags与header的高度 */
 }
 /* 主体界面样式 */
 </style>
