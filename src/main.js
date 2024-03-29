@@ -12,7 +12,7 @@ import "./style/reset.scss";
 import "./style/index.scss";
 import "./style/tailwind.css";
 import 'element-plus/dist/index.css'
-import 'element-plus/theme-chalk/index.css'
+
 
 const app = createApp(App)
 

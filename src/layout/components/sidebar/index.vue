@@ -49,6 +49,7 @@ const toggleSideBar = () => {
         popper-class="pure-scrollbar"
         class="outer-most select-none"
         :collapse="isCollapse"
+        :collapse-transition="false"
         :popper-effect="tooltipEffect"
         :default-active="activeMenu"
       >

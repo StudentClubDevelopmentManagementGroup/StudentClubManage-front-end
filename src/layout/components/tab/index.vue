@@ -56,4 +56,12 @@ const clickTab = (tabName: { paneName: string }) => {
   </el-tabs>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.el-tabs {
+  background: #fff;
+  box-shadow: 0 -1px 1px -1px #888;
+}
+.el-tabs__header{
+  margin-bottom: 0px !important;
+}
+</style>

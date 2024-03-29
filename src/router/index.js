@@ -160,7 +160,7 @@ export const asyncRoutes = [
                 title: "简介设置",
             },
         }]
-    },{
+    }, {
         path: "/member",
         component: Layout,
         redirect: "/member/signin",
@@ -175,21 +175,21 @@ export const asyncRoutes = [
             meta: {
                 title: "打卡记录",
             },
-        },{
+        }, {
             path: "/member/duty",
             name: "MemberDuty",
             component: () => import('@/views/Introduce'),
             meta: {
                 title: "值日查询",
             },
-        },{
+        }, {
             path: "/member/seat",
             name: "MemberSeat",
             component: () => import('@/views/Introduce'),
             meta: {
                 title: "座位表查询",
             },
-        },{
+        }, {
             path: "/member/report",
             name: "MemberReport",
             component: () => import('@/views/Introduce'),
@@ -218,16 +218,17 @@ router.beforeEach(async (to, from, next) => {
     }
     tabStore.setCurrentIndex(to.path)
 
-    const hasGetUserInfo = userStore.state.userInfo
-    if (to.path === '/login') {
-        next()
-        return
-    }
-    if (!hasGetUserInfo) {
-        next('/login')
-    } else {
-        next()
-    }
+    next();
+    // const hasGetUserInfo = userStore.state.userInfo
+    // if (to.path === '/login') {
+    //     next()
+    //     return
+    // }
+    // if (!hasGetUserInfo) {
+    //     next('/login')
+    // } else {
+    //     next()
+    // }
 })
 
 export default router

@@ -5,7 +5,6 @@ const getConfig = () => {
     "HiddenSideBar": false,
     "MultiTagsCache": false,
     "KeepAlive": true,
-    "Locale": "zh",
     "Layout": "vertical",
     "Theme": "light",
     "DarkMode": false,
@@ -39,7 +38,7 @@ const responsiveStorageNameSpace = () => getConfig().ResponsiveStorageNameSpace;
 
 const CONFIG = {
   development: {
-    baseUrl: 'http://10.60.83.22:3333',
+    baseUrl: 'http://10.33.114.45:3333',
     logo: 'http://localhost:5173/icon.jpeg',
     avatar: 'http://localhost:8080/header4.gif',
     emptyImg: 'http://localhost:8080/empty.png',

@@ -140,6 +140,7 @@ const resolvePath = (routePath) => {
         :route="onlyOneChild.path"
         :class="{ 'submenu-title-noDropdown': !isNested }"
         :style="getNoDropdownStyle"
+        v-bind="attrs"
       >
         <div
           v-if="toRaw(item.meta.icon)"

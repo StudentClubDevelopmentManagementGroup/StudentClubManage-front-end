@@ -1,25 +1,8 @@
 <template>
-  <section class="app-main">
-    <!-- <div class="tags-view">
-      <el-tabs
-        id="Tabs"
-        v-model="currentIndex"
-        type="card"
-        closable
-        @tab-click="clickTab"
-        @tab-remove="removeTab"
-      >
-        <el-tab-pane
-          v-for="item in tabsOption"
-          :key="item.route"
-          :label="item.title"
-          :name="item.route"
-        />
-      </el-tabs>
-    </div> -->
+  <section class="app-main" >
     <router-view v-if="$route.meta.keepAlive" v-slot="{ Component }">
       <transition name="fade" mode="out-in">
-        <component :is="Component" :key="$route.path" />
+        <component :is="Component" :key="$route.path" class="main-content"/>
       </transition>
     </router-view>
 
@@ -36,6 +19,8 @@
         </transition>
       </div>
     </router-view>
+
+    <Footer v-if="!hideFooter" />
   </section>
 </template>
 
@@ -43,12 +28,13 @@
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import useStore from "@/store";
+import Footer from "./footer/index.vue";
 
 const router = useRouter();
 
 const tabsOption = computed(() => useStore.tabStore.getTabsOption);
 const currentIndex = computed(() => useStore.tabStore.getCurrentIndex);
-
+const hideFooter = computed(() => useStore.settingStore.getHideFooter);
 // 移除tab
 const removeTab = (tabName: string) => {
   if (tabName === "/welcome") {
@@ -81,7 +67,7 @@ const clickTab = (tabName: { paneName: string }) => {
   width: 100%;
   height: 100vh;
   overflow-x: hidden;
-
+  padding-top: 82px;
 }
 
 .app-main-nofixed-header {

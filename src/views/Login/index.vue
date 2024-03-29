@@ -33,20 +33,21 @@ const currentPage = computed(() => {
 });
 
 const handleLogin = () => {
-  loginLoading.value = true;
-  userApi
-    .login(loginForm)
-    .then((data) => {
-      message("登录成功", { type: "success" });
-      loginLoading.value = false;
-      console.log(data);
-    })
-    .catch((e) => {
-      // message("登陆失败", { type: "error" });
-      loginLoading.value = false;
-    });
+  // loginLoading.value = true;
+  // userApi
+  //   .login(loginForm)
+  //   .then((data) => {
+  //     message("登录成功", { type: "success" });
+  //     loginLoading.value = false;
+  //     console.log(data);
+  //   })
+  //   .catch((e) => {
+  //     // message("登陆失败", { type: "error" });
+  //     loginLoading.value = false;
+  //   });
   permissionStore.getPermissionRoutes();
   permissionStore.getPermissions();
+  router.replace({ path: "/" });
   // router.push("/welcome");
 };
 </script>
@@ -224,9 +225,9 @@ const handleLogin = () => {
 }
 
 .left img {
-  width: 100%;
-  height: auto;
-  overflow: hidden;
+  height: 100%;
+  width: auto;
+  object-fit: cover;
 }
 
 .top {

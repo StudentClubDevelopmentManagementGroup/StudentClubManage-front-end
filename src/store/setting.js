@@ -6,7 +6,6 @@ import { reactive, computed, ref } from "vue";
 export const useSettingStore = defineStore("setting", () => {
   const state = ref({
     fixedHeader: getConfig().FixedHeader,
-    hiddenSideBar: getConfig().HiddenSideBar,
     hideTabs: getConfig().HideTabs,
     hideFooter: getConfig().HideFooter,
     hideHeader: getConfig().HideHeader,
@@ -16,21 +15,23 @@ export const useSettingStore = defineStore("setting", () => {
 
   const getShowSettings = computed(() => state.value.showSettings);
   const getFixedHeader = computed(() => state.value.fixedHeader);
-  const getHiddenSideBar = computed(() => state.value.hiddenSideBar);
   const getHideTabs = computed(() => state.value.hideTabs);
   const getHideFooter = computed(() => state.value.hideFooter);
   const getHideHeader = computed(() => state.value.hideHeader);
   const getShowLogo = computed(() => state.value.showLogo);
 
   const changeSetting = ({ key, value }) => {
-    if (state.hasOwnProperty(key)) {
-      state[key] = value;
-    }
-  };
-
+    console.log(key);
+    if (state.value.hasOwnProperty(key)) {
+      if (value === true || value === false) {
+        state.value[key] = value;
+      } else {
+        state.value[key] = !state.value[key];
+      }
+    };
+  }
   return {
     getFixedHeader,
-    getHiddenSideBar,
     getHideTabs,
     getHideFooter,
     getHideHeader,

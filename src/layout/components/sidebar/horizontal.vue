@@ -1,38 +1,32 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import Hamburger from "@/components/Hamburger/Hamburger.vue";
-import Breadcrumb from "@/components/Breadcrumb/index.vue";
-import Search from "@/components/Search/index.vue";
-import avatar from "@/assets/avatar-default.jpg";
-import { toFullScreen, exitFullScreen } from "@/utils/screen";
-import useStore from "@/store";
-import Full from "@iconify-icons/ri/fullscreen-fill";
-import ExitFull from "@iconify-icons/ri/fullscreen-exit-fill";
+import SidebarItem from "./sidebarItem.vue";
+import { isAllEmpty } from "@pureadmin/utils";
+import { ref, nextTick, computed } from "vue";
 import Setting from "@iconify-icons/ri/settings-3-line";
-const props = defineProps({
-  primary: {
-    default: "#fff",
-    type: String,
-  },
-});
+import logo from "@/assets/logo.png";
+import Search from "@/components/Search/index.vue";
+import { useRouter } from "vue-router";
+import useStore from "@/store";
+import { toFullScreen, exitFullScreen } from "@/utils/screen";
+import avatar from "@/assets/avatar-default.jpg";
 
 const router = useRouter();
-
-const opened = computed(() => useStore.appStore.getSidebarOpened);
+const menuRef = ref();
 const fullScreen = ref(false);
 const nickname = ref("车车");
 const messageNum = ref(5);
-onMounted(() => {
-  const userInfo = localStorage.getItem("userInfo");
-  if (userInfo) {
-    nickname.value = JSON.parse(userInfo).userName;
-  }
+
+const routes = computed(() => useStore.permissionStore.accessRoutes);
+const activeMenu = computed(() => useStore.tabStore.getCurrentIndex);
+
+nextTick(() => {
+  menuRef.value?.handleResize();
 });
 
-// methods
-const toggleSideBar = () => {
-  useStore.appStore.toggle_sidebar();
+const logout = () => {
+  sessionStorage.removeItem("auth");
+  sessionStorage.removeItem("accessToken");
+  router.replace("/login");
 };
 
 const toShowFullScreen = () => {
@@ -44,25 +38,33 @@ const toExitFullScreen = () => {
   exitFullScreen();
   fullScreen.value = false;
 };
-
-const logout = () => {
-  sessionStorage.removeItem("auth");
-  sessionStorage.removeItem("accessToken");
-  router.replace("/login");
-};
 </script>
 
 <template>
-  <div class="navbar bg-[#fff] shadow-sm shadow-[rgba(0,21,41,0.08)]">
-    <Hamburger
-      id="Hamburger"
-      :is-active="opened"
-      class="hamburger-container"
-      @toggleClick="toggleSideBar"
-    />
-    <breadcrumb class="breadcrumb-container" />
-    <div class="vertical-header-right right-menu">
+  <div v-loading="routes.length === 0" class="horizontal-header">
+    <div class="horizontal-header-left" @click="backTopMenu">
+      <img :src="logo" alt="logo" />
+      <span class="sidebar-title">欢迎您！车立钧</span>
+    </div>
+    <el-menu
+      ref="menuRef"
+      router
+      mode="horizontal"
+      popper-class="pure-scrollbar"
+      class="horizontal-header-menu"
+      :default-active="activeMenu"
+    >
+      <sidebar-item
+        v-for="route in routes"
+        :key="route.path"
+        :item="route"
+        :base-path="route.path"
+      />
+    </el-menu>
+    <div class="horizontal-header-right">
+      <!-- 菜单搜索 -->
       <search id="header-search"></search>
+      <!-- 通知 -->
       <div id="Message" class="right-menu-box">
         <el-dropdown>
           <el-badge
@@ -134,119 +136,16 @@ const logout = () => {
           </el-dropdown-menu>
         </template>
       </el-dropdown>
+      <span class="set-icon navbar-bg-hover" title="打开系统配置" @click="">
+        <IconifyIconOffline :icon="Setting" />
+      </span>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.navbar {
-  width: 100%;
-  height: 48px;
-  overflow: hidden;
-
-  .hamburger-container {
-    float: left;
-    height: 100%;
-    line-height: 48px;
-    cursor: pointer;
-  }
-
-  .vertical-header-right {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    min-width: 280px;
-    height: 48px;
-    color: #000000d9;
-
-    .right-menu-box {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .message-badge {
-      .is-fixed {
-        top: 12px !important;
-        right: 28px !important;
-      }
-      .message {
-        background-color: transparent;
-        border: none;
-        padding: 5px 20px;
-
-        i {
-          background-color: transparent;
-          border: none;
-          color: #2c3e50;
-          font-size: 25px;
-        }
-      }
-    }
-
-    .full-screen {
-      background-color: transparent;
-      border: none;
-      padding: 5px 20px;
-
-      i {
-        background-color: transparent;
-        border: none;
-        color: #2c3e50;
-        font-size: 28px;
-      }
-    }
-    .el-dropdown-link {
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      height: 48px;
-      padding: 10px;
-      color: #000000d9;
-      cursor: pointer;
-
-      p {
-        font-size: 14px;
-      }
-
-      img {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-      }
-    }
-  }
-
-  .breadcrumb-container {
-    float: left;
-    margin-left: 16px;
-  }
-}
-
-.avatar-container {
-  margin-right: 30px;
-
-  .avatar-wrapper {
-    margin-top: 5px;
-    position: relative;
-    cursor: pointer;
-
-    .user-avatar {
-      cursor: pointer;
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-    }
-
-    .el-icon-caret-bottom {
-      cursor: pointer;
-      position: absolute;
-      right: -20px;
-      top: 25px;
-      font-size: 12px;
-    }
-  }
+:deep(.el-loading-mask) {
+  opacity: 0.45;
 }
 
 .translation {
@@ -262,6 +161,73 @@ const logout = () => {
   .check-en {
     position: absolute;
     left: 20px;
+  }
+}
+
+.horizontal-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 280px;
+  height: 48px;
+  color: #000000d9;
+
+  .right-menu-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .message-badge {
+    .is-fixed {
+      top: 12px !important;
+      right: 28px !important;
+    }
+    .message {
+      background-color: transparent;
+      border: none;
+      padding: 5px 20px;
+
+      i {
+        background-color: transparent;
+        border: none;
+        color: #2c3e50;
+        font-size: 25px;
+      }
+    }
+  }
+
+  .full-screen {
+    background-color: transparent;
+    border: none;
+    padding: 5px 20px;
+
+    i {
+      background-color: transparent;
+      border: none;
+      color: #2c3e50;
+      font-size: 28px;
+    }
+  }
+  .el-dropdown-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 48px;
+    padding: 10px;
+    color: #000000d9;
+    cursor: pointer;
+
+    p {
+      font-size: 14px;
+    }
+
+    img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
   }
 }
 

@@ -29,14 +29,20 @@ export const useAppStore = defineStore('app', () => {
     state.value.device = newDevice;
   };
 
+  function setLayout(layout){
+    state.value.layout = layout;
+  };
   const getSidebarOpened = computed(() => state.value.sidebarOpened);
   const getSidebarWithoutAnimation = computed(() => state.value.sidebarWithoutAnimation);
+  const getLayout = computed(() => state.value.layout);
   const getDevice = computed(() => state.value.device);
 
   return {
     getSidebarOpened,
     getSidebarWithoutAnimation,
+    getLayout,
     getDevice,
+    setLayout,
     toggle_sidebar,
     closeSidebar,
     toggleDevice,

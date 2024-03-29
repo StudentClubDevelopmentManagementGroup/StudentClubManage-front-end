@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import useStore from "@/store";
 import MenuFold from "@iconify-icons/ri/menu-fold-fill";
 
 const props = defineProps({
@@ -23,7 +22,6 @@ const iconClass = computed(() => {
   ];
 });
 
-const themeColor = computed(() => useStore.themeStore.getThemeColor);
 
 const emit = defineEmits<{
   (e: "toggleClick"): void;
