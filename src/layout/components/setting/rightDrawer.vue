@@ -28,70 +28,16 @@ const props = defineProps({
 
 const target = ref(null);
 const show = ref(false);
+
 onClickOutside(target, (event: any) => {
   if (event.clientX > target.value.offsetLeft) return;
   show.value = false;
 });
+
 const onReset = () => {};
 </script>
 
 <template>
-  <!-- <div class="rightDrawer">
-    <el-drawer v-model="openDrawer" size="20%" :with-header="false">
-      <div
-        class="project-configuration border-b-[1px] border-solid border-[var(--pure-border-color)]"
-      >
-        <h4 class="dark:text-white">项目配置</h4>
-        <span
-          v-tippy="{
-            content: '关闭配置',
-            placement: 'bottom-start',
-            zIndex: 41000,
-          }"
-          :class="iconClass"
-        >
-          <IconifyIconOffline
-            class="dark:text-white"
-            width="18px"
-            height="18px"
-            :icon="Close"
-            @click="openDrawer = !openDrawer"
-          />
-        </span>
-      </div>
-      <el-scrollbar>
-        <slot />
-      </el-scrollbar>
-      <div
-        class="flex justify-end p-3 border-t-[1px] border-solid border-[var(--pure-border-color)]"
-      >
-        <el-button
-          v-tippy="{
-            content: '清空缓存并返回登录页',
-            placement: 'left-start',
-            zIndex: 41000,
-          }"
-          type="danger"
-          text
-          bg
-          @click="onReset"
-        >
-          清空缓存
-        </el-button>
-      </div>
-    </el-drawer>
-    <div class="rightPanel">
-      <el-button
-        class="handle-button"
-        type="primary"
-        :class="{ 'handle-button-close': !openDrawer }"
-        :style="{ top: buttonTop + 'px' }"
-        @click="openDrawer = !openDrawer"
-      >
-        <el-icon><Setting /></el-icon>
-      </el-button>
-    </div>
-  </div> -->
   <div :class="{ show }">
     <div class="right-panel-background" />
     <div ref="target" class="right-panel bg-bg_color">

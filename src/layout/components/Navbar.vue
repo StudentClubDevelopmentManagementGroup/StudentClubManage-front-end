@@ -10,6 +10,7 @@ import useStore from "@/store";
 import Full from "@iconify-icons/ri/fullscreen-fill";
 import ExitFull from "@iconify-icons/ri/fullscreen-exit-fill";
 import Setting from "@iconify-icons/ri/settings-3-line";
+import {GetUserInfo} from '@/utils/auth'
 const props = defineProps({
   primary: {
     default: "#fff",
@@ -19,14 +20,15 @@ const props = defineProps({
 
 const router = useRouter();
 
-const opened = computed(() => useStore.appStore.getSidebarOpened);
+
 const fullScreen = ref(false);
-const nickname = ref("车车");
 const messageNum = ref(5);
+const opened = computed(() => useStore.appStore.getSidebarOpened);
+const name  =  computed(() => useStore.userStore.getName);
 onMounted(() => {
-  const userInfo = localStorage.getItem("userInfo");
+  const userInfo = GetUserInfo();
   if (userInfo) {
-    nickname.value = JSON.parse(userInfo).userName;
+    name.value = userInfo.name;
   }
 });
 
@@ -115,7 +117,7 @@ const logout = () => {
       <el-dropdown trigger="click">
         <span class="el-dropdown-link navbar-bg-hover select-none">
           <img :src="avatar" style="margin-right: 10px" />
-          <p v-if="nickname" class="dark:text-white">{{ nickname }}</p>
+          <p v-if="name" class="dark:text-white">{{ name }}</p>
         </span>
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">

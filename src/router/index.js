@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { useUserStore } from "@/store/user.js"
-import { useTabStore } from "@/store/tab.js"
+import useStore from "@/store";
 import Layout from "@/layout"
 
 export const constantRoutes = [
@@ -210,25 +209,28 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     document.title = `${to.meta.title}--基地管理系统`
-    const userStore = useUserStore()
-    const tabStore = useTabStore()
+    const userStore = useStore.userStore
+    const tabStore = useStore.tabStore
     const flag = tabStore.getTabsOption.findIndex(tab => tab.route === to.path) > -1
     if (!flag && !to.meta.hiddenTab) {
         tabStore.addTab({ route: to.path, title: to.meta.title, name: to.name })
     }
     tabStore.setCurrentIndex(to.path)
 
-    next();
-    // const hasGetUserInfo = userStore.state.userInfo
-    // if (to.path === '/login') {
-    //     next()
-    //     return
-    // }
-    // if (!hasGetUserInfo) {
-    //     next('/login')
-    // } else {
-    //     next()
-    // }
+    const hasGetUserInfo = userStore.getUserInfo
+    if (to.path === '/login') {
+        next()
+        return
+    }
+    if (!hasGetUserInfo) {
+        next('/login')
+    } else {
+        next()
+        // next({
+        //     path: '/login',
+        //     query: { redirect: to.fullPath }
+        // })
+    }
 })
 
 export default router

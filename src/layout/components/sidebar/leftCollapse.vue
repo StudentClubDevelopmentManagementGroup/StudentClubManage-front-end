@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import MenuFold from "@iconify-icons/ri/menu-fold-fill";
+import useStore from "@/store";
 
 const props = defineProps({
   isActive: {
@@ -8,7 +9,7 @@ const props = defineProps({
     default: false,
   },
 });
-
+const themeColor = computed(() => useStore.appStore.getTheme);
 const iconClass = computed(() => {
   return [
     "ml-4",
@@ -42,7 +43,7 @@ const toggleClick = () => {
         placement: 'right',
       }"
       :icon="MenuFold"
-      :class="[iconClass]"
+      :class="[iconClass, themeColor === 'light' ? '' : 'text-primary']"
       :style="{ transform: isActive ? 'none' : 'rotateY(180deg)' }"
       @click="toggleClick"
     />

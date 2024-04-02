@@ -2,19 +2,19 @@ import Cookies from 'js-cookie'
 
 const TokenKey = 'token'
 
-export function getToken() {
+export function GetToken() {
   return Cookies.get(TokenKey)
 }
 
-export function setToken(token) {
+export function SetToken(token) {
   return Cookies.set(TokenKey, token, { expires: 7 })
 }
 
-export function removeToken() {
+export function RemoveToken() {
   return Cookies.remove(TokenKey)
 }
 
-export function setUserInfo(user) {
+export function SetUserInfo(user) {
   let userInfo = '';
   if (user) {
     userInfo = JSON.stringify(user)
@@ -22,19 +22,19 @@ export function setUserInfo(user) {
   return Cookies.set('userInfo', userInfo, { expires: 7 })
 }
 
-export function getUserInfo() {
+export function GetUserInfo() {
   let userInfoText = Cookies.get('userInfo')
   if (userInfoText) {
-    return userInfoText;
+    return JSON.parse(userInfoText);
   }
   return '';
 }
 
-export function removeUserInfo() {
+export function RemoveUserInfo() {
   return Cookies.remove('userInfo')
 }
 
-export function setRoles(roles) {
+export function SetRoles(roles) {
   let userRoles = []
   if (roles) {
     userRoles = JSON.stringify(roles)
@@ -42,7 +42,7 @@ export function setRoles(roles) {
   Cookies.set("roles", userRoles, { expires: 7 })
 }
 
-export function getRoles() {
+export function GetRoles() {
   let userRoles = Cookies.get("roles")
   if (userRoles) {
     return JSON.parse(userRoles)
@@ -50,6 +50,6 @@ export function getRoles() {
   return []
 }
 
-export function removeRoles() {
+export function RemoveRoles() {
   Cookies.remove("roles")
 }

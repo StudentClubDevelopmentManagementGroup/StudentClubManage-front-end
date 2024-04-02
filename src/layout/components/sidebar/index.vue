@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { isUrl } from "@pureadmin/utils";
 import sidebarItem from "./sidebarItem.vue";
 import LeftCollapse from "./leftCollapse.vue";
+import CenterCollapse from "./centerCollapse.vue";
 import logo from "./logo.vue";
 import useStore from "@/store";
 import { getConfig } from "@/config";
@@ -63,6 +64,10 @@ const toggleSideBar = () => {
         />
       </el-menu>
     </el-scrollbar>
+    <CenterCollapse
+    :is-active="!isCollapse"
+      @toggleClick="toggleSideBar"
+    />
     <leftCollapse :is-active="!isCollapse" @toggleClick="toggleSideBar" />
   </div>
 </template>

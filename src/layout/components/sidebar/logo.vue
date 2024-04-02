@@ -8,21 +8,24 @@
         to="/"
       >
         <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <span v-else class="sidebar-title">欢迎您！车立钧</span>
+        <span v-else class="sidebar-title">欢迎您！{{ name }}</span>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <span class="sidebar-title">欢迎您！车立钧</span>
+        <span class="sidebar-title">欢迎您！{{ name }}</span>
       </router-link>
     </transition>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import logo from "@/assets/logo.png";
+import useStore from "@/store";
 const props = defineProps({
   collapse: Boolean,
 });
+const name  =  computed(() => useStore.userStore.getName);
 </script>
 
 <style lang="scss" scoped>
@@ -54,7 +57,7 @@ const props = defineProps({
       font-size: 18px;
       font-weight: 600;
       line-height: 32px;
-      color: #000000d9;
+      color: $subMenuActiveText;
       text-overflow: ellipsis;
       white-space: nowrap;
     }

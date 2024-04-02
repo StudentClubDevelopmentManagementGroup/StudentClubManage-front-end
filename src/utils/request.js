@@ -2,12 +2,12 @@ import axios from 'axios'
 import { ElMessage ,ElMessageBox} from 'element-plus'
 import { useUserStore } from '@/store/user.js'
 import router from '@/router'
-import { getToken } from '@/utils/auth'
+import { GetToken } from '@/utils/auth'
 import constants from "@/config";
 
 const service = axios.create({
   baseURL: constants.baseUrl, 
-  timeout: 40000 // request timeout
+  timeout: 8000 // request timeout
 })
 // // 允许携带cookie
 // service.defaults.withCredentials = true
@@ -19,10 +19,10 @@ service.defaults.headers.post['Content-Type'] = 'application/json'
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    // const userStore = useUserStore()
-    // if (userStore.state.token) {
-    //   config.headers['token'] = getToken()
-    // }
+    const token = GetToken()
+    if (token) {
+      config.headers['token'] = token
+    }
     return config
   },
   error => {

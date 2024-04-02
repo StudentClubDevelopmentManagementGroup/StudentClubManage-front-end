@@ -1,9 +1,42 @@
 <template>
-  <section class="app-main" >
+  <section class="app-main">
     <router-view v-if="$route.meta.keepAlive" v-slot="{ Component }">
-      <transition name="fade" mode="out-in">
-        <component :is="Component" :key="$route.path" class="main-content"/>
-      </transition>
+      <el-scrollbar
+        v-if="props.fixedHeader"
+        :wrap-style="{
+          display: 'flex',
+          'flex-wrap': 'wrap',
+          'max-width': '100%',
+          margin: '0 auto',
+          transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+        }"
+        :view-style="{
+          display: 'flex',
+          flex: 'auto',
+          overflow: 'hidden',
+          'flex-direction': 'column',
+        }"
+      >
+        <el-backtop title="回到顶部" target=".app-main .el-scrollbar__wrap">
+          <backTop />
+        </el-backtop>
+        <div class="grow">
+          <transition name="fade" mode="out-in">
+            <keep-alive v-if="$route.meta.keepAlive" :include="$route.name">
+              <component
+                :is="Component"
+                :key="$route.path"
+                class="main-content"
+              />
+            </keep-alive>
+            <component
+              v-else
+              :is="Component"
+              :key="$route.path"
+              class="main-content"
+            />
+          </transition></div
+      ></el-scrollbar>
     </router-view>
 
     <router-view v-else v-slot="{ Component }">
@@ -76,7 +109,6 @@ const clickTab = (tabName: { paneName: string }) => {
   flex-direction: column;
   width: 100%;
 }
-
 
 .main-content {
   margin: 24px;

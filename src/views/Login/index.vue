@@ -25,30 +25,39 @@ const loginForm = reactive({
   user_id: "",
   pwd: "",
 });
-const loginLoading = ref(false);
+const loading = ref(false);
 const checked = ref(false);
+const disabled = ref(false);
 const loginFormRef = ref(null);
 const currentPage = computed(() => {
   return useStore.userStore.getCurrentPage;
 });
 
-const handleLogin = () => {
-  // loginLoading.value = true;
-  // userApi
-  //   .login(loginForm)
-  //   .then((data) => {
-  //     message("登录成功", { type: "success" });
-  //     loginLoading.value = false;
-  //     console.log(data);
-  //   })
-  //   .catch((e) => {
-  //     // message("登陆失败", { type: "error" });
-  //     loginLoading.value = false;
-  //   });
-  permissionStore.getPermissionRoutes();
-  permissionStore.getPermissions();
-  router.replace({ path: "/" });
-  // router.push("/welcome");
+const handleLogin = async () => {
+  const valid = await loginFormRef.value.validate();
+  if (valid) {
+    loading.value = true;
+    try {
+      await useStore.userStore.login(loginForm);
+      disabled.value = true;
+      // 获取权限路由和权限信息
+      await permissionStore.getPermissionRoutes();
+      await permissionStore.getPermissions();
+      // 导航到主页
+      router.replace({ path: "/" });
+      disabled.value = false;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      loading.value = false;
+    }
+  } else {
+    ElMessage({
+      message: '表单验证失败',
+      type: 'error',
+      duration: 2500
+    });
+  }
 };
 </script>
 
@@ -146,9 +155,10 @@ const handleLogin = () => {
             </div>
             <el-button
               type="primary"
+              :disabled="disabled"
               @click.native.prevent="handleLogin"
               class="w-full mt-4"
-              :loading="loginLoading"
+              :loading="loading"
             >
               登录
             </el-button>
@@ -262,6 +272,3 @@ const handleLogin = () => {
   padding: 0px 30px;
 }
 </style>
-import { usePermissionStore } from "../../store/permission";import {
-usePermissionStore } from "../../store/permission"; import { useRouter } from
-"vue-router";

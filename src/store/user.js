@@ -1,7 +1,7 @@
 import { reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import userApi from '@/api/user'
-// import { getToken, setToken, removeToken, getUserInfo, removeUserInfo, setUserInfo, removeRoles, setRoles, getRoles } from '@/utils/auth'
+import { GetToken, SetToken, RemoveToken, GetUserInfo, RemoveUserInfo, SetUserInfo, RemoveRoles, SetRoles, GetRoles } from '@/utils/auth'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
@@ -10,106 +10,101 @@ export const useUserStore = defineStore('user', () => {
 
   const state = reactive({
     currentPage: 0,
-    token: "",
-    userInfo: "",
-    roles: ""
+    token: GetToken(),
+    userInfo: GetUserInfo(),
+    roles: GetRoles()
   })
 
   const getCurrentPage = computed(() => state.currentPage);
   const getToken = computed(() => state.token);
   const getUserInfo = computed(() => state.userInfo);
   const getRoles = computed(() => state.roles);
-
+  const getName = computed(() => state.userInfo.name);
   const setCurrentPage = (value) => {
     state.currentPage = value;
   }
 
-  const ResetState = () => {
+  const resetState = () => {
     Object.assign(state, getDefaultState())
   }
 
-  const SetToken = (token) => {
+  const setToken = (token) => {
     // state.token = token
-    setToken(token)
+    SetToken(token)
   }
 
-  const SetUserInfo = (userInfo) => {
+  const setUserInfo = (userInfo) => {
     // state.userInfo = userInfo
-    setUserInfo(userInfo)
+    SetUserInfo(userInfo)
   }
 
-  const SetRoles = (roles) => {
+  const setRoles = (roles) => {
     // state.roles = roles
-    setRoles(roles)
+    SetRoles(roles)
   }
 
-  const Logout = async () => {
+  const logout = async () => {
     try {
       await userApi.logout()
       state.token = null
       state.userInfo = null
       state.roles = []
-      removeUserInfo()
-      removeToken()
-      removeRoles()
+      RemoveUserInfo()
+      RemoveToken()
+      RemoveRoles()
       router.replace('/login')
     } catch (error) {
       console.error(error)
     }
   }
 
-  const Login = async (userInfo) => {
-    const { act, pwd } = userInfo
-    return new Promise((resolve, reject) => {
-      let userLoginDTO = {
-        act: act.trim(),
-        pwd: pwd
-      }
-      userApi.login(userLoginDTO).then(data => {
-        console.log(data);
-        if (data !== null) {
-          state.token = data.token
-          state.userInfo = data.user
-          state.roles = data.user.identification
-          setToken(data.token)
-          setUserInfo(data.user)
-          setRoles(data.user.identification)
-          resolve()
-        } else {
-          ElMessage({
-            message: '账号或密码错误',
-            type: 'error',
-            duration: 2500
-          })
-          reject()
-        }
-      }).catch(error => {
+  const login = async (userInfo) => {
+    const { user_id, pwd } = userInfo
+    let userLoginDTO = {
+      user_id: user_id.trim(),
+      pwd: pwd
+    }
+    try {
+      const data = await userApi.login(userLoginDTO);
+      if (data !== null) {
+        state.token = data.token
+        state.userInfo = data.user_info
+        state.roles = data.user_info.role
+        setToken(data.token)
+        setUserInfo(data.user_info)
+        setRoles(data.user_info.role)
+      } else {
         ElMessage({
-          message: error,
+          message: '账号或密码错误',
           type: 'error',
+          duration: 2500
         })
-      })
-    })
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  const UpdateUserInfo = (newUserInfo) => {
-    setUserInfo(newUserInfo)
+
+  const updateUserInfo = (newUserInfo) => {
+    SetUserInfo(newUserInfo)
   }
 
   return {
     state,
-    ResetState,
-    SetToken,
-    SetUserInfo,
-    SetRoles,
+    resetState,
+    setToken,
+    setUserInfo,
+    setRoles,
     setCurrentPage,
-    Logout,
-    Login,
-    UpdateUserInfo,
+    logout,
+    login,
+    updateUserInfo,
     getCurrentPage,
     getToken,
     getUserInfo,
     getRoles,
+    getName
   }
 }, {
   persistent: true,

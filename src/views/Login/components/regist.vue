@@ -2,7 +2,8 @@
 import { ref, reactive } from "vue";
 import { registRules } from "../utils/rule";
 import { useRouter, useRoute } from "vue-router";
-import { useUserStore } from "@/store/user";
+import useStore from "@/store";
+import departmentApi from "@/api/department";
 
 import Lock from "@iconify-icons/ri/lock-fill";
 import User from "@iconify-icons/ri/user-3-fill";
@@ -25,18 +26,26 @@ const registForm = reactive({
   pwd: "",
 });
 
-const options = reactive([
-  { id: 1, department: "Computer Science" },
-  { id: 2, department: "Mechanical Engineering" },
-  { id: 3, department: "Electrical Engineering" },
-]);
+const department = ref({});
+
+const getDepartment = () => {
+  departmentApi
+    .getAllDepartment()
+    .then((data) => {
+      department.value = data;
+      console.log(data);
+    })
+    .catch((e) => {
+      console.log(e.message);
+    });
+};
 const handleRegist = () => {
   P;
 };
-
 const onBack = () => {
-  useUserStore().setCurrentPage(0);
+  useStore.userStore.setCurrentPage(0);
 };
+getDepartment()
 </script>
 
 <template>
@@ -96,9 +105,9 @@ const onBack = () => {
           />
         </template>
         <el-option
-          v-for="item in options"
+          v-for="item in department"
           :key="item.id"
-          :label="item.department"
+          :label="item.fullName"
           :value="item.id"
         />
       </el-select>
@@ -165,7 +174,7 @@ const onBack = () => {
           type="primary"
           @click.native.prevent="handleRegist"
           class="w-full"
-          :loading="loginLoading"
+          :loading="loading"
         >
           注册
         </el-button>

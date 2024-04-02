@@ -10,6 +10,7 @@ export const useAppStore = defineStore('app', () => {
     sidebarWithoutAnimation: false,
     sidebarIsClickCollapse:false,
     layout: getConfig().Layout,
+    theme: getConfig().Theme,
     device: 'desktop'
   });
 
@@ -29,6 +30,26 @@ export const useAppStore = defineStore('app', () => {
     state.value.device = newDevice;
   };
 
+  const setSidebarOpened = (value) => {
+    state.value.sidebarOpened = value;
+  };
+  
+  const setSidebarWithoutAnimation = (value) => {
+    state.value.sidebarWithoutAnimation = value;
+  };
+  
+  const setSidebarIsClickCollapse = (value) => {
+    state.value.sidebarIsClickCollapse = value;
+  };
+  
+  const setTheme = (value) => {
+    state.value.theme = value;
+  };
+  
+  const setDevice = (value) => {
+    state.value.device = value;
+  };
+
   function setLayout(layout){
     state.value.layout = layout;
   };
@@ -36,13 +57,16 @@ export const useAppStore = defineStore('app', () => {
   const getSidebarWithoutAnimation = computed(() => state.value.sidebarWithoutAnimation);
   const getLayout = computed(() => state.value.layout);
   const getDevice = computed(() => state.value.device);
-
+  const getTheme = computed(() => state.value.theme);
+  
   return {
     getSidebarOpened,
     getSidebarWithoutAnimation,
     getLayout,
     getDevice,
+    getTheme,
     setLayout,
+    setTheme,
     toggle_sidebar,
     closeSidebar,
     toggleDevice,

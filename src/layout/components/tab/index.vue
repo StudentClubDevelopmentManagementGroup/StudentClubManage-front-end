@@ -61,7 +61,7 @@ const clickTab = (tabName: { paneName: string }) => {
   background: #fff;
   box-shadow: 0 -1px 1px -1px #888;
 }
-.el-tabs__header{
+.el-tabs__header {
   margin-bottom: 0px !important;
 }
 </style>

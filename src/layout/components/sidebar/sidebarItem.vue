@@ -8,11 +8,6 @@ import useStore from "@/store";
 // import { useRenderIcon } from "@/components/Icon/hooks";
 import { getConfig } from "@/config";
 
-import ArrowUp from "@iconify-icons/ep/arrow-up-bold";
-import EpArrowDown from "@iconify-icons/ep/arrow-down-bold";
-import ArrowLeft from "@iconify-icons/ep/arrow-left-bold";
-import ArrowRight from "@iconify-icons/ep/arrow-right-bold";
-
 interface childType {
   path: string;
   name?: string;
