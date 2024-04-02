@@ -1,27 +1,64 @@
 <script setup>
 import { reactive, ref, watch, toRaw, computed } from "vue";
-import bg from "@/assets/login/bg.png";
-import left from "@/assets/login/left.png";
-// import avatar from "@/assets/login/avatar.svg?component";
-import illustration from "@/assets/login/illustration.svg?component";
+import { useUserStore } from "@/store/user";
+import { usePermissionStore } from "@/store/permission";
 import { loginRules } from "./utils/rule";
+import { useRouter } from "vue-router";
+import { message } from "@/utils/message";
+import useStore from "@/store";
+import userApi from "@/api/user";
+
 import regist from "./components/regist.vue";
 import update from "./components/update.vue";
 import email from "./components/email.vue";
-import { useUserStore } from "@/store/user";
 
+import bg from "@/assets/login/bg.png";
+import left from "@/assets/login/left.png";
+import illustration from "@/assets/login/illustration.svg?component";
+import Lock from "@iconify-icons/ri/lock-fill";
+import User from "@iconify-icons/ri/user-3-fill";
+import Info from "@iconify-icons/ri/information-line";
+
+const router = useRouter();
+const permissionStore = usePermissionStore();
 const loginForm = reactive({
-  act: "",
+  user_id: "",
   pwd: "",
 });
-const loginLoading = ref(false);
+const loading = ref(false);
 const checked = ref(false);
+const disabled = ref(false);
 const loginFormRef = ref(null);
 const currentPage = computed(() => {
-  return useUserStore().state.currentPage;
+  return useStore.userStore.getCurrentPage;
 });
 
-const handleLogin = () => {};
+const handleLogin = async () => {
+  const valid = await loginFormRef.value.validate();
+  if (valid) {
+    loading.value = true;
+    try {
+      await useStore.userStore.login(loginForm);
+      disabled.value = true;
+      // 获取权限路由和权限信息
+      await permissionStore.getPermissionRoutes();
+      await permissionStore.getPermissions();
+      // 导航到主页
+      router.replace({ path: "/" });
+      disabled.value = false;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      loading.value = false;
+    }
+  } else {
+    ElMessage({
+      message: '表单验证失败',
+      type: 'error',
+      duration: 2500
+    });
+  }
+};
 </script>
 
 <template>
@@ -57,15 +94,15 @@ const handleLogin = () => {};
           class="login_form"
           :model="loginForm"
         >
-          <el-form-item prop="act">
+          <el-form-item prop="user_id">
             <el-input
-              v-model="loginForm.act"
+              v-model="loginForm.user_id"
               clearable
               placeholder="请输入学号"
             >
               <template #prefix>
-                <IconifyIcon
-                  icon="ri:user-3-fill"
+                <IconifyIconOffline
+                  :icon="User"
                   width="14"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
                 />
@@ -82,8 +119,8 @@ const handleLogin = () => {};
               @keyup.enter.native="handleLogin"
             >
               <template #prefix>
-                <IconifyIcon
-                  icon="ri:lock-fill"
+                <IconifyIconOffline
+                  :icon="Lock"
                   width="14"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
                 />
@@ -101,26 +138,27 @@ const handleLogin = () => {};
                     placement="top"
                     content="勾选并登录后，规定天数内无需输入用户名和密码会自动登入系统"
                   >
-                    <IconifyIcon icon="ri:information-line" width="14" />
+                    <IconifyIconOffline :icon="Info" width="14" />
                   </el-tooltip>
                 </span>
               </el-checkbox>
-              <el-button link @click="useUserStore().setCurrentPage(1)">
+              <el-button link @click="useStore.userStore.setCurrentPage(1)">
                 免费注册
               </el-button>
               <el-button
                 link
                 type="primary"
-                @click="useUserStore().setCurrentPage(3)"
+                @click="useStore.userStore.setCurrentPage(3)"
               >
                 忘记密码？
               </el-button>
             </div>
             <el-button
               type="primary"
+              :disabled="disabled"
               @click.native.prevent="handleLogin"
               class="w-full mt-4"
-              :loading="loginLoading"
+              :loading="loading"
             >
               登录
             </el-button>
@@ -130,21 +168,21 @@ const handleLogin = () => {};
               <p class="text-gray-500 text-xs">快捷登陆方式</p>
             </el-divider>
             <div class="w-full flex justify-evenly">
-              <span @click="useUserStore().setCurrentPage(2)">
-                <IconifyIcon
+              <span @click="useStore.userStore.setCurrentPage(2)">
+                <IconifyIconOnline
                   icon="ic:baseline-email"
                   width="20"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
                 />
               </span>
               <span>
-                <IconifyIcon
+                <IconifyIconOnline
                   icon="ri:wechat-fill"
                   width="20"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
                 /> </span
               ><span>
-                <IconifyIcon
+                <IconifyIconOnline
                   icon="ri:qq-fill"
                   width="20"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
@@ -197,9 +235,9 @@ const handleLogin = () => {};
 }
 
 .left img {
-  width: 100%;
-  height: auto;
-  overflow: hidden;
+  height: 100%;
+  width: auto;
+  object-fit: cover;
 }
 
 .top {

@@ -2,6 +2,11 @@
 import { reactive } from "vue";
 import { registRules } from "../utils/rule";
 import { useUserStore } from "@/store/user";
+
+import Lock from "@iconify-icons/ri/lock-fill";
+import Mail from "@iconify-icons/ri/mail-fill";
+import Code from "@iconify-icons/ri/shield-keyhole-line";
+
 const registForm = reactive({
   name: "",
   userId: "",
@@ -25,12 +30,11 @@ const onBack = () => {
     class="regist_form"
     :model="registForm"
   >
-
     <el-form-item prop="mail">
       <el-input placeholder="请输入邮箱" v-model="registForm.mail" clearable>
         <template #prefix>
-          <IconifyIcon
-            icon="ri:mail-fill"
+          <IconifyIconOffline
+            :icon="Mail"
             width="14"
             class="cursor-pointer text-gray-500 hover:text-blue-400"
           />
@@ -46,8 +50,8 @@ const onBack = () => {
           clearable
         >
           <template #prefix>
-            <IconifyIcon
-              icon="ri:shield-keyhole-line"
+            <IconifyIconOffline
+              :icon="Code"
               width="14"
               class="cursor-pointer text-gray-500 hover:text-blue-400"
             />
@@ -60,8 +64,8 @@ const onBack = () => {
     <el-form-item prop="pwd">
       <el-input placeholder="请输入密码" v-model="registForm.pwd" clearable>
         <template #prefix>
-          <IconifyIcon
-            icon="ri:lock-fill"
+          <IconifyIconOffline
+            :icon="Lock"
             width="14"
             class="cursor-pointer text-gray-500 hover:text-blue-400"
           />
@@ -72,8 +76,8 @@ const onBack = () => {
     <el-form-item prop="pwd">
       <el-input placeholder="确认密码" v-model="registForm.pwd" clearable>
         <template #prefix>
-          <IconifyIcon
-            icon="ri:lock-fill"
+          <IconifyIconOffline
+            :icon="Lock"
             width="14"
             class="cursor-pointer text-gray-500 hover:text-blue-400"
           />

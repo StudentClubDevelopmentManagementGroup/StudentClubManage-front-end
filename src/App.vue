@@ -8,3 +8,8 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
   </el-config-provider>
 </template>
 
+<style scoped>
+#app::-webkit-scrollbar {
+  display: none;
+}
+</style>

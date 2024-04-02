@@ -2,7 +2,15 @@
 import { ref, reactive } from "vue";
 import { registRules } from "../utils/rule";
 import { useRouter, useRoute } from "vue-router";
-import { useUserStore } from "@/store/user";
+import useStore from "@/store";
+import departmentApi from "@/api/department";
+
+import Lock from "@iconify-icons/ri/lock-fill";
+import User from "@iconify-icons/ri/user-3-fill";
+// import Card from "@iconify-icons/ri/id-card-fill";
+import School from "@iconify-icons/ri/school-fill";
+import Mail from "@iconify-icons/ri/mail-fill";
+import Code from "@iconify-icons/ri/shield-keyhole-line";
 
 const route = useRoute();
 const router = useRouter();
@@ -18,18 +26,26 @@ const registForm = reactive({
   pwd: "",
 });
 
-const options = reactive([
-  { id: 1, department: "Computer Science" },
-  { id: 2, department: "Mechanical Engineering" },
-  { id: 3, department: "Electrical Engineering" },
-]);
+const department = ref({});
+
+const getDepartment = () => {
+  departmentApi
+    .getAllDepartment()
+    .then((data) => {
+      department.value = data;
+      console.log(data);
+    })
+    .catch((e) => {
+      console.log(e.message);
+    });
+};
 const handleRegist = () => {
   P;
 };
-
 const onBack = () => {
-  useUserStore().setCurrentPage(0);
+  useStore.userStore.setCurrentPage(0);
 };
+getDepartment()
 </script>
 
 <template>
@@ -45,8 +61,8 @@ const onBack = () => {
     <el-form-item prop="name">
       <el-input v-model="registForm.name" clearable placeholder="请输入姓名">
         <template #prefix>
-          <IconifyIcon
-            icon="ri:user-3-fill"
+          <IconifyIconOffline
+            :icon="User"
             width="14"
             class="cursor-pointer text-gray-500 hover:text-blue-400"
           />
@@ -61,11 +77,16 @@ const onBack = () => {
         clearable
       >
         <template #prefix>
-          <IconifyIcon
+          <IconifyIconOnline
             icon="ri:id-card-fill"
             width="14"
             class="cursor-pointer text-gray-500 hover:text-blue-400"
           />
+          <!-- <IconifyIconOffline
+            :icon="Id"
+            width="14"
+            class="cursor-pointer text-gray-500 hover:text-blue-400"
+          /> -->
         </template>
       </el-input>
     </el-form-item>
@@ -77,16 +98,16 @@ const onBack = () => {
         style="width: 240px"
       >
         <template #prefix>
-          <IconifyIcon
-            icon="ri:school-fill"
+          <IconifyIconOffline
+            :icon="School"
             width="14"
             class="cursor-pointer text-gray-500 hover:text-blue-400"
           />
         </template>
         <el-option
-          v-for="item in options"
+          v-for="item in department"
           :key="item.id"
-          :label="item.department"
+          :label="item.fullName"
           :value="item.id"
         />
       </el-select>
@@ -95,8 +116,8 @@ const onBack = () => {
     <el-form-item prop="mail">
       <el-input placeholder="请输入邮箱" v-model="registForm.mail" clearable>
         <template #prefix>
-          <IconifyIcon
-            icon="ri:mail-fill"
+          <IconifyIconOffline
+            :icon="Mail"
             width="14"
             class="cursor-pointer text-gray-500 hover:text-blue-400"
           />
@@ -112,8 +133,8 @@ const onBack = () => {
           clearable
         >
           <template #prefix>
-            <IconifyIcon
-              icon="ri:shield-keyhole-line"
+            <IconifyIconOffline
+              :icon="Code"
               width="14"
               class="cursor-pointer text-gray-500 hover:text-blue-400"
             />
@@ -126,8 +147,8 @@ const onBack = () => {
     <el-form-item prop="pwd">
       <el-input placeholder="请输入密码" v-model="registForm.pwd" clearable>
         <template #prefix>
-          <IconifyIcon
-            icon="ri:lock-fill"
+          <IconifyIconOffline
+            :icon="Lock"
             width="14"
             class="cursor-pointer text-gray-500 hover:text-blue-400"
           />
@@ -138,8 +159,8 @@ const onBack = () => {
     <el-form-item prop="pwd">
       <el-input placeholder="确认密码" v-model="registForm.pwd" clearable>
         <template #prefix>
-          <IconifyIcon
-            icon="ri:lock-fill"
+          <IconifyIconOffline
+            :icon="Lock"
             width="14"
             class="cursor-pointer text-gray-500 hover:text-blue-400"
           />
@@ -153,7 +174,7 @@ const onBack = () => {
           type="primary"
           @click.native.prevent="handleRegist"
           class="w-full"
-          :loading="loginLoading"
+          :loading="loading"
         >
           注册
         </el-button>

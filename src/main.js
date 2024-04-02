@@ -13,6 +13,7 @@ import "./style/index.scss";
 import "./style/tailwind.css";
 import 'element-plus/dist/index.css'
 
+
 const app = createApp(App)
 
 import { createPinia } from 'pinia'
@@ -21,8 +22,21 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 
-import IconifyIcon from '@/components/Icon/iconifyIcon'
-app.component('IconifyIcon', IconifyIcon)
+import { registerStore } from '@/store';
+registerStore()
+import useStore from '@/store'
+useStore.permissionStore.getPermissionRoutes()
+useStore.permissionStore.getRoutes()
+
+import iconifyIconOnline from '@/components/Icon/iconifyIconOnline'
+import iconifyIconOffline from '@/components/Icon/iconifyIconOffline'
+app.component('IconifyIconOnline', iconifyIconOnline)
+app.component('IconifyIconOffline', iconifyIconOffline)
+
+import "tippy.js/dist/tippy.css";
+import "tippy.js/themes/light.css";
+import VueTippy from "vue-tippy";
+app.use(VueTippy);
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
