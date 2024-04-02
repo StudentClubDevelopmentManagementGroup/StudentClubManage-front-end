@@ -44,6 +44,7 @@ const fetchTableData = async (value) => {
         } else {
           // 查询到空数据
           tableData.value = [];
+          total.value = 0;
           reject();
         }
       })
@@ -286,7 +287,7 @@ onMounted(() => {
                   }}</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column>
+              <el-table-column align="right">
                 <template #default="scope">
                   <div>
                     <el-button type="primary" text @click="handleClickBtn(scope.row)"
@@ -431,9 +432,6 @@ onMounted(() => {
 /*  数据表格展示及操作区域样式 */
 #down-container {
   padding: 10px 40px;
-}
-.table-container {
-  height: 100%;
 }
 #operation {
   display: flex;

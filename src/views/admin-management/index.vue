@@ -197,17 +197,6 @@ const handleCommand = (command) => {
   top: 25px;
   font-size: 12px;
 }
-.scrollbar-demo-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px;
-  margin: 10px;
-  text-align: center;
-  border-radius: 4px;
-  background: var(--el-color-primary-light-9);
-  color: var(--el-color-primary);
-}
 #tags {
   height: 30px;
   min-width: 1600px;

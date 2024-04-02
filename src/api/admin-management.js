@@ -7,7 +7,6 @@ export function getBaseList(params) {
         params
     })
 }
-
 export function queryBase(data) {
     return myRequest({
         url: '/manage_all/select_club',
@@ -68,6 +67,29 @@ export function getDepartmentList(data) {
     return myRequest({
         url: '/department/all',
         method: 'get',
+        data
+    })
+}
+// 添加新院系
+export function addDepartment(data) {
+    return myRequest({
+        url: '/department/add',
+        method: 'post',
+        data
+    })
+}
+// 删除院系
+export function deleteDepartment(data) {
+    return myRequest({
+        url: `/department/${data}`,
+        method: 'delete'
+    })
+}
+// 修改院系信息
+export function modifyDepartment(data) {
+    return myRequest({
+        url: '/department/update',
+        method: 'put',
         data
     })
 }
