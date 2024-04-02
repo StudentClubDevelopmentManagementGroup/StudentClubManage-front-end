@@ -55,3 +55,19 @@ export function reuseBase(data) {
         data
     })
 }
+// 变更教师负责人
+export function setTeacherManager(data) {
+    return myRequest({
+        url: '/manage_all/select_manager',
+        method: 'post',
+        data
+    })
+}
+// 获取院系列表数据
+export function getDepartmentList(data) {
+    return myRequest({
+        url: '/department/all',
+        method: 'get',
+        data
+    })
+}

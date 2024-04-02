@@ -1,12 +1,16 @@
 <script setup>
 import { reactive, ref, computed, onMounted } from "vue";
 import { CirclePlus } from "@element-plus/icons-vue";
-import { baseStore } from "@/store/base";
 import { addBaseRules, setManagerRules } from "./utils/rule";
-import { baseData, departmentData, departmentSwtichData } from "./test-data/mock";
+import { baseData } from "./test-data/mock";
 import { message } from "@/utils/message";
-import { getBaseList, addBase, deleteBase, recoverBase } from "@/api/admin-management";
-const multipleSelection = ref([]);
+import {
+  getBaseList,
+  addBase,
+  getDepartmentList,
+  setTeacherManager,
+} from "@/api/admin-management";
+// TODO: const multipleSelection = ref([]);
 
 // 测试表格数据
 const tableData = ref(baseData);
@@ -28,7 +32,7 @@ const queryBaseListParams = computed(() => ({
   departmentId: input2.value === "" ? null : input2.value,
 }));
 
-const fetchData = async (value) => {
+const fetchTableData = async (value) => {
   return new Promise((resolve, reject) => {
     getBaseList(value)
       .then((data) => {
@@ -51,16 +55,16 @@ const fetchData = async (value) => {
 const handleSizeChange = () => {
   // TODO:逻辑bug,在total大于size时，从第2页或者后续几页将size调至大于total时触发，导致发生两次查询请求
   if (searchStatus.value === true) {
-    fetchData(queryBaseListParams.value);
+    fetchTableData(queryBaseListParams.value);
   } else {
-    fetchData(getBaseListParams.value);
+    fetchTableData(getBaseListParams.value);
   }
 };
 const handleCurrentChange = () => {
   if (searchStatus.value === true) {
-    fetchData(queryBaseListParams.value);
+    fetchTableData(queryBaseListParams.value);
   } else {
-    fetchData(getBaseListParams.value);
+    fetchTableData(getBaseListParams.value);
   }
 };
 const handleSearch = () => {
@@ -70,11 +74,11 @@ const handleSearch = () => {
   ) {
     // 有任一检索关键字
     searchStatus.value = true;
-    fetchData(queryBaseListParams.value);
+    fetchTableData(queryBaseListParams.value);
   } else {
     // 没有检索关键字
     searchStatus.value = false;
-    fetchData(getBaseListParams.value);
+    fetchTableData(getBaseListParams.value);
   }
 };
 const handleReset = () => {
@@ -83,10 +87,22 @@ const handleReset = () => {
 };
 const handleCancelSearch = () => {
   searchStatus.value = false;
-  fetchData(getBaseListParams.value);
+  fetchTableData(getBaseListParams.value);
 };
 // 获取院系数据
-const selectData = ref(departmentData);
+const selectData = ref([]);
+const fetchSelectionData = async () => {
+  return new Promise((resolve, reject) => {
+    getDepartmentList()
+      .then((data) => {
+        selectData.value = data;
+        resolve();
+      })
+      .catch((err) => {
+        console.warn(err);
+      });
+  });
+};
 
 // 对话框-新增基地数据
 const dialogAdded = ref(false);
@@ -100,18 +116,12 @@ const addNewBase = async (value) => {
   return new Promise((resolve, reject) => {
     addBase(value)
       .then((data) => {
-        setTimeout(() => {
-          message("添加成功", { type: "success" });
-          addedBtnLoading.value = false;
-          dialogAdded.value = false;
-          addBaseParams.name = null;
-          addBaseParams.department_id = null;
-        }, 1000);
+        message("添加成功", { type: "success" });
+        dialogAdded.value = false;
+        addBaseParams.name = null;
+        addBaseParams.department_id = null;
       })
       .catch((error) => {
-        setTimeout(() => {
-          addedBtnLoading.value = false;
-        }, 1000);
         console.warn(error);
       });
   });
@@ -124,10 +134,11 @@ const handleConfirmAdded = () => {
   addFormRef.value.validate((valid, fields) => {
     if (valid) {
       addNewBase(addBaseParams);
-    } else {
-      addedBtnLoading.value = false;
     }
   });
+  setTimeout(() => {
+    addedBtnLoading.value = false;
+  }, 1000);
 };
 // 取消批量操作
 const selectStatus = ref(false);
@@ -142,27 +153,40 @@ const columnInfo = reactive({
   department_name: "",
 });
 const setBtnLoading = ref(false);
-const setBaseManagerParams = reactive({
+const setTeacherManagerParams = reactive({
   club_id: null,
   user_id: null,
 });
+const setNewTeacherManager = async (value) => {
+  return new Promise((resolve, reject) => {
+    setTeacherManager(value)
+      .then((data) => {
+        message("设置成功", { type: "success" });
+        dialogSetManager.value = false;
+        setTeacherManagerParams.user_id = null;
+        resolve();
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  });
+};
 const handleClickBtn = (row) => {
   dialogSetManager.value = true;
   columnInfo.name = row.name;
   columnInfo.department_name = row.department_name;
-  setBaseManagerParams.club_id = row.club_id;
+  setTeacherManagerParams.club_id = row.club_id;
 };
 const handleConfirmSetManager = () => {
   setBtnLoading.value = true;
-  setFormRef.value.validate((value, fields) => {
-    if (value) {
-      setTimeout(() => {
-        setBtnLoading.value = false;
-      }, 1000);
-    } else {
-      setBtnLoading.value = false;
+  setFormRef.value.validate((valid, fields) => {
+    if (valid) {
+      setNewTeacherManager(setTeacherManagerParams);
     }
   });
+  setTimeout(() => {
+    setBtnLoading.value = false;
+  }, 1000);
 };
 // 进入基地管理端界面
 const handleClickBtn2 = (row) => {
@@ -171,7 +195,8 @@ const handleClickBtn2 = (row) => {
 };
 
 onMounted(() => {
-  fetchData(getBaseListParams.value);
+  fetchTableData(getBaseListParams.value);
+  fetchSelectionData();
 });
 </script>
 
@@ -181,37 +206,9 @@ onMounted(() => {
       <!-- 检索关键字区域 -->
       <div id="up-container">
         <el-card class="search-container" shadow="always">
-          <!-- TODO:面包屑没有导航功能，暂时不做,这里预留位置 -->
-          <template #header>
-            <div id="breadcrumb">
-              <span>面包屑占位</span>
-            </div>
-          </template>
-          <!-- 检索关键字 -->
-          <div id="search">
-            <!-- 搜索输入框 -->
-            <div>
-              <span>基地：</span>
-              <el-input
-                v-model="input1"
-                style="width: 240px"
-                placeholder="请输入基地/社团名称"
-              />
-              <span>院系：</span>
-              <el-select
-                v-model="input2"
-                placeholder="请选择学院名称"
-                style="width: 240px"
-              >
-                <el-option
-                  v-for="item in selectData"
-                  :label="item.full_name"
-                  :value="item.id"
-                ></el-option>
-              </el-select>
-            </div>
-            <!-- 操作 -->
-            <div>
+          <template #footer>
+            <div id="search-button">
+              <!-- 操作 -->
               <el-button type="primary" style="margin-right: 10px" @click="handleSearch"
                 >查询</el-button
               >
@@ -220,6 +217,23 @@ onMounted(() => {
               >
               <el-button @click="handleReset">重置</el-button>
             </div>
+          </template>
+          <!-- 检索关键字 -->
+          <div id="search">
+            <span>基地：</span>
+            <el-input
+              v-model="input1"
+              style="width: 240px"
+              placeholder="请输入基地/社团名称"
+            />
+            <span>院系：</span>
+            <el-select v-model="input2" placeholder="请选择学院名称" style="width: 240px">
+              <el-option
+                v-for="item in selectData"
+                :label="item.fullName"
+                :value="item.id"
+              ></el-option>
+            </el-select>
           </div>
         </el-card>
       </div>
@@ -276,7 +290,7 @@ onMounted(() => {
                 <template #default="scope">
                   <div>
                     <el-button type="primary" text @click="handleClickBtn(scope.row)"
-                      >设置教师负责人</el-button
+                      >变更教师负责人</el-button
                     >
                     <el-button type="success" text @click="handleClickBtn2(scope.row)"
                       >编辑</el-button
@@ -323,7 +337,7 @@ onMounted(() => {
             <el-select v-model="addBaseParams.department_id" placeholder="请选择院系">
               <el-option
                 v-for="item in selectData"
-                :label="item.full_name"
+                :label="item.fullName"
                 :value="item.id"
               ></el-option>
             </el-select>
@@ -350,7 +364,11 @@ onMounted(() => {
         width="500"
         destroy-on-close
       >
-        <el-form :model="setBaseManagerParams" ref="setFormRef" :rules="setManagerRules">
+        <el-form
+          :model="setTeacherManagerParams"
+          ref="setFormRef"
+          :rules="setManagerRules"
+        >
           <el-form-item id="column-info">
             <div>基地名称：</div>
             <div>{{ columnInfo.name }}</div>
@@ -359,7 +377,7 @@ onMounted(() => {
           </el-form-item>
           <el-form-item prop="user_id" label="工号">
             <el-input
-              v-model="setBaseManagerParams.user_id"
+              v-model="setTeacherManagerParams.user_id"
               placeholder="请输入教师负责人工号"
             ></el-input>
           </el-form-item>
@@ -396,7 +414,7 @@ onMounted(() => {
 }
 #search {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
 }
 #search span {
   margin-right: 5px;
@@ -404,9 +422,9 @@ onMounted(() => {
 #search span:not(:first-child) {
   margin-left: 20px;
 }
-#search > div {
+#search-button {
   display: flex;
-  align-items: center;
+  justify-content: flex-end;
 }
 /* 检索关键字区域样式 */
 

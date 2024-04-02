@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, ref, watch, toRaw, computed } from "vue";
-import { Document, Menu as IconMenu } from "@element-plus/icons-vue";
+import { Document, Menu as IconMenu, School } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { layoutStore } from "@/store/layout";
 
@@ -54,6 +54,10 @@ const handleCommand = (command) => {
           <el-menu-item index="/bm/base">
             <el-icon><OfficeBuilding /></el-icon>
             <template #title>基地管理</template>
+          </el-menu-item>
+          <el-menu-item index="/dm/department">
+            <el-icon><School /></el-icon>
+            <template #title>院系管理</template>
           </el-menu-item>
           <el-menu-item index="/um/user">
             <el-icon><Avatar /></el-icon>

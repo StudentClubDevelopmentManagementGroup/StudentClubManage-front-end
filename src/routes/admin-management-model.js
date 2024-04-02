@@ -16,6 +16,19 @@ export const adminManagementRoutes = [
         ]
     },
     {
+        path: '/dm',
+        redirect: '/dm/department',
+        component: Layout,
+        children: [
+            {
+                path: 'department',
+                name: 'Department',
+                component: () => import('@/views/admin-management/department-management'),
+                meta: { title: '院系管理',icon: ""}
+            }
+        ]
+    },
+    {
         path: '/um',
         redirect: '/um/user',
         component: Layout,

@@ -1,5 +1,4 @@
 const validateName = (rule, value, callback) => {
-    console.log(value);
     if (!value) {
         callback(new Error("名称不能为空"));
     } else if (value == null) {
@@ -10,7 +9,6 @@ const validateName = (rule, value, callback) => {
 };
 
 const validateId = (rule, value, callback) => {
-    console.log(value);
     if (!value) {
         callback(new Error("请选择院系"));
     } else if (value == null) {
@@ -30,7 +28,6 @@ export const addBaseRules = {
 }
 
 const validateUserId = (rule, value, callback) => {
-    console.log(value);
     if (!value) {
         callback(new Error("请输入工号"));
     } else if (value == null) {
