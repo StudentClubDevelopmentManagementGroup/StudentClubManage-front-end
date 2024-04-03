@@ -10,10 +10,9 @@ import {
   getDepartmentList,
   setTeacherManager,
 } from "@/api/admin-management";
-// TODO: const multipleSelection = ref([]);
 
 // 测试表格数据
-const tableData = ref(baseData);
+const clubData = ref(baseData);
 // 分页获取基地列表数据 与 检索关键字
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -38,12 +37,12 @@ const fetchTableData = async (value) => {
       .then((data) => {
         if (data && data.records !== undefined) {
           // 查询到非空数据
-          tableData.value = [...data.records];
+          clubData.value = [...data.records];
           total.value = data.total;
           resolve();
         } else {
           // 查询到空数据
-          tableData.value = [];
+          clubData.value = [];
           total.value = 0;
           reject();
         }
@@ -202,11 +201,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <el-scrollbar>
     <div id="container">
       <!-- 检索关键字区域 -->
       <div id="up-container">
-        <el-card class="search-container" shadow="always">
+        <el-card class="search-container">
           <template #footer>
             <div id="search-button">
               <!-- 操作 -->
@@ -261,7 +259,7 @@ onMounted(() => {
           </template>
           <!-- 数据表格 -->
           <div id="table">
-            <el-table ref="TableRef" :data="tableData" table-layout="auto" size="large">
+            <el-table ref="TableRef" :data="clubData" border table-layout="auto" size="large">
               <el-table-column type="selection" align="center" />
               <el-table-column property="name" label="基地/社团名称" align="center" />
               <el-table-column
@@ -397,17 +395,12 @@ onMounted(() => {
         </template>
       </el-dialog>
     </div>
-  </el-scrollbar>
 </template>
 
 <style scoped>
-#container {
-  display: grid;
-  grid-template-rows: 175px auto; /* 上块高度为150px，下块高度自适应 */
-}
 /* 检索关键字区域样式 */
 #up-container {
-  padding: 20px 40px;
+  padding: 20px 0px;
 }
 .search-container {
   width: 100%;
@@ -431,7 +424,7 @@ onMounted(() => {
 
 /*  数据表格展示及操作区域样式 */
 #down-container {
-  padding: 10px 40px;
+  padding: 10px 0px;
 }
 #operation {
   display: flex;
@@ -453,7 +446,7 @@ onMounted(() => {
 }
 .table-container:deep() .el-table__body {
   width: 100% !important;
-  min-width: 1600px;
+  min-width: 1100px;
 }
 /* 修复未指定列的宽度，导致在界面展开/收起时发生的宽度异常，而破坏容器 */
 

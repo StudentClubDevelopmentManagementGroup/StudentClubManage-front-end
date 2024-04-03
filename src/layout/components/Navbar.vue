@@ -25,12 +25,6 @@ const fullScreen = ref(false);
 const messageNum = ref(5);
 const opened = computed(() => useStore.appStore.getSidebarOpened);
 const name  =  computed(() => useStore.userStore.getName);
-onMounted(() => {
-  const userInfo = GetUserInfo();
-  if (userInfo) {
-    name.value = userInfo.name;
-  }
-});
 
 // methods
 const toggleSideBar = () => {
@@ -47,21 +41,14 @@ const toExitFullScreen = () => {
   fullScreen.value = false;
 };
 
-const logout = () => {
-  sessionStorage.removeItem("auth");
-  sessionStorage.removeItem("accessToken");
+const logout = async () => {
+  await useStore.userStore.logout()
   router.replace("/login");
 };
 </script>
 
 <template>
   <div class="navbar bg-[#fff] shadow-sm shadow-[rgba(0,21,41,0.08)]">
-    <Hamburger
-      id="Hamburger"
-      :is-active="opened"
-      class="hamburger-container"
-      @toggleClick="toggleSideBar"
-    />
     <breadcrumb class="breadcrumb-container" />
     <div class="vertical-header-right right-menu">
       <search id="header-search"></search>
@@ -145,13 +132,6 @@ const logout = () => {
   width: 100%;
   height: 48px;
   overflow: hidden;
-
-  .hamburger-container {
-    float: left;
-    height: 100%;
-    line-height: 48px;
-    cursor: pointer;
-  }
 
   .vertical-header-right {
     display: flex;

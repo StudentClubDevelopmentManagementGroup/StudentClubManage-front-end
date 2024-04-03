@@ -169,180 +169,193 @@ onMounted(() => {
 </script>
 
 <template>
-  <el-scrollbar>
-    <div id="container">
-      <!-- 数据表格展示及操作区域 -->
-      <div id="down-container">
-        <el-card class="table-container" shadow="always">
-          <!-- 操作按钮 -->
-          <template #header>
-            <div id="operation">
-              <div id="operation-left">
-                <el-button
-                  v-if="selectStatus"
-                  @click="handleCancelAllSelected"
-                  type="success"
-                  >取消全选</el-button
-                >
-              </div>
-              <div id="operation-right">
-                <el-button type="primary" :icon="CirclePlus" @click="handleAdd"
-                  >新增</el-button
-                >
-              </div>
+  <div id="container">
+    <!-- 数据表格展示及操作区域 -->
+    <div id="down-container">
+      <el-card class="table-container" shadow="always">
+        <!-- 操作按钮 -->
+        <template #header>
+          <div id="operation">
+            <div id="operation-left">
+              <el-button
+                v-if="selectStatus"
+                @click="handleCancelAllSelected"
+                type="success"
+                >取消全选</el-button
+              >
             </div>
-          </template>
-          <!-- 数据表格 -->
-          <div id="table">
-            <el-table
-              ref="TableRef"
-              :data="computeTableData"
-              table-layout="auto"
-              size="large"
-            >
-              <el-table-column type="selection" align="center" />
-              <el-table-column property="id" label="学院序号" align="center" />
-              <el-table-column property="fullName" label="学院全称" align="center" />
-              <el-table-column property="abbreviation" label="学院简称" align="center" />
-              <!-- 操作 -->
-              <el-table-column align="right">
-                <template #default="scope">
-                  <div>
-                    <el-button type="danger" text @click="handleClickBtn(scope.row)"
-                      >变更为删除状态</el-button
-                    >
-                    <el-button type="success" text @click="handleClickBtn2(scope.row)"
-                      >编辑</el-button
-                    >
-                  </div>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-          <!-- 页签 -->
-          <template #footer>
-            <div id="pager">
-              <div class="demo-pagination-block">
-                <el-pagination
-                  v-model:current-page="currentPage"
-                  v-model:page-size="pageSize"
-                  :page-sizes="[13, 26, 39]"
-                  layout="total, sizes, prev, pager, next, jumper"
-                  :total="total"
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"
-                />
-              </div>
+            <div id="operation-right">
+              <el-button type="primary" :icon="CirclePlus" @click="handleAdd"
+                >新增</el-button
+              >
             </div>
-          </template>
-        </el-card>
-      </div>
-      <!--  弹出处理 新增 的对话框 -->
-      <el-dialog
-        v-model="dialogAdded"
-        title="新增学院"
-        width="500"
-        align-center
-        destroy-on-close
-      >
-        <el-form
-          :model="addDepartmentParams"
-          ref="addFormRef"
-          :rules="addDepartmentRules"
-        >
-          <el-form-item prop="fullName" label="全名">
-            <el-input
-              v-model="addDepartmentParams.fullName"
-              placeholder="请输入学院全称"
-            ></el-input>
-          </el-form-item>
-          <el-form-item prop="abbreviation" label="简称">
-            <el-input
-              v-model="addDepartmentParams.abbreviation"
-              placeholder="请输入学院简称"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button @click="dialogAdded = false">取消</el-button>
-            <el-button
-              type="primary"
-              @click="handleConfirmAdded"
-              :loading="addedBtnLoading"
-            >
-              确认
-            </el-button>
           </div>
         </template>
-      </el-dialog>
-      <!-- 弹出处理 删除院系 的对话框 -->
-      <el-dialog
-        v-model="dialogDeleteDepartment"
-        title="删除院系"
-        align-center
-        width="500"
-        destroy-on-close
-      >
-        <el-result
-          icon="warning"
-          title="删除院系，谨慎操作！"
-          :sub-title="'请输入' + '“' + warnInfo + '”' + '以确认删除院系'"
-        />
-        <div id="delete-operation">
-          <el-input v-model="confirmDeleteInput"></el-input>
-          <el-button
-            round
-            plain
-            type="danger"
-            @click="handleConfirmDeleteDepartment"
-            :disabled="deleteBtnStatus"
-            :loading="deleteBtnLoading"
-            >我想要删除院系</el-button
+        <!-- 数据表格 -->
+        <div id="table">
+          <el-table
+            ref="TableRef"
+            :data="computeTableData"
+            table-layout="auto"
+            border
+            size="large"
           >
+            <el-table-column type="selection" align="center" />
+            <el-table-column property="id" label="学院序号" align="center" />
+            <el-table-column
+              property="fullName"
+              label="学院全称"
+              align="center"
+            />
+            <el-table-column
+              property="abbreviation"
+              label="学院简称"
+              align="center"
+            />
+            <!-- 操作 -->
+            <el-table-column align="right">
+              <template #default="scope">
+                <div>
+                  <el-button
+                    type="danger"
+                    text
+                    @click="handleClickBtn(scope.row)"
+                    >变更为删除状态</el-button
+                  >
+                  <el-button
+                    type="success"
+                    text
+                    @click="handleClickBtn2(scope.row)"
+                    >编辑</el-button
+                  >
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
-      </el-dialog>
-      <!-- 弹出处理 修改院系信息 的对话框 -->
-      <el-dialog
-        v-model="dialogModified"
-        title="编辑院系信息"
-        width="500"
-        align-center
-        destroy-on-close
-      >
-        <el-form
-          :model="modifyDepartmentInfoParams"
-          ref="modifyFormRef"
-          :rules="modifyDepartmentRules"
-        >
-          <el-form-item prop="fullName" label="全称">
-            <el-input
-              v-model="modifyDepartmentInfoParams.fullName"
-              placeholder="请输入学院全称"
-            ></el-input>
-          </el-form-item>
-          <el-form-item prop="abbreviation" label="简称">
-            <el-input
-              v-model="modifyDepartmentInfoParams.abbreviation"
-              placeholder="请输入学院简称"
-            ></el-input>
-          </el-form-item>
-        </el-form>
+        <!-- 页签 -->
         <template #footer>
-          <div class="dialog-footer">
-            <el-button @click="dialogModified = false">取消</el-button>
-            <el-button
-              type="primary"
-              @click="handleConfirmModified"
-              :loading="modifiedBtnLoading"
-            >
-              确认
-            </el-button>
+          <div id="pager">
+            <div class="demo-pagination-block">
+              <el-pagination
+                v-model:current-page="currentPage"
+                v-model:page-size="pageSize"
+                :page-sizes="[13, 26, 39]"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+              />
+            </div>
           </div>
         </template>
-      </el-dialog>
+      </el-card>
     </div>
-  </el-scrollbar>
+    <!--  弹出处理 新增 的对话框 -->
+    <el-dialog
+      v-model="dialogAdded"
+      title="新增学院"
+      width="500"
+      align-center
+      destroy-on-close
+    >
+      <el-form
+        :model="addDepartmentParams"
+        ref="addFormRef"
+        :rules="addDepartmentRules"
+      >
+        <el-form-item prop="fullName" label="全名">
+          <el-input
+            v-model="addDepartmentParams.fullName"
+            placeholder="请输入学院全称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item prop="abbreviation" label="简称">
+          <el-input
+            v-model="addDepartmentParams.abbreviation"
+            placeholder="请输入学院简称"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogAdded = false">取消</el-button>
+          <el-button
+            type="primary"
+            @click="handleConfirmAdded"
+            :loading="addedBtnLoading"
+          >
+            确认
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+    <!-- 弹出处理 删除院系 的对话框 -->
+    <el-dialog
+      v-model="dialogDeleteDepartment"
+      title="删除院系"
+      align-center
+      width="500"
+      destroy-on-close
+    >
+      <el-result
+        icon="warning"
+        title="删除院系，谨慎操作！"
+        :sub-title="'请输入' + '“' + warnInfo + '”' + '以确认删除院系'"
+      />
+      <div id="delete-operation">
+        <el-input v-model="confirmDeleteInput"></el-input>
+        <el-button
+          round
+          plain
+          type="danger"
+          @click="handleConfirmDeleteDepartment"
+          :disabled="deleteBtnStatus"
+          :loading="deleteBtnLoading"
+          >我想要删除院系</el-button
+        >
+      </div>
+    </el-dialog>
+    <!-- 弹出处理 修改院系信息 的对话框 -->
+    <el-dialog
+      v-model="dialogModified"
+      title="编辑院系信息"
+      width="500"
+      align-center
+      destroy-on-close
+    >
+      <el-form
+        :model="modifyDepartmentInfoParams"
+        ref="modifyFormRef"
+        :rules="modifyDepartmentRules"
+      >
+        <el-form-item prop="fullName" label="全称">
+          <el-input
+            v-model="modifyDepartmentInfoParams.fullName"
+            placeholder="请输入学院全称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item prop="abbreviation" label="简称">
+          <el-input
+            v-model="modifyDepartmentInfoParams.abbreviation"
+            placeholder="请输入学院简称"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogModified = false">取消</el-button>
+          <el-button
+            type="primary"
+            @click="handleConfirmModified"
+            :loading="modifiedBtnLoading"
+          >
+            确认
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
 <style scoped>
@@ -352,7 +365,7 @@ onMounted(() => {
 }
 /*  数据表格展示及操作区域样式 */
 #down-container {
-  padding: 39px 40px;
+  padding: 39px 0px;
 }
 #operation {
   display: flex;
@@ -374,7 +387,7 @@ onMounted(() => {
 }
 .table-container:deep() .el-table__body {
   width: 100% !important;
-  min-width: 1600px;
+  min-width: 1100px;
 }
 /* 修复未指定列的宽度，导致在界面展开/收起时发生的宽度异常，而破坏容器 */
 

@@ -31,7 +31,7 @@ export const usePermissionStore = defineStore('permission', () => {
     }
 
     const getPermissionRoutes = async (payload) => {
-        const newAuthedRoutes = ["/run", "/develop", "/user", "/introduce", "/member"]
+        const newAuthedRoutes = ["/run", "/develop", "/user", "/introduce", "/member","/teacher"]
         setAuthedRoutes(newAuthedRoutes)
         const accessedRoutes = []
 
