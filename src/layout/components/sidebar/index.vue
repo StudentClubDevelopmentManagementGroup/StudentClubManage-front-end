@@ -25,6 +25,8 @@ onMounted(() => {
   useStore.tabStore.setCurrentIndex(routePath);
 });
 
+const loading = computed(() => (routes.value.length === 0 ? true : false));
+
 const resolvePath = (routePath) => {
   if (isUrl(routePath)) {
     return routePath;
@@ -64,10 +66,7 @@ const toggleSideBar = () => {
         />
       </el-menu>
     </el-scrollbar>
-    <CenterCollapse
-    :is-active="!isCollapse"
-      @toggleClick="toggleSideBar"
-    />
+    <CenterCollapse :is-active="!isCollapse" @toggleClick="toggleSideBar" />
     <leftCollapse :is-active="!isCollapse" @toggleClick="toggleSideBar" />
   </div>
 </template>

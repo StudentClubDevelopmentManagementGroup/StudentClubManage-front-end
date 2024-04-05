@@ -2,10 +2,8 @@ import { reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import userApi from '@/api/user'
 import { GetToken, SetToken, RemoveToken, GetUserInfo, RemoveUserInfo, SetUserInfo, RemoveRoles, SetRoles, GetRoles } from '@/utils/auth'
-import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
-const router = useRouter()
 export const useUserStore = defineStore('user', () => {
 
   const state = reactive({
@@ -45,7 +43,7 @@ export const useUserStore = defineStore('user', () => {
 
   const logout = async () => {
     try {
-      await userApi.logout()
+      // await userApi.logout()
       state.token = null
       state.userInfo = null
       state.roles = []

@@ -1,8 +1,7 @@
 <template>
   <section class="app-main">
-    <router-view v-if="$route.meta.keepAlive" v-slot="{ Component }">
+    <router-view v-slot="{ Component }">
       <el-scrollbar
-        v-if="props.fixedHeader"
         :wrap-style="{
           display: 'flex',
           'flex-wrap': 'wrap',
@@ -36,24 +35,11 @@
               class="main-content"
             />
           </transition></div
-      ></el-scrollbar>
+      ><Footer v-if="!hideFooter" />
+    </el-scrollbar>
     </router-view>
 
-    <router-view v-else v-slot="{ Component }">
-      <div class="grow">
-        <transition name="fade" mode="out-in">
-          <keep-alive :include="$route.name">
-            <component
-              :is="Component"
-              :key="$route.path"
-              class="main-content"
-            />
-          </keep-alive>
-        </transition>
-      </div>
-    </router-view>
-
-    <Footer v-if="!hideFooter" />
+    
   </section>
 </template>
 
@@ -62,6 +48,7 @@ import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import useStore from "@/store";
 import Footer from "./footer/index.vue";
+import backTop from "@/assets/back_top.svg?component";
 
 const router = useRouter();
 
@@ -95,12 +82,11 @@ const clickTab = (tabName: { paneName: string }) => {
 
 <style scoped>
 .app-main {
-  background-color: #fafbfe;
   position: relative;
   width: 100%;
   height: 100vh;
-  overflow-x: hidden;
-  padding-top: 82px;
+  overflow-y: hidden;
+  padding-top: 102px
 }
 
 .app-main-nofixed-header {

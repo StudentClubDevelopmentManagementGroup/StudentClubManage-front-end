@@ -42,7 +42,6 @@ const handleFooterChange = () => {
 <template>
   <el-form
     ref="contentFormRef"
-    :model="colors"
     label-position="left"
     class="content-form"
     label-width="150px"

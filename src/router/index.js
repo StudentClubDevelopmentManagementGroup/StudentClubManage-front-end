@@ -196,7 +196,41 @@ export const asyncRoutes = [
                 title: "成果汇报",
             },
         }]
-    },
+    }, {
+        path: "/teacher",
+        component: Layout,
+        redirect: "/teacher/base",
+        meta: {
+            icon: "ri:account-box-fill",
+            title: "管理模块",
+        },
+        children: [{
+            path: "/teacher/base",
+            name: "TeacherBase",
+            component: () => import('@/views/admin-management/base-management'),
+            meta: { title: '基地管理' }
+        }, {
+            path: "/teacher/department",
+            name: "teacherDepartment",
+            component: () => import('@/views/admin-management/department-management'),
+            meta: { title: '院系管理' }
+        }, {
+            path: "/teacher/user",
+            name: "teacherUser",
+            component: () => import('@/views/admin-management/user-management'),
+            meta: { title: '人员管理' }
+        }, {
+            path: "/teacher/person",
+            name: "teacherPerson",
+            component: () => import('@/views/admin-management/person-information'),
+            meta: { title: '个人信息' }
+        }, {
+            path: "/teacher/operation",
+            name: "teacherOperation",
+            component: () => import('@/views/admin-management/operation-log'),
+            meta: { title: '操作日志' }
+        }]
+    }
 ]
 
 const router = createRouter({

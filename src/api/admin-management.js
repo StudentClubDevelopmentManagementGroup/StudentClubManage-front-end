@@ -1,14 +1,14 @@
-import myRequest from '@/utils/myRequest'
+import request from '@/utils/request'
 // 查询基地：全部-关键字
 export function getBaseList(params) {
-    return myRequest({
+    return request({
         url: '/manage_all/select_all',
         method: 'get',
         params
     })
 }
 export function queryBase(data) {
-    return myRequest({
+    return request({
         url: '/manage_all/select_club',
         method: 'post',
         data
@@ -16,7 +16,7 @@ export function queryBase(data) {
 }
 // 新增基地
 export function addBase(data) {
-    return myRequest({
+    return request({
         url: '/manage_all/create_club',
         method: 'post',
         data
@@ -24,7 +24,7 @@ export function addBase(data) {
 }
 // 逻辑删除基地
 export function deleteBase(data) {
-    return myRequest({
+    return request({
         url: '/manage_all/delete_club',
         method: 'post',
         data
@@ -32,7 +32,7 @@ export function deleteBase(data) {
 }
 // 逻辑恢复基地
 export function recoverBase(data) {
-    return myRequest({
+    return request({
         url: '/manage_all/recover_club',
         method: 'post',
         data
@@ -40,7 +40,7 @@ export function recoverBase(data) {
 }
 // 基地停止招新
 export function deactivateBase(data) {
-    return myRequest({
+    return request({
         url: '/manage_all/deactivate_club',
         method: 'post',
         data
@@ -48,7 +48,7 @@ export function deactivateBase(data) {
 }
 // 基地开放招新
 export function reuseBase(data) {
-    return myRequest({
+    return request({
         url: '/manage_all/reuse_club',
         method: 'post',
         data
@@ -56,23 +56,22 @@ export function reuseBase(data) {
 }
 // 变更教师负责人
 export function setTeacherManager(data) {
-    return myRequest({
+    return request({
         url: '/manage_all/select_manager',
         method: 'post',
         data
     })
 }
 // 获取院系列表数据
-export function getDepartmentList(data) {
-    return myRequest({
+export function getDepartmentList() {
+    return request({
         url: '/department/all',
         method: 'get',
-        data
     })
 }
 // 添加新院系
 export function addDepartment(data) {
-    return myRequest({
+    return request({
         url: '/department/add',
         method: 'post',
         data
@@ -80,14 +79,14 @@ export function addDepartment(data) {
 }
 // 删除院系
 export function deleteDepartment(data) {
-    return myRequest({
+    return request({
         url: `/department/${data}`,
         method: 'delete'
     })
 }
 // 修改院系信息
 export function modifyDepartment(data) {
-    return myRequest({
+    return request({
         url: '/department/update',
         method: 'put',
         data

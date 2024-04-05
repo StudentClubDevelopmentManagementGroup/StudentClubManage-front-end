@@ -124,65 +124,67 @@ const setLayoutModel = (layout) => {
 
 <template>
   <RightDrawer v-if="showSetting">
-    <div class="setting-item">
-      <p class="mt-5 mb-3 font-medium text-sm dark:text-white">主题色</p>
-      <ul class="theme-color">
-        <li
-          v-for="(item, index) in themeColors"
-          :key="index"
-          :style="getThemeColorStyle(item.color)"
-          @click="setLayoutThemeColor(item.themeColor)"
-        >
-          <el-icon
-            style="margin: 0.1em 0.1em 0 0"
-            :size="17"
-            :color="getThemeColor(item.themeColor)"
+    <div>
+      <div class="setting-item">
+        <p class="mt-5 mb-3 font-medium text-sm dark:text-white">主题色</p>
+        <ul class="theme-color">
+          <li
+            v-for="(item, index) in themeColors"
+            :key="index"
+            :style="getThemeColorStyle(item.color)"
+            @click="setLayoutThemeColor(item.themeColor)"
           >
-            <IconifyIconOffline :icon="Check" />
-          </el-icon>
-        </li>
-      </ul>
-      <div class="divider"></div>
-    </div>
-    <div class="setting-item">
-      <div class="setting-draw-title">导航模式</div>
-      <ul class="pure-theme">
-        <li
-          ref="verticalRef"
-          v-tippy="{
-            content: '左侧菜单，亲切熟悉',
-            zIndex: 41000,
-          }"
-          :class="layout === 'vertical' ? 'is-select' : ''"
-          @click="setLayoutModel('vertical')"
-        >
-          <div />
-          <div />
-        </li>
-        <li
-          ref="horizontalRef"
-          v-tippy="{
-            content: '顶部菜单，简洁概览',
-            zIndex: 41000,
-          }"
-          :class="layout === 'horizontal' ? 'is-select' : ''"
-          @click="setLayoutModel('horizontal')"
-        >
-          <div />
-          <div />
-        </li>
-      </ul>
-      <div class="divider"></div>
-    </div>
-    <div class="setting-item">
-      <div class="setting-draw-title">界面显示</div>
-      <content
-        @change="handleSettingChange('hideHeader')"
-        @fixedHeader="handleSettingChange('fixedHeader')"
-        @sidebarLogo="handleSettingChange('showLogo')"
-        @hideTabs="handleSettingChange('hideTabs')"
-        @hideFooter="handleSettingChange('hideFooter')"
-      ></content>
+            <el-icon
+              style="margin: 0.1em 0.1em 0 0"
+              :size="17"
+              :color="getThemeColor(item.themeColor)"
+            >
+              <IconifyIconOffline :icon="Check" />
+            </el-icon>
+          </li>
+        </ul>
+        <div class="divider"></div>
+      </div>
+      <div class="setting-item">
+        <div class="setting-draw-title">导航模式</div>
+        <ul class="pure-theme">
+          <li
+            ref="verticalRef"
+            v-tippy="{
+              content: '左侧菜单，亲切熟悉',
+              zIndex: 41000,
+            }"
+            :class="layout === 'vertical' ? 'is-select' : ''"
+            @click="setLayoutModel('vertical')"
+          >
+            <div />
+            <div />
+          </li>
+          <li
+            ref="horizontalRef"
+            v-tippy="{
+              content: '顶部菜单，简洁概览',
+              zIndex: 41000,
+            }"
+            :class="layout === 'horizontal' ? 'is-select' : ''"
+            @click="setLayoutModel('horizontal')"
+          >
+            <div />
+            <div />
+          </li>
+        </ul>
+        <div class="divider"></div>
+      </div>
+      <div class="setting-item">
+        <div class="setting-draw-title">界面显示</div>
+        <content
+          @change="handleSettingChange('hideHeader')"
+          @fixedHeader="handleSettingChange('fixedHeader')"
+          @sidebarLogo="handleSettingChange('showLogo')"
+          @hideTabs="handleSettingChange('hideTabs')"
+          @hideFooter="handleSettingChange('hideFooter')"
+        ></content>
+      </div>
     </div>
   </RightDrawer>
 </template>
@@ -219,7 +221,6 @@ const setLayoutModel = (layout) => {
   font-size: 16px;
   font-weight: 700;
 }
-
 
 .theme-color {
   height: 20px;

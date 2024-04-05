@@ -11,7 +11,7 @@ const router = useRouter();
 const getBreadcrumb = () => {
   const matched = route.matched.filter((item) => item?.meta?.title);
   levelList.value = matched.filter(
-    (item) => item.meta && item.meta.title && item.meta.breadcrumb !== false
+    (item) => item.meta && item.meta.title && item.children?.length !== 1
   );
 };
 
@@ -33,9 +33,15 @@ onMounted(() => {
   getBreadcrumb();
 });
 
-watch(route, () => {
-  getBreadcrumb();
-});
+watch(
+  () => route.path,
+  () => {
+    getBreadcrumb();
+  },
+  {
+    deep: true,
+  }
+);
 </script>
 
 <template>
@@ -47,9 +53,7 @@ watch(route, () => {
           class="no-redirect"
           >{{ item.meta.title }}</span
         >
-        <a v-else @click.prevent="handleLink(item)">{{
-          item.meta.title
-        }}</a>
+        <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
       </el-breadcrumb-item>
     </transition-group>
   </el-breadcrumb>
