@@ -16,8 +16,10 @@ console.log(props);
 </script>
 
 <template>
-  <div style="color: red">{{ icon }}</div>
-  <div style="color: blue">{{ title }}</div>
+  <div>
+    <div style="color: red">{{ icon }}</div>
+    <div style="color: blue">{{ title }}</div>
+  </div>
 </template>
 
 <style scoped></style>
