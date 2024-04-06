@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
+import { h, ref, reactive, computed, defineComponent } from "vue";
 import Sidebar from "./components/sidebar/index.vue";
 import Horizontal from "./components/sidebar/horizontal.vue";
 import Navbar from "./components/Navbar.vue";
@@ -11,7 +11,6 @@ import useStore from "@/store";
 const showSetting = computed(() => useStore.settingStore.getShowSettings);
 const opened = computed(() => useStore.appStore.getSidebarOpened);
 const fixedHeader = computed(() => useStore.settingStore.getFixedHeader);
-const hideHeader = computed(() => useStore.settingStore.getHideHeader);
 const layout = computed(() => useStore.appStore.getLayout);
 const hideTabs = computed(() => useStore.settingStore.getHideTabs);
 const withoutAnimation = computed(
@@ -29,18 +28,39 @@ const classObj = computed(() => {
   };
 });
 
+const layoutHeader = defineComponent({
+  render() {
+    return h(
+      "div",
+      {
+        class: { "fixed-header": fixedHeader },
+        style: [
+          hideTabs && layout.value === "horizontal"
+            ? "box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08)"
+            : "",
+        ],
+      },
+      {
+        default: () => [
+          layout.value === "vertical" || layout.value === "mix"
+            ? h(Navbar)
+            : null,
+          layout.value === "horizontal" ? h(Horizontal) : null,
+          h(Tab),
+        ],
+      }
+    );
+  },
+});
 </script>
 
 <template>
   <div :class="classObj" class="app-wrapper">
-    <sidebar />
-    <div class="main-container">
+    <sidebar v-show="layout === 'vertical'" />
+    <div :class="['main-container', layout !== 'vertical' ? 'main-hidden':'']">
       <!--Navbar-->
-      <div :class="{ 'fixed-header': fixedHeader, 'hide-header': hideHeader }" >
-        <navbar />
-        <tab />
-      </div>
-      <!-- <Horizontal/> -->
+      <layout-header />
+
       <AppMain />
     </div>
     <Setting />
@@ -93,6 +113,4 @@ const classObj = computed(() => {
 .re-screen {
   margin-top: 12px;
 }
-
-
 </style>

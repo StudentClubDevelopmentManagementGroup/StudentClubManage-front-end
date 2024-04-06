@@ -3,6 +3,20 @@ import { ref, computed } from "vue";
 import { Setting } from "@element-plus/icons-vue";
 import { onClickOutside } from "@vueuse/core";
 import Close from "@iconify-icons/ep/close";
+import { useRouter } from "vue-router";
+import useStore from "@/store";
+
+const props = defineProps({
+  buttonTop: {
+    type: Number,
+    default: 250,
+  },
+});
+
+const router = useRouter()
+
+const target = ref(null);
+const show = ref(false);
 const iconClass = computed(() => {
   return [
     "w-[22px]",
@@ -19,22 +33,16 @@ const iconClass = computed(() => {
     "dark:hover:text-[#ffffffd9]",
   ];
 });
-const props = defineProps({
-  buttonTop: {
-    type: Number,
-    default: 250,
-  },
-});
-
-const target = ref(null);
-const show = ref(false);
 
 onClickOutside(target, (event: any) => {
   if (event.clientX > target.value.offsetLeft) return;
   show.value = false;
 });
 
-const onReset = () => {};
+const onReset = async () => {
+  await useStore.userStore.logout();
+  router.replace("/login");
+};
 </script>
 
 <template>

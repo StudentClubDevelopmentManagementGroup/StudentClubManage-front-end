@@ -10,9 +10,9 @@ const service = axios.create({
   timeout: 8000 // request timeout
 })
 // // 允许携带cookie
-// service.defaults.withCredentials = true
+service.defaults.withCredentials = true
 // // 请求头信息
-// service.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
+service.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
 // // 默认使用 application/json 形式
 service.defaults.headers.post['Content-Type'] = 'application/json'
 

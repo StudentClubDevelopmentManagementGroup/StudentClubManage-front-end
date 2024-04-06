@@ -29,6 +29,22 @@ export const constantRoutes = [
                 title: "首页",
             },
         }]
+    }, {
+        path: "/personal",
+        component: Layout,
+        redirect: "/personal/index",
+        meta: {
+            hidden: true,
+            title: "个人中心",
+        },
+        children: [{
+            path: "/personal/index",
+            name: "Personal",
+            component: () => import('@/views/Personal'),
+            meta: {
+                title: "个人中心",
+            },
+        }]
     },
     {
         path: '/403',

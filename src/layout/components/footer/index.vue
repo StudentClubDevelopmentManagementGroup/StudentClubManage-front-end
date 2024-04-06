@@ -7,7 +7,7 @@ const TITLE = ref("桂林电子科技大学");
   <footer
     class="layout-footer text-[rgba(0,0,0,0.6)] dark:text-[rgba(220,220,242,0.8)]"
   >
-    Copyright © 2020-present
+    Copyright © 2024
     <a
       class="hover:text-primary"
       href="https://www.guet.edu.cn"

@@ -11,29 +11,6 @@ import {
 } from "@pureadmin/theme/dist/browser-utils";
 import Check from "@iconify-icons/ep/check";
 
-const dataTheme = computed(() => getConfig().DarkMode);
-const showSetting = computed(() => useStore.settingStore.getShowSettings);
-const opened = computed(() => useStore.appStore.getSidebarOpened);
-const fixedHeader = computed(() => useStore.settingStore.getFixedHeader);
-const hideHeader = computed(() => useStore.settingStore.getHideHeader);
-const layout = computed(() => useStore.appStore.getLayout);
-const hideTabs = computed(() => useStore.settingStore.getHideTabs);
-const layoutTheme = computed(() => useStore.appStore.getTheme);
-const withoutAnimation = computed(
-  () => useStore.appStore.getSidebarWithoutAnimation
-);
-const originalStylesheetCount = computed(
-  () => document.styleSheets.length || -1
-);
-const classObj = computed(() => {
-  return {
-    hideSidebar: !useStore.appStore.getSidebarOpened,
-    openSidebar: useStore.appStore.getSidebarOpened,
-    withoutAnimation: withoutAnimation,
-    mobile: false,
-  };
-});
-
 const themeColors = ref([
   /* 亮白色 */
   { color: "#ffffff", themeColor: "light" },
@@ -52,6 +29,13 @@ const themeColors = ref([
   /* 酸橙绿 */
   { color: "#52c41a", themeColor: "auroraGreen" },
 ]);
+
+const dataTheme = computed(() => getConfig().DarkMode);
+const showSetting = computed(() => useStore.settingStore.getShowSettings);
+const opened = computed(() => useStore.appStore.getSidebarOpened);
+const fixedHeader = computed(() => useStore.settingStore.getFixedHeader);
+const layout = computed(() => useStore.appStore.getLayout);
+const layoutTheme = computed(() => useStore.appStore.getTheme);
 
 const handleClickOutside = () => {
   useStore.appStore.closeSideBar({ withoutAnimation: false });
@@ -111,6 +95,25 @@ const setEpThemeColor = (color: string) => {
   }
 };
 
+function toggleClass(flag: boolean, clsName: string, target?: HTMLElement) {
+  const targetEl = target || document.body;
+  let { className } = targetEl;
+  className = className.replace(clsName, "").trim();
+  targetEl.className = flag ? `${className} ${clsName}` : className;
+}
+
+/** 灰色模式设置 */
+const greyChange = (value): void => {
+  const htmlEl = document.querySelector("html");
+  toggleClass(value, "html-grey", htmlEl);
+};
+
+/** 色弱模式设置 */
+const weekChange = (value): void => {
+  const htmlEl = document.querySelector("html");
+  toggleClass(value, "html-weakness", htmlEl);
+};
+
 const handleSettingChange = (value: string) => {
   useStore.settingStore.changeSetting({ key: value });
 };
@@ -118,6 +121,7 @@ const handleSettingChange = (value: string) => {
 const submitForm = (primary: string) => {};
 
 const setLayoutModel = (layout) => {
+  window.document.body.setAttribute("layout", layout);
   useStore.appStore.setLayout(layout);
 };
 </script>
@@ -178,7 +182,8 @@ const setLayoutModel = (layout) => {
       <div class="setting-item">
         <div class="setting-draw-title">界面显示</div>
         <content
-          @change="handleSettingChange('hideHeader')"
+          @greyChange = "greyChange"
+          @weekChange = "weekChange"
           @fixedHeader="handleSettingChange('fixedHeader')"
           @sidebarLogo="handleSettingChange('showLogo')"
           @hideTabs="handleSettingChange('hideTabs')"

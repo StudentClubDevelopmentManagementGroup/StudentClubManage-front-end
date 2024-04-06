@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import { computed } from "vue";
+import logo from "@/assets/logo.png";
+import useStore from "@/store";
+const props = defineProps({
+  collapse: Boolean,
+});
+const name  =  computed(() => useStore.userStore.getName);
+</script>
+
 <template>
   <div class="sidebar-logo-container" :class="{ collapses: props.collapse }">
     <transition name="sidebarLogoFade">
@@ -17,16 +27,6 @@
     </transition>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from "vue";
-import logo from "@/assets/logo.png";
-import useStore from "@/store";
-const props = defineProps({
-  collapse: Boolean,
-});
-const name  =  computed(() => useStore.userStore.getName);
-</script>
 
 <style lang="scss" scoped>
 .sidebar-logo-container {
