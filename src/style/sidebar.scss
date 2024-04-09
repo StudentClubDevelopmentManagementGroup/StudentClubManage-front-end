@@ -79,7 +79,7 @@
       width: 100% !important;
 
       + .app-main {
-        padding-top: 37px !important;
+        padding-top: 102px !important;
       }
     }
   }
@@ -552,30 +552,6 @@
     min-width: $sideBarWidth !important;
   }
 
-  /* 手机端 */
-  .mobile {
-    .fixed-header {
-      width: 100% !important;
-      transition: width var(--pure-transition-duration);
-    }
-
-    .main-container {
-      margin-left: 0 !important;
-    }
-
-    .sidebar-container {
-      width: $sideBarWidth;
-      transition: transform var(--pure-transition-duration);
-    }
-
-    &.hideSidebar {
-      .sidebar-container {
-        pointer-events: none;
-        transition-duration: 0.3s;
-        transform: translate3d(-$sideBarWidth, 0, 0);
-      }
-    }
-  }
 }
 
 body[layout="vertical"] {

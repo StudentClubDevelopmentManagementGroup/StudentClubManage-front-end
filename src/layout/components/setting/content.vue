@@ -14,7 +14,7 @@ const emit = defineEmits([
 const contentFormRef = ref(null);
 const state = reactive({
   showHeader: true,
-  fixedHeader: false,
+  fixedHeader: true,
   hideFooter: false,
   hideTabs: false,
   sidebarLogo: true,

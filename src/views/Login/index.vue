@@ -1,12 +1,10 @@
 <script setup>
 import { reactive, ref, watch, toRaw, computed } from "vue";
-import { useUserStore } from "@/store/user";
 import { usePermissionStore } from "@/store/permission";
 import { loginRules } from "./utils/rule";
 import { useRouter } from "vue-router";
 import { message } from "@/utils/message";
 import useStore from "@/store";
-import userApi from "@/api/user";
 
 import regist from "./components/regist.vue";
 import update from "./components/update.vue";
@@ -45,6 +43,7 @@ const handleLogin = async () => {
       await permissionStore.getPermissions();
       // 导航到主页
       router.replace({ path: "/" });
+      message("登陆成功", { type: "success" });
       disabled.value = false;
     } catch (error) {
       console.error(error);
@@ -52,11 +51,7 @@ const handleLogin = async () => {
       loading.value = false;
     }
   } else {
-    ElMessage({
-      message: '表单验证失败',
-      type: 'error',
-      duration: 2500
-    });
+    message("表单验证失败", { type: "error" });
   }
 };
 </script>

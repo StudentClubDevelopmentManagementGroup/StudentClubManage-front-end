@@ -208,13 +208,13 @@ onMounted(() => {
           <template #footer>
             <div id="search-button">
               <!-- 操作 -->
-              <el-button type="primary" style="margin-right: 10px" @click="handleSearch"
+              <el-button v-ripple type="primary" style="margin-right: 10px" @click="handleSearch"
                 >查询</el-button
               >
               <el-button type="success" v-if="searchStatus" @click="handleCancelSearch"
                 >取消检索</el-button
               >
-              <el-button @click="handleReset">重置</el-button>
+              <el-button v-ripple @click="handleReset">重置</el-button>
             </div>
           </template>
           <!-- 检索关键字 -->

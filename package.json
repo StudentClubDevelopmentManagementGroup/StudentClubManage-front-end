@@ -17,6 +17,7 @@
     "@pureadmin/utils": "^2.4.6",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
     "@vueuse/core": "^10.9.0",
+    "animate.css": "^4.1.1",
     "axios": "^1.6.8",
     "boxen": "^7.1.1",
     "dayjs": "^1.11.10",

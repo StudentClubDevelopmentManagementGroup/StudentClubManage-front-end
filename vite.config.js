@@ -1,6 +1,8 @@
 import { getPluginsList } from "./build/plugins";
 import { loadEnv } from "vite";
 import path from 'path'
+import { fileURLToPath, URL } from "url";
+
 import {
   root,
   warpperEnv,

@@ -7,7 +7,7 @@ import constants from "@/config";
 
 const service = axios.create({
   baseURL: constants.baseUrl, 
-  timeout: 8000 // request timeout
+  timeout: 20000 // request timeout
 })
 // // 允许携带cookie
 service.defaults.withCredentials = true

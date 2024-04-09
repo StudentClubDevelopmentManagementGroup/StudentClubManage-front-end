@@ -7,6 +7,7 @@ import AppMain from "./components/AppMain.vue";
 import Tab from "./components/tab";
 import Setting from "./components/setting";
 import useStore from "@/store";
+import backTop from "@/assets/back_top.svg?component";
 
 const showSetting = computed(() => useStore.settingStore.getShowSettings);
 const opened = computed(() => useStore.appStore.getSidebarOpened);
@@ -33,7 +34,7 @@ const layoutHeader = defineComponent({
     return h(
       "div",
       {
-        class: { "fixed-header": fixedHeader },
+        class: { "fixed-header": fixedHeader.value },
         style: [
           hideTabs && layout.value === "horizontal"
             ? "box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08)"
@@ -57,11 +58,23 @@ const layoutHeader = defineComponent({
 <template>
   <div :class="classObj" class="app-wrapper">
     <sidebar v-show="layout === 'vertical'" />
-    <div :class="['main-container', layout !== 'vertical' ? 'main-hidden':'']">
-      <!--Navbar-->
-      <layout-header />
-
-      <AppMain />
+    <div
+      :class="['main-container', layout !== 'vertical' ? 'main-hidden' : '']"
+    >
+      <div v-if="fixedHeader">
+        <layout-header />
+        <AppMain />
+      </div>
+      <el-scrollbar v-else>
+        <el-backtop
+          title="回到顶部"
+          target=".main-container .el-scrollbar__wrap"
+        >
+          <backTop />
+        </el-backtop>
+        <layout-header />
+        <AppMain />
+      </el-scrollbar>
     </div>
     <Setting />
   </div>

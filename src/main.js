@@ -12,9 +12,12 @@ import "./style/reset.scss";
 import "./style/index.scss";
 import "./style/tailwind.css";
 import 'element-plus/dist/index.css'
-
+import 'animate.css/animate.min.css'
 
 const app = createApp(App)
+
+import { Ripple } from "@/directives/ripple"
+app.directive("ripple", Ripple);
 
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'

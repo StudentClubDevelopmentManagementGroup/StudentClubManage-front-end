@@ -217,7 +217,7 @@ export const asyncRoutes = [
         component: Layout,
         redirect: "/teacher/base",
         meta: {
-            icon: "ri:account-box-fill",
+            icon: "ri:file-settings-fill",
             title: "管理模块",
         },
         children: [{
