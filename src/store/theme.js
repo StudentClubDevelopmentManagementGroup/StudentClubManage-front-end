@@ -10,6 +10,7 @@ export const useThemeStore = defineStore('theme', () => {
     });
 
     const getThemeColor = computed(() => state.value.themeColor);
+    
     const fill = computed(() => {
         if (state.value.theme === "light") {
             return "#409eff";

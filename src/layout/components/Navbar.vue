@@ -5,6 +5,7 @@ import { useFullscreen } from "@vueuse/core";
 import Breadcrumb from "@/components/Breadcrumb/index.vue";
 import Search from "@/components/Search/index.vue";
 import avatar from "@/assets/avatar-default.jpg";
+import { message } from "@/utils/message";
 import useStore from "@/store";
 import Full from "@iconify-icons/ri/fullscreen-fill";
 import ExitFull from "@iconify-icons/ri/fullscreen-exit-fill";
@@ -36,8 +37,15 @@ const toggleSideBar = () => {
 };
 
 const logout = async () => {
-  await useStore.userStore.logout();
-  router.replace("/login");
+  await useStore.userStore
+    .logout()
+    .then(() => {
+      message("退出登陆成功", { type: "success" });
+      router.replace("/login");
+    })
+    .catch((error) => {
+      console.error(error.message);
+    });
 };
 
 watch(

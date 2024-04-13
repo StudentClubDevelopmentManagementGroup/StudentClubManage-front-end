@@ -6,6 +6,8 @@ import ElementPlus from 'element-plus'
 import 'dayjs/locale/zh-cn'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
+import Table from "@pureadmin/table";
+
 // 引入重置样式
 import "./style/reset.scss";
 // 导入公共样式
@@ -50,4 +52,4 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 import axios from 'axios'
 app.config.globalProperties.$axios = axios
 
-app.use(router).use(ElementPlus, { zhCn }).mount('#app')
+app.use(router).use(Table).use(ElementPlus, { zhCn }).mount('#app')

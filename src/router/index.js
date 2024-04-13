@@ -6,7 +6,7 @@ export const constantRoutes = [
     {
         path: '/login',
         name: 'Login',
-        component: () => import('@/views/Login'),
+        component: () => import('@/views/login'),
         meta: {
             hidden: true,
             hiddenTab: true,
@@ -23,7 +23,7 @@ export const constantRoutes = [
         children: [{
             path: "/welcome",
             name: "Welcome",
-            component: () => import('@/views/Welcome'),
+            component: () => import('@/views/welcome'),
             meta: {
                 icon: "ri:bar-chart-box-fill",
                 title: "首页",
@@ -40,7 +40,7 @@ export const constantRoutes = [
         children: [{
             path: "/personal/index",
             name: "Personal",
-            component: () => import('@/views/Personal'),
+            component: () => import('@/views/personal'),
             meta: {
                 title: "个人中心",
             },
@@ -55,14 +55,14 @@ export const constantRoutes = [
         }
     }, {
         path: '/404',
-        component: () => import('../views/Error/404.vue'),
+        component: () => import('../views/error/404.vue'),
         meta: {
             hidden: true,
             hiddenTab: true
         }
     }, {
         path: '/500',
-        component: () => import('../views/Error/500.vue'),
+        component: () => import('../views/error/500.vue'),
         meta: {
             hidden: true,
             hiddenTab: true
@@ -70,7 +70,7 @@ export const constantRoutes = [
     },
     {
         path: '/:catchAll(.*)',
-        component: () => import('../views/Error/404.vue'),
+        component: () => import('../views/error/404.vue'),
         meta: {
             hidden: true,
             hiddenTab: true,
@@ -90,29 +90,29 @@ export const asyncRoutes = [
         },
         children: [{
             path: "/run/signin",
-            name: "Signin",
-            component: () => import('@/views/Sign-in'),
+            name: "SignIn",
+            component: () => import('@/views/sign-in'),
             meta: {
                 title: "签到详情",
             },
         }, {
             path: "/run/notice",
             name: "Notice",
-            component: () => import('@/views/Notice'),
+            component: () => import('@/views/notice'),
             meta: {
                 title: "公告发布",
             },
         }, {
             path: "/run/seat",
             name: "Seat",
-            component: () => import('@/views/Seat'),
+            component: () => import('@/views/seat'),
             meta: {
                 title: "座位表设置",
             },
         }, {
             path: "/run/duty",
             name: "Duty",
-            component: () => import('@/views/Duty'),
+            component: () => import('@/views/duty'),
             meta: {
                 title: "值日表设置",
             },
@@ -129,14 +129,14 @@ export const asyncRoutes = [
         children: [{
             path: "/develop/activity",
             name: "Activity",
-            component: () => import('@/views/Activity'),
+            component: () => import('@/views/activity'),
             meta: {
                 title: "活动/比赛发布",
             },
         }, {
             path: "/develop/report",
             name: "Report",
-            component: () => import('@/views/Report'),
+            component: () => import('@/views/report'),
             meta: {
                 title: "年终汇报",
             },
@@ -151,8 +151,8 @@ export const asyncRoutes = [
         },
         children: [{
             path: "/user/manage",
-            name: "Manage",
-            component: () => import('@/views/User'),
+            name: "User",
+            component: () => import('@/views/user'),
             meta: {
                 icon: "ri:file-user-fill",
                 title: "基地人员管理",
@@ -169,7 +169,7 @@ export const asyncRoutes = [
         children: [{
             path: "/introduce/index",
             name: "Introduce",
-            component: () => import('@/views/Introduce'),
+            component: () => import('@/views/introduce'),
             meta: {
                 icon: "ri:file-text-fill",
                 title: "简介设置",
@@ -222,27 +222,27 @@ export const asyncRoutes = [
         },
         children: [{
             path: "/teacher/base",
-            name: "TeacherBase",
-            component: () => import('@/views/admin-management/base-management'),
+            name: "BaseManagement",
+            component: () => import('@/views/admin-management/base'),
             meta: { title: '基地管理' }
         }, {
             path: "/teacher/department",
-            name: "teacherDepartment",
+            name: "DepartmentManagement",
             component: () => import('@/views/admin-management/department-management'),
             meta: { title: '院系管理' }
         }, {
             path: "/teacher/user",
-            name: "teacherUser",
+            name: "UserManagement",
             component: () => import('@/views/admin-management/user-management'),
             meta: { title: '人员管理' }
         }, {
             path: "/teacher/person",
-            name: "teacherPerson",
+            name: "PersonInformation",
             component: () => import('@/views/admin-management/person-information'),
             meta: { title: '个人信息' }
         }, {
             path: "/teacher/operation",
-            name: "teacherOperation",
+            name: "OperationLog",
             component: () => import('@/views/admin-management/operation-log'),
             meta: { title: '操作日志' }
         }]
