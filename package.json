@@ -13,6 +13,8 @@
     "@iconify-icons/ep": "^1.2.12",
     "@iconify-icons/ri": "^1.2.10",
     "@iconify/vue": "^4.1.1",
+    "@logicflow/core": "^1.2.26",
+    "@logicflow/extension": "^1.2.26",
     "@pureadmin/table": "^3.1.2",
     "@pureadmin/theme": "^3.2.0",
     "@pureadmin/utils": "^2.4.6",
@@ -41,6 +43,7 @@
     "vite-plugin-router-warn": "^1.0.0",
     "vite-svg-loader": "^5.1.0",
     "vue": "^3.4.19",
+    "vue-json-pretty": "^2.4.0",
     "vue-router": "^4.3.0",
     "vue-tippy": "^6.4.1",
     "wangeditor": "^4.7.15"
