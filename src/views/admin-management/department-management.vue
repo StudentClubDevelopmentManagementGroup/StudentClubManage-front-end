@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { reactive, ref, computed, onMounted } from "vue";
 import { CirclePlus } from "@element-plus/icons-vue";
 import { addDepartmentRules, modifyDepartmentRules } from "./utils/rule";
@@ -11,6 +11,35 @@ import {
   modifyDepartment,
 } from "@/api/admin-management";
 // TODO: const multipleSelection = ref([]);
+
+const columns = [
+  {
+    label: "勾选列",
+    type: "selection",
+    fixed: "left",
+    reserveSelection: true,
+  },
+  {
+    label: "学院序号",
+    prop: "id",
+    minWidth: 90,
+  },
+  {
+    label: "学院全程",
+    prop: "fullName",
+    minWidth: 100,
+  },
+  {
+    label: "学院简称",
+    prop: "abbreviation",
+    minWidth: 140,
+  },
+  {
+    label: "操作",
+    fixed: "right",
+    slot: "operation",
+  },
+];
 
 // 测试表格数据
 const tableData = ref(baseData);
@@ -193,45 +222,26 @@ onMounted(() => {
         </template>
         <!-- 数据表格 -->
         <div id="table">
-          <el-table
-            ref="TableRef"
-            :data="computeTableData"
+          <pure-table
+            row-key="id"
+            align-whole="center"
             table-layout="auto"
+            :data="computeTableData"
+            :columns="columns"
             border
-            size="large"
           >
-            <el-table-column type="selection" align="center" />
-            <el-table-column property="id" label="学院序号" align="center" />
-            <el-table-column
-              property="fullName"
-              label="学院全称"
-              align="center"
-            />
-            <el-table-column
-              property="abbreviation"
-              label="学院简称"
-              align="center"
-            />
-            <!-- 操作 -->
-            <el-table-column align="right">
-              <template #default="scope">
-                <div>
-                  <el-button
-                    type="danger"
-                    text
-                    @click="handleClickBtn(scope.row)"
-                    >变更为删除状态</el-button
-                  >
-                  <el-button
-                    type="success"
-                    text
-                    @click="handleClickBtn2(scope.row)"
-                    >编辑</el-button
-                  >
-                </div>
-              </template>
-            </el-table-column>
-          </el-table>
+            <template #operation="{ row }"
+              >
+              <div>
+                <el-button type="danger" text @click="handleClickBtn(row)"
+                  >变更为删除状态</el-button
+                >
+                <el-button type="success" text @click="handleClickBtn2(row)"
+                  >编辑</el-button
+                >
+              </div>
+            </template>
+          </pure-table>
         </div>
         <!-- 页签 -->
         <template #footer>

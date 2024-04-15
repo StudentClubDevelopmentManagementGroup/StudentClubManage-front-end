@@ -5,8 +5,10 @@ import useStore from "@/store";
 import Down from "@iconify-icons/ri/arrow-down-s-line";
 const router = useRouter();
 
+const hideTabs = computed(() => useStore.settingStore.getHideTabs);
 const tabsOption = computed(() => useStore.tabStore.getTabsOption);
 const currentIndex = computed(() => useStore.tabStore.getCurrentIndex);
+
 const removeTab = (tabName: string) => {
   if (tabName === "/welcome") {
     return;
@@ -33,6 +35,7 @@ const clickTab = (tabName: { paneName: string }) => {
 
 <template>
   <el-tabs
+    v-if="!hideTabs"
     id="Tabs"
     v-model="currentIndex"
     type="card"
@@ -60,6 +63,7 @@ const clickTab = (tabName: { paneName: string }) => {
 .el-tabs {
   background: #fff;
   box-shadow: 0 -1px 1px -1px #888;
+  position: relative;
 }
 .el-tabs__header {
   margin-bottom: 0px !important;

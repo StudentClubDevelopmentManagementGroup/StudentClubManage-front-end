@@ -8,7 +8,6 @@ export const useSettingStore = defineStore("setting", () => {
     fixedHeader: getConfig().FixedHeader,
     hideTabs: getConfig().HideTabs,
     hideFooter: getConfig().HideFooter,
-    hideHeader: getConfig().HideHeader,
     showLogo: getConfig().ShowLogo,
     showSettings: true,
   });
@@ -17,7 +16,6 @@ export const useSettingStore = defineStore("setting", () => {
   const getFixedHeader = computed(() => state.value.fixedHeader);
   const getHideTabs = computed(() => state.value.hideTabs);
   const getHideFooter = computed(() => state.value.hideFooter);
-  const getHideHeader = computed(() => state.value.hideHeader);
   const getShowLogo = computed(() => state.value.showLogo);
 
   const changeSetting = ({ key, value }) => {
@@ -34,7 +32,6 @@ export const useSettingStore = defineStore("setting", () => {
     getFixedHeader,
     getHideTabs,
     getHideFooter,
-    getHideHeader,
     getShowLogo,
     changeSetting,
     getShowSettings,

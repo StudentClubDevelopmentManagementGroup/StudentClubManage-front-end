@@ -52,3 +52,11 @@
 .horizontal-collapse-transition {
   transition: var(--pure-transition-duration) all !important;
 }
+
+.login-enter-active {
+  transition: backInUp 0.4s;
+}
+
+.login-leave-active {
+  transition: backOutUp 0.3s;
+}

@@ -1,7 +1,7 @@
 <script setup>
 import { reactive } from "vue";
 import { registRules } from "../utils/rule";
-import { useUserStore } from "@/store/user";
+import useStore from "@/store";
 
 import Lock from "@iconify-icons/ri/lock-fill";
 import Mail from "@iconify-icons/ri/mail-fill";
@@ -16,7 +16,7 @@ const registForm = reactive({
   pwd: "",
 });
 const onBack = () => {
-  useUserStore().setCurrentPage(0);
+  useStore.userStore.setCurrentPage(0);
 };
 </script>
 

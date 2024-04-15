@@ -6,15 +6,20 @@ import ElementPlus from 'element-plus'
 import 'dayjs/locale/zh-cn'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
+import Table from "@pureadmin/table";
+
 // 引入重置样式
 import "./style/reset.scss";
 // 导入公共样式
 import "./style/index.scss";
 import "./style/tailwind.css";
 import 'element-plus/dist/index.css'
-
+import 'animate.css/animate.min.css'
 
 const app = createApp(App)
+
+import { Ripple } from "@/directives/ripple"
+app.directive("ripple", Ripple);
 
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
@@ -47,4 +52,4 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 import axios from 'axios'
 app.config.globalProperties.$axios = axios
 
-app.use(router).use(ElementPlus, { zhCn }).mount('#app')
+app.use(router).use(Table).use(ElementPlus, { zhCn }).mount('#app')

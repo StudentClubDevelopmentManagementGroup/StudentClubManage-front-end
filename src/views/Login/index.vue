@@ -1,12 +1,10 @@
 <script setup>
 import { reactive, ref, watch, toRaw, computed } from "vue";
-import { useUserStore } from "@/store/user";
 import { usePermissionStore } from "@/store/permission";
 import { loginRules } from "./utils/rule";
 import { useRouter } from "vue-router";
 import { message } from "@/utils/message";
 import useStore from "@/store";
-import userApi from "@/api/user";
 
 import regist from "./components/regist.vue";
 import update from "./components/update.vue";
@@ -34,30 +32,27 @@ const currentPage = computed(() => {
 });
 
 const handleLogin = async () => {
-  const valid = await loginFormRef.value.validate();
-  if (valid) {
-    loading.value = true;
-    try {
-      await useStore.userStore.login(loginForm);
-      disabled.value = true;
-      // 获取权限路由和权限信息
-      await permissionStore.getPermissionRoutes();
-      await permissionStore.getPermissions();
-      // 导航到主页
-      router.replace({ path: "/" });
-      disabled.value = false;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      loading.value = false;
+  if (!loginForm) return;
+  await loginFormRef.value.validate((valid, fields) => {
+    if (valid) {
+      loading.value = true;
+      useStore.userStore
+        .login(loginForm)
+        .then(() => {
+          disabled.value = true;
+          // 获取权限路由和权限信息
+          permissionStore.getPermissionRoutes();
+          permissionStore.getPermissions();
+          // 导航到主页
+          router.replace({ path: "/" });
+          message("登陆成功", { type: "success" });
+          disabled.value = false;
+        })
+        .finally(() => (loading.value = false));
+    } else {
+      message("表单验证失败", { type: "error" });
     }
-  } else {
-    ElMessage({
-      message: '表单验证失败',
-      type: 'error',
-      duration: 2500
-    });
-  }
+  });
 };
 </script>
 

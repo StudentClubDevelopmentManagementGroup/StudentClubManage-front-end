@@ -35,7 +35,8 @@
     }
   }
 
-  .set-icon {
+  .nitoce,
+  .fullscreen-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -78,7 +79,7 @@
       width: 100% !important;
 
       + .app-main {
-        padding-top: 37px !important;
+        padding-top: 102px !important;
       }
     }
   }
@@ -458,16 +459,12 @@
       min-width: 340px;
       color: $subMenuActiveText;
 
-      /* 搜索 */
-      .search-container,
-      /* 告警 */
-      .dropdown-badge,
-      /* 国际化 */
-      .globalization,
+
+      .fullscreen-icon,
       /* 用户名 */
       .el-dropdown-link,
-      /* 设置 */
-      .set-icon {
+      /* 消息 */
+      .nitoce {
         &:hover {
           background: $menuHover;
         }
@@ -501,8 +498,8 @@
         }
 
         img {
-          width: 22px;
-          height: 22px;
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
         }
       }
@@ -555,30 +552,6 @@
     min-width: $sideBarWidth !important;
   }
 
-  /* 手机端 */
-  .mobile {
-    .fixed-header {
-      width: 100% !important;
-      transition: width var(--pure-transition-duration);
-    }
-
-    .main-container {
-      margin-left: 0 !important;
-    }
-
-    .sidebar-container {
-      width: $sideBarWidth;
-      transition: transform var(--pure-transition-duration);
-    }
-
-    &.hideSidebar {
-      .sidebar-container {
-        pointer-events: none;
-        transition-duration: 0.3s;
-        transform: translate3d(-$sideBarWidth, 0, 0);
-      }
-    }
-  }
 }
 
 body[layout="vertical"] {
@@ -640,16 +613,11 @@ body[layout="vertical"] {
     }
   }
 
-  /* 搜索 */
-  .search-container,
-  /* 告警 */
-  .dropdown-badge,
-  /* 国际化 */
-  .globalization,
+  .fullscreen-icon,
   /* 用户名 */
   .el-dropdown-link,
   /* 设置 */
-  .set-icon {
+  .nitoce {
     &:hover {
       background: #f6f6f6;
     }

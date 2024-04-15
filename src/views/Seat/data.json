@@ -1,0 +1,17 @@
+{
+  "nodes": [
+    {
+      "id": "dacda6b6-48d3-4dff-911d-287704eb23d8",
+      "type": "rect",
+      "x": 350,
+      "y": 170,
+      "properties": {},
+      "baseType": "node",
+      "text": {
+        "x": 350,
+        "y": 170,
+        "value": "基础节点"
+      }
+    }
+  ]
+}

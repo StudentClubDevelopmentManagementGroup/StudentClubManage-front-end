@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "jsx": "preserve",
+        "lib": [
+            "ESNext",
+            "DOM"
+        ],
+        "baseUrl": "./",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ]
+        },
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "src/**/*.vue",
+        "types/*.d.ts",
+        "vite.config.ts"
+    ],
+    "exclude": [
+        "dist",
+        "node_modules"
+    ]
+}

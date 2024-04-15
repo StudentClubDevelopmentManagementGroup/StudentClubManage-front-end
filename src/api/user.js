@@ -5,7 +5,7 @@ export default {
     return request({
       url: '/user/login/password',
       method: 'post',
-      params: { user_id, pwd }
+      data: { user_id, pwd }
     })
   },
   regist(req) {

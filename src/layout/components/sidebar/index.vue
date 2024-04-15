@@ -11,9 +11,10 @@ import { getConfig } from "@/config";
 
 const route = useRoute();
 
+const loading = computed(() => (routes.value.length === 0 ? true : false));
 const isCollapse = computed(() => !useStore.appStore.getSidebarOpened);
 const showLogo = computed(() => useStore.settingStore.getShowLogo);
-const routes = computed(() => useStore.permissionStore.accessRoutes);
+const routes = computed(() => useStore.permissionStore.accessRoutes.filter(route => !route.meta.hidden));
 const activeMenu = computed(() => useStore.tabStore.getCurrentIndex);
 const tooltipEffect = computed(() => {
   getConfig().TooltipEffect;
@@ -21,17 +22,9 @@ const tooltipEffect = computed(() => {
 
 onMounted(() => {
   const routePath = route.path;
-  console.log(routePath);
   useStore.tabStore.setCurrentIndex(routePath);
 });
 
-const loading = computed(() => (routes.value.length === 0 ? true : false));
-
-const resolvePath = (routePath) => {
-  if (isUrl(routePath)) {
-    return routePath;
-  }
-};
 
 const toggleSideBar = () => {
   useStore.appStore.toggle_sidebar();

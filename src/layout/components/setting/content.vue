@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, toRefs, defineEmits } from "vue";
+import { ref, reactive, toRefs } from "vue";
 
 const emit = defineEmits([
   "change",
@@ -7,20 +7,20 @@ const emit = defineEmits([
   "sidebarLogo",
   "hideTabs",
   "hideFooter",
+  "weekChange",
+  "greyChange"
 ]);
 
 const contentFormRef = ref(null);
 const state = reactive({
   showHeader: true,
-  fixedHeader: false,
+  fixedHeader: true,
   hideFooter: false,
   hideTabs: false,
   sidebarLogo: true,
+  grey:false,
+  week:false,
 });
-
-const handleChange = () => {
-  emit("change");
-};
 
 const handleFixedChange = () => {
   emit("fixedHeader");
@@ -37,6 +37,15 @@ const handleTabsChange = () => {
 const handleFooterChange = () => {
   emit("hideFooter");
 };
+ 
+const handleGreyChange = () =>{
+  emit("greyChange",state.grey);
+}
+
+const handleWeekChange = () =>{
+  emit("weekChange",state.week);
+}
+
 </script>
 
 <template>
@@ -46,8 +55,13 @@ const handleFooterChange = () => {
     class="content-form"
     label-width="150px"
   >
-    <el-form-item label="隐藏顶栏" prop="primary">
-      <el-switch v-model="state.showHeader" @change="handleChange"> </el-switch>
+    <el-form-item label="灰色模式" prop="primary">
+      <el-switch v-model="state.grey" @change="handleGreyChange">
+      </el-switch>
+    </el-form-item>
+    <el-form-item label="色弱模式" prop="primary">
+      <el-switch v-model="state.week" @change="handleWeekChange">
+      </el-switch>
     </el-form-item>
     <el-form-item label="固定顶栏" prop="primary">
       <el-switch v-model="state.fixedHeader" @change="handleFixedChange">

@@ -4,6 +4,7 @@ import { registRules } from "../utils/rule";
 import { useRouter, useRoute } from "vue-router";
 import useStore from "@/store";
 import departmentApi from "@/api/department";
+import userApi from "@/api/user";
 
 import Lock from "@iconify-icons/ri/lock-fill";
 import User from "@iconify-icons/ri/user-3-fill";
@@ -16,11 +17,12 @@ const route = useRoute();
 const router = useRouter();
 
 const checked = ref(false);
+const registFormRef = ref();
 const loading = ref(false);
 const registForm = reactive({
   name: "",
-  userId: "",
-  departmentId: "",
+  user_id: "",
+  department_id: "",
   mail: "",
   code: "",
   pwd: "",
@@ -28,8 +30,8 @@ const registForm = reactive({
 
 const department = ref({});
 
-const getDepartment = () => {
-  departmentApi
+const getDepartment = async () => {
+  await departmentApi
     .getAllDepartment()
     .then((data) => {
       department.value = data;
@@ -39,13 +41,27 @@ const getDepartment = () => {
       console.log(e.message);
     });
 };
-const handleRegist = () => {
-  P;
+const handleRegist = async () => {
+  loading.value = true;
+  try {
+    if (!registFormRef.value) throw new Error("Form reference is undefined");
+
+    const valid = await registFormRef.value.validate();
+    if (!valid) throw new Error("Validation failed");
+
+    const data = await userApi.regist(registForm);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
 };
+
 const onBack = () => {
   useStore.userStore.setCurrentPage(0);
 };
-getDepartment()
+getDepartment();
 </script>
 
 <template>
