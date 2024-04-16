@@ -1,58 +1,58 @@
 {
-  "id": "2491438",
-  "name": "liu'c'tu",
+  "id": "4508927",
+  "name": "demo",
   "font_family": "iconfont",
   "css_prefix_text": "icon-",
   "description": "",
   "glyphs": [
     {
-      "icon_id": "755619",
-      "name": "自适应图标",
-      "font_class": "full-screen-hs",
-      "unicode": "e656",
-      "unicode_decimal": 58966
-    },
-    {
-      "icon_id": "14445801",
-      "name": "查看",
-      "font_class": "watch-hs",
-      "unicode": "e766",
-      "unicode_decimal": 59238
-    },
-    {
-      "icon_id": "9712640",
+      "icon_id": "1870124",
       "name": "下载",
-      "font_class": "download-hs",
-      "unicode": "e6af",
-      "unicode_decimal": 59055
+      "font_class": "xiazai",
+      "unicode": "e62d",
+      "unicode_decimal": 58925
     },
     {
-      "icon_id": "1029099",
+      "icon_id": "1490627",
+      "name": "定位",
+      "font_class": "dingwei",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    },
+    {
+      "icon_id": "5387606",
+      "name": "全屏",
+      "font_class": "quanping",
+      "unicode": "eb11",
+      "unicode_decimal": 60177
+    },
+    {
+      "icon_id": "6048393",
+      "name": "查看数据",
+      "font_class": "chakanshuju",
+      "unicode": "e647",
+      "unicode_decimal": 58951
+    },
+    {
+      "icon_id": "6056178",
+      "name": "预览",
+      "font_class": "yulan",
+      "unicode": "e679",
+      "unicode_decimal": 59001
+    },
+    {
+      "icon_id": "6248386",
       "name": "放大",
-      "font_class": "enlarge-hs",
-      "unicode": "e765",
-      "unicode_decimal": 59237
+      "font_class": "fangda",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
     },
     {
-      "icon_id": "20017362",
-      "name": "上一步",
-      "font_class": "previous-hs",
-      "unicode": "e84c",
-      "unicode_decimal": 59468
-    },
-    {
-      "icon_id": "1010015",
+      "icon_id": "6248387",
       "name": "缩小",
-      "font_class": "zoom-out-hs",
-      "unicode": "e744",
-      "unicode_decimal": 59204
-    },
-    {
-      "icon_id": "20017363",
-      "name": "下一步",
-      "font_class": "next-step-hs",
-      "unicode": "e84b",
-      "unicode_decimal": 59467
+      "font_class": "suoxiao",
+      "unicode": "e610",
+      "unicode_decimal": 58896
     }
   ]
 }

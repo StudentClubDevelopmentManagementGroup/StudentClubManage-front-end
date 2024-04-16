@@ -2,28 +2,22 @@
 import demoData from "./data.json";
 import "@logicflow/core/dist/style/index.css";
 import "@logicflow/extension/lib/style/index.css";
-import { toNodeData } from "@/components/FlowChart/src/adpter";
+import { toMemberNodeData } from "@/components/FlowChart/src/adpter";
 import LogicFlow from "@logicflow/core";
 import { ref, unref, onMounted } from "vue";
 import {
-  nodeList,
-  SeatModel,
-  SeatView,
+  MemberModel,
+  MemberView
 } from "@/components/FlowChart/src/config";
 import { Snapshot, Menu,MiniMap } from "@logicflow/extension";
 import {
   Control,
-  NodePanel,
   DataDialog,
-  Property,
 } from "@/components/FlowChart";
-
 
 const lf = ref(null);
 const graphData = ref(null);
 const dataVisible = ref<boolean>(false);
-const dialogVisible = ref<boolean>(false);
-const clickNode = ref(null);
 const config = ref({
   grid: true,
   background: {
@@ -33,15 +27,12 @@ const config = ref({
   keyboard: {
     enabled: true,
   },
+  isSilentMode: true,
 });
 
 function initLf() {
   // 画布配置
   LogicFlow.use(Snapshot);
-  // 使用bpmn插件，引入bpmn元素
-  LogicFlow.use(MiniMap);
-  // 启动右键菜单
-  LogicFlow.use(Menu);
   const domLf = new LogicFlow({
     ...unref(config),
     container: document.querySelector("#LF-view"),
@@ -49,55 +40,18 @@ function initLf() {
   lf.value = domLf;
   lf.value.register({
     type: "seat",
-    view: SeatView,
-    model: SeatModel,
+    view: MemberView,
+    model: MemberModel,
   });
   onRender();
 }
 
 function onRender() {
-  //重写Lf右键菜单
-  lf.value.setMenuConfig({
-    nodeMenu: [
-      {
-        text: "删除",
-        callback(node) {
-          lf.value.deleteNode(node.id);
-        },
-      },
-      {
-        text: "编辑文本",
-        callback: function (node) {
-          lf.value.graphModel.editText(node.id);
-        },
-      },
-    ],
-    edgeMenu: false,
-    graphMenu: [],
-  });
-  const lFData = toNodeData(demoData);
+
+  const lFData = toMemberNodeData(demoData);
 
   lf.value.render(lFData);
-
-  //监听点击事件
-  lf.value.on("node:click", ({ data }) => {
-    console.log("node:click", data);
-    clickNode.value = data;
-    dialogVisible.value = true;
-  });
-  //监听拖拽结束
-  lf.value.on("node:drop", ({ data }) => {
-    console.log("node:drop", data);
-  });
-  //监听拖拽增加节点事件
-  lf.value.on("node:dnd-add", ({ data }) => {
-    console.log("node:dnd-add", data);
-  });
 }
-
-const closeDialog = () => {
-  dialogVisible.value = false;
-};
 
 function catData() {
   graphData.value = unref(lf).getGraphData();
@@ -120,25 +74,8 @@ onMounted(() => {
         :catTurboData="false"
         @catData="catData"
       />
-      <!-- 节点面板 -->
-      <NodePanel v-if="lf" :lf="lf" :nodeList="nodeList" />
       <!-- 画布 -->
       <div id="LF-view" />
-
-      <el-drawer
-        title="设置座位属性"
-        v-model="dialogVisible"
-        direction="rtl"
-        size="500px"
-        :before-close="closeDialog"
-      >
-        <Property
-          v-if="dialogVisible"
-          :nodeData="clickNode"
-          :lf="lf"
-          @onClose="closeDialog"
-        ></Property>
-      </el-drawer>
 
       <!-- 数据查看面板 -->
       <el-dialog

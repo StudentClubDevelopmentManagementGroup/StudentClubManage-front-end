@@ -24,3 +24,34 @@
 .html-weakness {
   filter: invert(80%);
 }
+
+.box {
+  height: 60px;
+  border: 2px solid $menuActiveBefore;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+.box-title {
+  display: flex;
+  margin: 0;
+  font-size: 12px;
+  align-items: center;
+}
+
+.box-title > span {
+  width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.box-content > span {
+  font-size: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

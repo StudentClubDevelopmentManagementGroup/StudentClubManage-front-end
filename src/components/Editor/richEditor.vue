@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import E from "wangeditor";
-import { useProps, useEmits } from "@vueuse/core";
 
 const props = defineProps({
   modelValue: {
@@ -12,7 +11,7 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue"]);
 
-const reditor = ref(null); // 富文本引用
+const reditor = ref(null);
 let editor: E;
 
 onMounted(() => {

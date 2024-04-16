@@ -15,18 +15,18 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   lf: null,
-  nodeList: null
+  nodeList: null,
 });
 
 const properties = ref({
   a: "efrwe",
-  b: "wewe"
+  b: "wewe",
 });
 
-const nodeDragNode = item => {
+const nodeDragNode = (item) => {
   props.lf.dnd.startDrag({
     type: item.type,
-    properties: unref(properties)
+    properties: unref(properties),
   });
 };
 </script>
@@ -41,17 +41,14 @@ const nodeDragNode = item => {
       @mousedown="nodeDragNode(item)"
     >
       <div class="node-item-icon" :class="item.class">
-        <div
-          v-if="item.type === 'user' || item.type === 'time'"
-          class="shape"
-        />
+        <div class="shape" />
       </div>
       <span class="node-label">{{ item.text }}</span>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .node-panel {
   position: absolute;
   top: 10px;
@@ -79,7 +76,6 @@ const nodeDragNode = item => {
 }
 
 .node-rect {
-  border: 2px solid #187DFF;
+  border: 2px solid $menuActiveBefore;
 }
-
 </style>
