@@ -67,6 +67,7 @@ const nodeDragNode = (item) => {
   justify-content: center;
   height: 38px;
   background-size: cover;
+  cursor: grab;
 }
 
 .node-label {

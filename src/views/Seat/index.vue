@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import demoData from "./data.json";
 import "@logicflow/core/dist/style/index.css";
 import "@logicflow/extension/lib/style/index.css";
-import { toNodeData } from "@/components/FlowChart/src/adpter";
+import { toNodeData, toSeatData } from "@/components/FlowChart/src/adpter";
 import LogicFlow from "@logicflow/core";
 import { ref, unref, onMounted } from "vue";
+import { EditPen, Plus, Download, Star } from "@element-plus/icons-vue";
+
 import {
   nodeList,
   SeatModel,
   SeatView,
 } from "@/components/FlowChart/src/config";
-import { Snapshot, Menu,MiniMap } from "@logicflow/extension";
+import { Snapshot, Menu, MiniMap } from "@logicflow/extension";
+import seatApi from "@/api/seat";
+import { message } from "@/utils/message";
 import {
   Control,
   NodePanel,
@@ -18,12 +21,12 @@ import {
   Property,
 } from "@/components/FlowChart";
 
-
+const club_id = ref(1);
 const lf = ref(null);
 const graphData = ref(null);
 const dataVisible = ref<boolean>(false);
 const dialogVisible = ref<boolean>(false);
-const clickNode = ref(null);
+const clickNode = ref({});
 const config = ref({
   grid: true,
   background: {
@@ -55,7 +58,7 @@ function initLf() {
   onRender();
 }
 
-function onRender() {
+async function onRender() {
   //重写Lf右键菜单
   lf.value.setMenuConfig({
     nodeMenu: [
@@ -75,7 +78,10 @@ function onRender() {
     edgeMenu: false,
     graphMenu: [],
   });
-  const lFData = toNodeData(demoData);
+
+  const saetData = await seatApi.getAllSeat(club_id.value);
+
+  const lFData = toNodeData(saetData);
 
   lf.value.render(lFData);
 
@@ -92,17 +98,60 @@ function onRender() {
   //监听拖拽增加节点事件
   lf.value.on("node:dnd-add", ({ data }) => {
     console.log("node:dnd-add", data);
+    const { x, y } = data;
+    seatApi
+      .addSeat({
+        club_id: club_id.value,
+        seat_list: [
+          {
+            x,
+            y,
+            description: "",
+          },
+        ],
+      })
+      .then(() => {
+        message("添加成功", { type: "success" });
+      })
+      .catch(() => {
+        message("添加失败", { type: "error" });
+        lf.value.undo();
+      });
+  });
+  lf.value.on("node:delete", ({ data }) => {
+    seatApi
+      .delSeat({ club_id: club_id.value, seat_id: data.id })
+      .then(() => {
+        message("删除成功", { type: "success" });
+      })
+      .catch(() => {
+        message("删除失败", { type: "error" });
+        lf.value.undo();
+      });
   });
 }
 
 const closeDialog = () => {
   dialogVisible.value = false;
+  clickNode.value = {};
 };
 
 function catData() {
   graphData.value = unref(lf).getGraphData();
   dataVisible.value = true;
 }
+
+const saveAllSeat = () => {
+  const seat_list = toSeatData(lf.value.getGraphData().nodes);
+  seatApi
+    .updateSeatInfo({ club_id: club_id.value, seat_list })
+    .then(() => {
+      message("保存成功", { type: "success" });
+    })
+    .catch(() => {
+      message("保存失败", { type: "error" });
+    });
+};
 
 onMounted(() => {
   initLf();
@@ -111,6 +160,24 @@ onMounted(() => {
 
 <template>
   <el-card shadow="never">
+    <template #header>
+      <div class="flex justify-between">
+        <div>
+          <el-button v-ripple type="primary" :icon="Plus">添加座位</el-button>
+          <el-button v-ripple type="primary" :icon="EditPen"
+            >编辑座位</el-button
+          >
+        </div>
+        <div>
+          <el-button v-ripple type="primary" :icon="Star" @click="saveAllSeat"
+            >保存座位表</el-button
+          >
+          <el-button v-ripple type="primary" :icon="Download" plain>
+            导出
+          </el-button>
+        </div>
+      </div>
+    </template>
     <div class="logic-flow-view">
       <!-- 辅助工具栏 -->
       <Control
@@ -129,7 +196,7 @@ onMounted(() => {
         title="设置座位属性"
         v-model="dialogVisible"
         direction="rtl"
-        size="500px"
+        size="450px"
         :before-close="closeDialog"
       >
         <Property
@@ -208,5 +275,4 @@ onMounted(() => {
   height: 85vh;
   overflow: auto;
 }
-
 </style>

@@ -1,4 +1,4 @@
-function convertDateToMemberNode(data) {
+function convertDataToMemberNode(data) {
   const { seat_id, x, y, description, arranger, owner } = data;
   return {
     id: seat_id,
@@ -7,15 +7,14 @@ function convertDateToMemberNode(data) {
     y: y,
     properties: {
       text: description,
-      ...arranger,
-      owner,
+      arranger,
+      ...owner,
     },
     baseType: "node",
-    
   };
 }
 
-function convertDateToNode(data) {
+function convertDataToNode(data) {
   const { seat_id, x, y, description, arranger, owner } = data;
   return {
     id: seat_id,
@@ -25,10 +24,22 @@ function convertDateToNode(data) {
     properties: {
       arranger,
       ...owner,
-      description
+      description,
     },
     baseType: "node",
-    text: owner?.name ?? "",
+    text: owner?.name ?? "空座",
+  };
+}
+
+function convertNodeToSeat(data) {
+  const { id, x, y, properties } = data;
+  return {
+    seat_id: id,
+    x,
+    y,
+    description: properties.description,
+    owner_id: properties.user_id,
+    unset_owner: properties.user_id ? false : true,
   };
 }
 
@@ -37,8 +48,8 @@ export function toNodeData(data) {
     nodes: [],
     edges: [],
   };
-  data.nodes.forEach((node) => {
-    const flowElement = convertDateToNode(node);
+  data.forEach((node) => {
+    const flowElement = convertDataToNode(node);
     turboData.nodes.push(flowElement);
   });
 
@@ -50,10 +61,20 @@ export function toMemberNodeData(data) {
     nodes: [],
     edges: [],
   };
-  data.nodes.forEach((node) => {
-    const flowElement = convertDateToMemberNode(node);
+  data.forEach((node) => {
+    const flowElement = convertDataToMemberNode(node);
     turboData.nodes.push(flowElement);
   });
 
   return turboData;
+}
+
+export function toSeatData(data) {
+  const seat_list = [];
+  data.forEach((node) => {
+    const flowElement = convertNodeToSeat(node);
+    seat_list.push(flowElement);
+  });
+
+  return seat_list;
 }

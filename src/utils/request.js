@@ -41,7 +41,10 @@ service.interceptors.response.use(
     }
     const res = response.data
     console.log(res);
-    if (res.status_code !== 200) {
+    if (parseInt(res.status_code / 100) === 2) {
+      return res.data
+    }
+    else {
       const userStore = useUserStore()
       // 需要动态刷新token
       if (res.status_code === -2 || res.status_code === -3 || res.status_code === -4 || res.status_code === -5) {
@@ -72,8 +75,6 @@ service.interceptors.response.use(
         )
       }
       return Promise.reject(res.data || "Error")
-    } else {
-      return res.data
     }
   },
   error => {

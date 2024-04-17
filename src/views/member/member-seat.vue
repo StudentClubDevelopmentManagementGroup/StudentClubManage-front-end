@@ -1,20 +1,15 @@
 <script setup lang="ts">
-import demoData from "./data.json";
 import "@logicflow/core/dist/style/index.css";
 import "@logicflow/extension/lib/style/index.css";
 import { toMemberNodeData } from "@/components/FlowChart/src/adpter";
 import LogicFlow from "@logicflow/core";
 import { ref, unref, onMounted } from "vue";
-import {
-  MemberModel,
-  MemberView
-} from "@/components/FlowChart/src/config";
-import { Snapshot, Menu,MiniMap } from "@logicflow/extension";
-import {
-  Control,
-  DataDialog,
-} from "@/components/FlowChart";
+import { MemberModel, MemberView } from "@/components/FlowChart/src/config";
+import { Snapshot, MiniMap } from "@logicflow/extension";
+import seatApi from "@/api/seat";
+import { Control, DataDialog } from "@/components/FlowChart";
 
+const club_id = ref(1)
 const lf = ref(null);
 const graphData = ref(null);
 const dataVisible = ref<boolean>(false);
@@ -33,6 +28,7 @@ const config = ref({
 function initLf() {
   // 画布配置
   LogicFlow.use(Snapshot);
+  LogicFlow.use(MiniMap);
   const domLf = new LogicFlow({
     ...unref(config),
     container: document.querySelector("#LF-view"),
@@ -46,9 +42,9 @@ function initLf() {
   onRender();
 }
 
-function onRender() {
-
-  const lFData = toMemberNodeData(demoData);
+async function onRender() {
+  const saetData = await seatApi.getAllSeat(club_id.value);
+  const lFData = toMemberNodeData(saetData);
 
   lf.value.render(lFData);
 }
@@ -145,5 +141,4 @@ onMounted(() => {
   height: 85vh;
   overflow: auto;
 }
-
 </style>

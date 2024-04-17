@@ -22,25 +22,18 @@ export default {
             data: req
         })
     },
-    setSeatOwner(req) {
+    updateSeatInfo(req) {
         return request({
-            url: '/club/seat/set_owner',
+            url: '/club/seat/update',
             method: 'post',
             data: req
         })
     },
-    updateSeatInfo(userUpdateDTO) {
-        return request({
-            url: '/club/seat/update_info',
-            method: 'post',
-            data: userUpdateDTO
-        })
-    },
-    getMemberNoSeat(club_id) {
+    getMemberNoSeat(club_id, page_num, page_size) {
         return request({
             url: '/club/seat/members/no_seat',
             method: 'get',
-            params: { club_id }
+            params: { club_id, page_num, page_size }
         })
     }
 }
