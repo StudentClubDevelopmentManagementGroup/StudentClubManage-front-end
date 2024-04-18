@@ -40,7 +40,6 @@ service.interceptors.response.use(
       return response
     }
     const res = response.data
-    console.log(res);
     if (parseInt(res.status_code / 100) === 2) {
       return res.data
     }

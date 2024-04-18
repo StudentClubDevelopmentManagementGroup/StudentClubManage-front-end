@@ -6,7 +6,6 @@ import {
   RectNodeModel,
 } from "@logicflow/core";
 
-import useStore from "@/store";
 
 // 自定义节点的 view
 export class MemberView extends HtmlNode {

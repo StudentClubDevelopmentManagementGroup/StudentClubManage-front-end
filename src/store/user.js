@@ -14,10 +14,15 @@ export const useUserStore = defineStore('user', () => {
   })
 
   const getCurrentPage = computed(() => state.currentPage);
+
   const getToken = computed(() => state.token);
+
   const getUserInfo = computed(() => state.userInfo);
+
   const getRoles = computed(() => state.roles);
+
   const getName = computed(() => state.userInfo.name);
+
   const setCurrentPage = (value) => {
     state.currentPage = value;
   }
@@ -96,11 +101,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   return {
-    state,
     resetState,
-    setToken,
-    setUserInfo,
-    setRoles,
     setCurrentPage,
     logout,
     login,

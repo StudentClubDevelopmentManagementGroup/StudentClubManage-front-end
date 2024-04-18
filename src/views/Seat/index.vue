@@ -3,9 +3,9 @@ import "@logicflow/core/dist/style/index.css";
 import "@logicflow/extension/lib/style/index.css";
 import { toNodeData, toSeatData } from "@/components/FlowChart/src/adpter";
 import LogicFlow from "@logicflow/core";
-import { ref, unref, onMounted } from "vue";
+import { ref, unref, onMounted, computed } from "vue";
 import { EditPen, Plus, Download, Star } from "@element-plus/icons-vue";
-
+import useStore from "@/store";
 import {
   nodeList,
   SeatModel,
@@ -36,6 +36,15 @@ const config = ref({
   keyboard: {
     enabled: true,
   },
+});
+
+const currentUser = computed(() => {
+  return {
+    user_id: useStore.userStore.getUserInfo.user_id,
+    name: useStore.userStore.getName,
+    is_teacher: useStore.userStore.getRoles.is_teacher,
+    is_student: useStore.userStore.getRoles.is_student,
+  };
 });
 
 function initLf() {
@@ -79,10 +88,8 @@ async function onRender() {
     graphMenu: [],
   });
 
-  const saetData = await seatApi.getAllSeat(club_id.value);
-
-  const lFData = toNodeData(saetData);
-
+  const seatData = await seatApi.getAllSeat(club_id.value);
+  const lFData = toNodeData(seatData);
   lf.value.render(lFData);
 
   //监听点击事件
@@ -97,8 +104,7 @@ async function onRender() {
   });
   //监听拖拽增加节点事件
   lf.value.on("node:dnd-add", ({ data }) => {
-    console.log("node:dnd-add", data);
-    const { x, y } = data;
+    const { id, x, y } = data;
     seatApi
       .addSeat({
         club_id: club_id.value,
@@ -111,6 +117,7 @@ async function onRender() {
         ],
       })
       .then(() => {
+        lf.value.setProperties(id, { arranger: { ...currentUser.value } });
         message("添加成功", { type: "success" });
       })
       .catch(() => {

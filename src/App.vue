@@ -1,5 +1,5 @@
 <script setup>
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 </script>
 
 <template>
@@ -8,7 +8,7 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
   </el-config-provider>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 #app::-webkit-scrollbar {
   display: none;
 }

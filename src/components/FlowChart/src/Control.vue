@@ -59,21 +59,23 @@ const titleLists = ref([
 ]);
 
 const onControl = (item, key) => {
-  ["zoom", "zoom", "resetTranslate", "getSnapshot"].forEach((v, i) => {
-    const domControl = props.lf;
-    if (key === 1) {
-      domControl.zoom(true);
-    }
-    if (key === i) {
-      domControl[v]();
-    }
-    if (key === 4) {
-      domControl.extension.miniMap.show(domControl.graphModel.width - 230, 0);
-    }
-    if (key === 5) {
-      emit("catData");
-    }
-  });
+  const domControl = props.lf;
+  if (key === 4) {
+    domControl.extension.miniMap.show(domControl.graphModel.width - 230, 0);
+  } else if (key === 5) {
+    emit("catData");
+  } else {
+    ["zoom", "zoom", "resetTranslate", "getSnapshot"].forEach((v, i) => {
+      if (key === 1) {
+        domControl.zoom(true);
+      }
+      if (key === i) {
+        console.log(v);
+        
+        domControl[v]();
+      }
+    });
+  }
 };
 
 const onEnter = (key) => {

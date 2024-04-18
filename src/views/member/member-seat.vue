@@ -5,14 +5,18 @@ import { toMemberNodeData } from "@/components/FlowChart/src/adpter";
 import LogicFlow from "@logicflow/core";
 import { ref, unref, onMounted } from "vue";
 import { MemberModel, MemberView } from "@/components/FlowChart/src/config";
-import { Snapshot, MiniMap } from "@logicflow/extension";
+import { Snapshot, MiniMap, Menu } from "@logicflow/extension";
 import seatApi from "@/api/seat";
 import { Control, DataDialog } from "@/components/FlowChart";
+import SeatDescriptions from "./components/seat-descriptions";
+import { exportExcel } from "@/utils/index.ts";
 
-const club_id = ref(1)
+const club_id = ref(1);
 const lf = ref(null);
 const graphData = ref(null);
 const dataVisible = ref<boolean>(false);
+const dialogVisible = ref<boolean>(false);
+const clickNode = ref({});
 const config = ref({
   grid: true,
   background: {
@@ -28,6 +32,7 @@ const config = ref({
 function initLf() {
   // 画布配置
   LogicFlow.use(Snapshot);
+  LogicFlow.use(Menu);
   LogicFlow.use(MiniMap);
   const domLf = new LogicFlow({
     ...unref(config),
@@ -47,12 +52,25 @@ async function onRender() {
   const lFData = toMemberNodeData(saetData);
 
   lf.value.render(lFData);
+
+  lf.value.on("node:click", ({ data }) => {
+    clickNode.value = data;
+    dialogVisible.value = true;
+  });
 }
 
 function catData() {
   graphData.value = unref(lf).getGraphData();
   dataVisible.value = true;
 }
+
+const exportData = () => {
+  exportExcel();
+};
+
+const closeDialog = () => {
+  dialogVisible.value = false;
+};
 
 onMounted(() => {
   initLf();
@@ -73,6 +91,15 @@ onMounted(() => {
       <!-- 画布 -->
       <div id="LF-view" />
 
+      <el-drawer
+        title="座位详细属性"
+        v-model="dialogVisible"
+        direction="rtl"
+        size="450px"
+        :before-close="closeDialog"
+      >
+        <SeatDescriptions :nodeData="clickNode" />
+      </el-drawer>
       <!-- 数据查看面板 -->
       <el-dialog
         v-model="dataVisible"
