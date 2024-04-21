@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { useFullscreen } from "@vueuse/core";
 import Breadcrumb from "@/components/Breadcrumb/index.vue";
 import Search from "@/components/Search/index.vue";
-import avatar from "@/assets/avatar-default.jpg";
+import avatar from "@/assets/avatar-default.png";
 import { message } from "@/utils/message";
 import useStore from "@/store";
 import Full from "@iconify-icons/ri/fullscreen-fill";

@@ -2,7 +2,7 @@ import { reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import userApi from '@/api/user'
 import { GetToken, SetToken, RemoveToken, GetUserInfo, RemoveUserInfo, SetUserInfo, RemoveRoles, SetRoles, GetRoles } from '@/utils/auth'
-import { ElMessage } from 'element-plus'
+import { message } from "@/utils/message";
 
 export const useUserStore = defineStore('user', () => {
 
@@ -81,11 +81,11 @@ export const useUserStore = defineStore('user', () => {
           setUserInfo(data.user_info)
           setRoles(data.user_info.role)
         } else {
-          ElMessage({
-            message: '账号或密码错误',
-            type: 'error',
-            duration: 2500
-          })
+          message('账号或密码错误',
+            {
+              type: 'error',
+              duration: 2500
+            })
         }
         resolve()
       }).catch(error => {

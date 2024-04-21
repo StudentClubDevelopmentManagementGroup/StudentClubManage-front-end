@@ -51,7 +51,6 @@ export const usePermissionStore = defineStore('permission', () => {
                 }
             })
             router.options.routes = constantRoutes.concat(asyncRoutes)
-            console.log(accessedRoutes)
             setAccessRoutes(accessedRoutes)
         })
     }

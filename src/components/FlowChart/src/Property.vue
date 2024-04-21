@@ -23,6 +23,7 @@
           v-model="formData.user_id"
           placeholder="选择成员，未选择为空座"
           size="large"
+          clearable
           style="width: 240px"
           @change="updateName"
         >
@@ -115,9 +116,11 @@ onMounted(() => {
 });
 
 const updateName = (value) => {
+  formData.value.name = null;
   memberData.value.forEach((item) => {
     if (item.user_id == value) {
       formData.value.name = item.name;
+      return;
     }
   });
 };
@@ -138,6 +141,10 @@ const onSubmit = () => {
   seatApi
     .updateSeatInfo({ club_id: club_id.value, seat_list: [seat] })
     .then(() => {
+      if (!formData.value.user_id) {
+        formData.value.user_id = null;
+      }
+      console.log(formData.value);
       props.lf.setProperties(id, { ...formData.value });
       props.lf.updateText(id, formData.value.name);
       emit("onClose");
