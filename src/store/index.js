@@ -4,6 +4,7 @@ import { usePermissionStore } from "@/store/permission"
 import { useTabStore } from "@/store/tab"
 import { useUserStore } from "@/store/user"
 import { useThemeStore } from "@/store/theme"
+import { useNavigationStore } from "@/store/navigation"
 
 const useStore = {}
 
@@ -14,6 +15,7 @@ export const registerStore = () => {
     useStore.tabStore = useTabStore()
     useStore.userStore = useUserStore()
     useStore.themeStore = useThemeStore()
+    useStore.useNavigationStore = useNavigationStore()
 }
 
 export default useStore;

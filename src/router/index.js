@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import useStore from "@/store";
 import Layout from "@/layout"
+import homePageLayout from "@/views/HomePage/layout"
 
 export const constantRoutes = [
     {
@@ -249,12 +250,62 @@ export const asyncRoutes = [
     }
 ]
 
+export const homePageRoutes = [
+    {
+        path: "/homepage",
+        name: "HomePage",
+        redirect: '/home',
+        component: homePageLayout,
+        children: [
+            {
+                path: "/home",
+                name: "Home",
+                component: () => import('@/views/homepage/components/home.vue'),
+                meta: {
+                    title: "首页",
+                },
+            },
+            {
+                path: "/club",
+                name: "Club",
+                component: () => import('@/views/homepage/components/club.vue'),
+                meta: {
+                    title: "社团信息",
+                },
+            },
+            {
+                path: "/recruitment",
+                name: "Recruitment",
+                component: () => import('@/views/homepage/components/recruitment.vue'),
+                meta: {
+                    title: "招新信息",
+                },
+            },
+            {
+                path: "/activity",
+                name: "AcitivityInfo",
+                component: () => import('@/views/homepage/components/activity.vue'),
+                meta: {
+                    title: "活动信息",
+                },
+            }
+        ]
+    },
+    {
+        path: '/test',
+        name: 'Test',
+        meta: { hidden: true, title: '测试' }
+    }
+]
+
+const MergedRoutes = [...constantRoutes, ...homePageRoutes]
+
 const router = createRouter({
     history: createWebHashHistory(),
     scrollBehavior: () => ({
         top: 0
     }),
-    routes: constantRoutes
+    routes: MergedRoutes
 })
 
 router.beforeEach(async (to, from, next) => {
