@@ -4,6 +4,9 @@ import useStore from "@/store";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
+const naviOptions = computed(() => {
+  return useStore.useNavigationStore.naviOptions;
+});
 const activeIndex = computed(() => {
   return useStore.useNavigationStore.currentIndex;
 });
@@ -11,6 +14,8 @@ const hanldeSelect = (key, keyPath) => {
   useStore.useNavigationStore.setCurrentIndex(key);
 };
 onMounted(() => {
+  useStore.useNavigationStore.getNaviOptions();
+  console.log("naviOptions", useStore.useNavigationStore.naviOptions);
   useStore.useNavigationStore.setCurrentIndex(route.path);
 });
 </script>
@@ -23,10 +28,9 @@ onMounted(() => {
       mode="horizontal"
       @select="hanldeSelect"
     >
-      <el-menu-item index="/home">首页</el-menu-item>
-      <el-menu-item index="/club">社团信息</el-menu-item>
-      <el-menu-item index="/recruitment">招新讯息</el-menu-item>
-      <el-menu-item index="/activity">活动信息</el-menu-item>
+      <el-menu-item v-for="item in naviOptions" :index="item.path">
+        {{ item.meta.title }}
+      </el-menu-item>
     </el-menu>
   </div>
 </template>

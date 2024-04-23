@@ -85,6 +85,7 @@ const push2Management = () => {
   height: 53px;
 }
 .inner-right {
+  flex: 0;
   justify-content: right;
 }
 .inner-right .el-button {
