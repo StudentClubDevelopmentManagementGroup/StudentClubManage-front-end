@@ -18,9 +18,6 @@
   padding: 0 var(--el-drawer-padding-primary) !important;
 }
 
-.el-button{
-  line-height: 0 !important;
-}
 /* 重置 el-button 中 icon 的 margin */
 .reset-margin [class*="el-icon"] + span {
   margin-left: 2px !important;

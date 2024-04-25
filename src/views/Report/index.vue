@@ -5,6 +5,8 @@ import RichEditor from "@/components/Editor/richEditor.vue";
 const editorValue = ref("默认数据");
 const richHtml = ref();
 const handleUpdateValue = (val: any) => {
+  console.log(val);
+  
   richHtml.value = val;
 };
 </script>

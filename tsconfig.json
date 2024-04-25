@@ -18,7 +18,7 @@
         "src/**/*.vue",
         "types/*.d.ts",
         "vite.config.ts"
-    ],
+, "src/components/Icon/iconfont.js", "src/utils/export.ts"    ],
     "exclude": [
         "dist",
         "node_modules"

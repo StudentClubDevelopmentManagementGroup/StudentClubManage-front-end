@@ -9,7 +9,7 @@ import { Snapshot, MiniMap, Menu } from "@logicflow/extension";
 import seatApi from "@/api/seat";
 import { Control, DataDialog } from "@/components/FlowChart";
 import SeatDescriptions from "./components/seat-descriptions";
-import { exportExcel } from "@/utils/index.ts";
+import { exportExcel } from "@/utils/export";
 
 const club_id = ref(1);
 const lf = ref(null);

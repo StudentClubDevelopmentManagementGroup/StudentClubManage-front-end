@@ -234,7 +234,7 @@ export default defineComponent({
         <div {...attrs} class="w-[99/100] mt-2 px-2 pb-2 bg-bg_color">
           <div class="flex justify-between w-full h-[60px] p-4">
             {slots?.left ? (
-              slots.left()
+              <div class="flex mr-4">{slots.left()}</div>
             ) : (
               <p class="font-bold truncate">{props.title}</p>
             )}
