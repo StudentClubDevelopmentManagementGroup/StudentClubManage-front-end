@@ -260,7 +260,7 @@ export const homePageRoutes = [
             {
                 path: "/home",
                 name: "Home",
-                component: () => import('@/views/homepage/components/home.vue'),
+                component: () => import('@/views/homepage/home.vue'),
                 meta: {
                     title: "首页",
                 },
@@ -268,7 +268,7 @@ export const homePageRoutes = [
             {
                 path: "/club",
                 name: "Club",
-                component: () => import('@/views/homepage/components/club.vue'),
+                component: () => import('@/views/homepage/club.vue'),
                 meta: {
                     title: "社团信息",
                 },
@@ -276,7 +276,7 @@ export const homePageRoutes = [
             {
                 path: "/recruitment",
                 name: "Recruitment",
-                component: () => import('@/views/homepage/components/recruitment.vue'),
+                component: () => import('@/views/homepage/recruitment.vue'),
                 meta: {
                     title: "招新信息",
                 },
@@ -284,7 +284,7 @@ export const homePageRoutes = [
             {
                 path: "/activity",
                 name: "AcitivityInfo",
-                component: () => import('@/views/homepage/components/activity.vue'),
+                component: () => import('@/views/homepage/activity.vue'),
                 meta: {
                     title: "活动信息",
                 },

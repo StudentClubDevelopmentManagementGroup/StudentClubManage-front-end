@@ -1,5 +1,5 @@
 :root {
-  --main-width: 1160px;
+  --main-width: 1360px;
   --search-input-padding: 18px;
   --search-btn-position: var(--search-input-padding);
 }
@@ -19,4 +19,3 @@
   background-color: rgba(255, 255, 255, 0.5);
   width: 1px;
 }
-

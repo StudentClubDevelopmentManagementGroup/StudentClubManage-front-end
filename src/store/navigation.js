@@ -3,7 +3,6 @@ import { ref, computed } from 'vue'
 import { homePageRoutes } from '@/router'
 
 export const useNavigationStore = defineStore('navigation', () => {
-  console.log("HomePageRoutes", homePageRoutes)
   const naviOptions = ref([]);
   const routes = ref(homePageRoutes)
   const currentIndex = ref('')

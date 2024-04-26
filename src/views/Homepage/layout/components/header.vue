@@ -15,7 +15,7 @@ const logout = async () => {
 };
 const push2Management = () => {
   // TODO: 接上管理端的方法
-  console.log("进入管理端");
+  router.push("/welcome");
 };
 </script>
 

@@ -1,5 +1,4 @@
 <script setup>
-import { reactive, ref, watch, toRaw, computed } from "vue";
 import { useRouter } from "vue-router";
 
 import headview from "./components/header.vue";
@@ -29,11 +28,12 @@ const hanldeSelect = (key, keyPath) => {
 
 <style scoped>
 .el-container {
-  background-image: url("../../assets/background-pattern.jpg");
+  background-image: url("@/assets/background-pattern.jpg");
   background-color: rgb(236, 236, 236);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
+  overflow: hidden;
 }
 .el-header,
 .el-main,
