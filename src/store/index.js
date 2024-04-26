@@ -5,6 +5,7 @@ import { useTabStore } from "@/store/tab"
 import { useUserStore } from "@/store/user"
 import { useThemeStore } from "@/store/theme"
 import { useNavigationStore } from "@/store/navigation"
+import { useRegistrationStore } from "@/store/registration"
 
 const useStore = {}
 
@@ -16,6 +17,7 @@ export const registerStore = () => {
     useStore.userStore = useUserStore()
     useStore.themeStore = useThemeStore()
     useStore.useNavigationStore = useNavigationStore()
+    useStore.useRegistrationStore = useRegistrationStore()
 }
 
 export default useStore;
