@@ -3,8 +3,8 @@ import { delay } from "@pureadmin/utils";
 import { ref, reactive, computed, onMounted } from "vue";
 import useStore from "@/store";
 import registrationApi from "@/api/registration";
-import testData from "./test-data/mock";
 import formatUtil from "@/utils/formatter"
+import { message } from "@/utils/message";
 interface TableColumnList extends Array<TableColumns> { }
 
 export default function useColumns() {
@@ -24,7 +24,7 @@ export default function useColumns() {
         small: false
     });
     // 搜索框输入内容
-    const searchInput = reactive({
+    const searchInput = ref({
         time: [],
         timeLong: {
             hour: 0,
@@ -116,6 +116,9 @@ export default function useColumns() {
                     let hoursStr = diffInHours != 0 ? `${diffInHours}小时` : ""
                     let minutesStr = diffInMinutes != 0 ? `${diffInMinutes}分钟` : ""
                     let time = hoursStr + minutesStr
+                    if (time === "") {
+                        time = "0分钟"
+                    }
 
                     return <div style="line-height:32px;">{time}</div>;
                 } else if (!row.deleted) {
@@ -137,7 +140,7 @@ export default function useColumns() {
     /** 撑满内容区自适应高度相关配置 */
     const adaptiveConfig: AdaptiveConfig = {
         /** 表格距离页面底部的偏移量，默认值为 `96` */
-        offsetBottom: 125
+        offsetBottom: 125// 125 消除初始的右侧滚动
     };
     /** 加载动画配置 */
     const loadingConfig = reactive<LoadingConfig>({
@@ -160,8 +163,8 @@ export default function useColumns() {
         clubId: 1,
         // userId: userInfo.value.user_id,
         userId: "2100301816",
-        startTime: searchStatus.value ? formatUtil.formatDate(searchInput.time[0]) + "00:00:00" : "",
-        endTime: searchStatus.value ? formatUtil.formatDate(searchInput.time[1]) + formatUtil.getNowTime() : "",
+        startTime: searchStatus.value ? formatUtil.formatDate(searchInput.value.time[0]) + "00:00:00" : "",
+        endTime: searchStatus.value ? formatUtil.formatDate(searchInput.value.time[1]) + formatUtil.getNowTime() : "",
         currentPage: pagination.currentPage,
         pageSize: pagination.pageSize
     }))
@@ -188,6 +191,7 @@ export default function useColumns() {
         })
     }
     // 添加数据
+    // TODO: 预留的其他新增
     const addTableData = () => {
         console.log("添加数据行")
     }
@@ -214,7 +218,7 @@ export default function useColumns() {
     }
     // 检索
     const handleSearch = () => {
-        if (searchInput.time.length !== 0) {
+        if (searchInput.value.time !== null && searchInput.value.time.length !== 0) {
             searchStatus.value = true;
         }
         loading.value = true
@@ -227,9 +231,9 @@ export default function useColumns() {
     const handleReset = () => {
         // 成功检索
         if (searchStatus.value) {
-            searchInput.time = [];
-            searchInput.timeLong.hour = 0;
-            searchInput.timeLong.minute = 0;
+            searchInput.value.time = [];
+            searchInput.value.timeLong.hour = 0;
+            searchInput.value.timeLong.minute = 0;
             loading.value = true
             delay(600).then(() => {
                 fetchTableData()
@@ -245,7 +249,7 @@ export default function useColumns() {
             })
                 .then((data) => {
                     // TODO: 逻辑待调整，后端有些问题，进一步完善时再提
-                    if (!data.data) {
+                    if (data?.checkoutTime === null) {
                         checkStatus.value = 'success'
                     } else {
                         checkStatus.value = 'exception'
@@ -266,6 +270,9 @@ export default function useColumns() {
             })
                 .then((data) => {
                     checkStatus.value = 'success'
+                    message("签到成功", { type: 'success' })
+                    loading.value = true;
+                    fetchTableData()
                 })
                 .catch((error) => {
                     console.error(error)
@@ -273,6 +280,7 @@ export default function useColumns() {
         })
     }
     // 签退
+    // TODO: 签退只有按钮，样式以及功能还需完善
     const checkOut = () => {
         return new Promise((resolve, reject) => {
             registrationApi.checkOut({
@@ -282,6 +290,9 @@ export default function useColumns() {
             })
                 .then((data) => {
                     checkStatus.value = 'exception'
+                    message('签退成功', { type: 'success' })
+                    loading.value = true;
+                    fetchTableData()
                 })
                 .catch((error) => {
                     console.error(error)
