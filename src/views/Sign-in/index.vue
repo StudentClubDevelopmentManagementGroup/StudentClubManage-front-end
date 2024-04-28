@@ -1,27 +1,29 @@
 <script setup>
-import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { CirclePlus, Search, Refresh, Download } from "@element-plus/icons-vue";
 import { PureTableBar } from "@/components/PureTableBar";
-import useStore from "@/store";
 import useColumns from "./hook";
 
 const {
   tableData,
-  userInfo,
-  getTableDataParams,
-  columns,
-  pagination,
+  checkStatus,
   loading,
-  loadingConfig,
+  pagination,
+  searchInput,
+  shortcuts,
+  columns,
   adaptiveConfig,
+  loadingConfig,
 
-  fetchTableData,
+  refreshTabaleData,
   addTableData,
   exportExcel,
-  refreshTabaleData,
   onSizeChange,
   onCurrentChange,
+  reCheckIn,
+  handleCheck,
+  handleSearch,
+  handleReset,
 } = useColumns();
 
 const router = useRouter();
@@ -29,21 +31,86 @@ const router = useRouter();
 
 <template>
   <div id="container">
+    <!-- 检索栏 -->
     <div class="grid1">
-      <el-card>搜索栏占位符</el-card>
+      <el-card>
+        <template #header>
+          <div>检索</div>
+        </template>
+        <el-form-item label="日期范围">
+          <!-- 时间选择器 -->
+          <el-date-picker
+            v-model="searchInput.time"
+            type="daterange"
+            class="!w-[240px]"
+            unlink-panels
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :shortcuts="shortcuts"
+            :popper-options="{
+              placement: 'bottom-start',
+            }"
+            size="large"
+          />
+        </el-form-item>
+
+        <el-form-item label="时长范围">
+          <!-- TODO:无效功能，后端不提供时长查询参数，由于分页获取数据也无法前端处理 -->
+          <div style="width: 100px">
+            <el-input
+              style="width: 50px; padding-right: 10px"
+              v-model="searchInput.timeLong.hour"
+              placeholder=""
+            />
+            <span>小时</span>
+          </div>
+          <div style="width: 100px">
+            <el-input
+              style="width: 50px; padding-right: 10px"
+              v-model="searchInput.timeLong.minute"
+              placeholder=""
+            />
+            <span>分钟</span>
+          </div>
+        </el-form-item>
+        <template #footer>
+          <el-form-item>
+            <el-button v-ripple type="primary" :icon="Search" @click="handleSearch"
+              >查询</el-button
+            >
+            <el-button :icon="Refresh" v-ripple @click="handleReset">重置</el-button>
+          </el-form-item>
+        </template>
+      </el-card>
     </div>
+    <!-- 签到状态以及签到框 -->
     <div class="grid2">
-      <el-card>签到状态占位符占位符</el-card>
+      <el-card>
+        <el-progress type="circle" :percentage="100" :status="checkStatus">
+          <div class="el-progress__text-div">
+            {{ checkStatus === "success" ? "已签到" : "待签到" }}
+          </div>
+          <el-button
+            @click="handleCheck"
+            v-ripple
+            :type="checkStatus === 'success' ? 'success' : 'danger'"
+            circle
+            >{{ checkStatus === "success" ? "签退" : "签到" }}</el-button
+          >
+        </el-progress>
+      </el-card>
     </div>
+    <!-- 表格 -->
     <div class="grid3">
       <PureTableBar :columns="columns" @refresh="refreshTabaleData">
         <template #left>
-          <el-button type="primary" :icon="CirclePlus" @click="addTableData"
+          <el-button v-ripple type="primary" :icon="CirclePlus" @click="addTableData"
             >新增</el-button
           >
         </template>
         <template #right>
-          <el-button type="primary" @click="exportExcel" :icon="Download">
+          <el-button v-ripple type="primary" @click="exportExcel" :icon="Download">
             导出
           </el-button>
         </template>
@@ -71,7 +138,9 @@ const router = useRouter();
             @page-current-change="onCurrentChange"
           >
             <template #operation="{ row }">
-              <el-button v-if="row.deleted" type="primary" @click="" text>补签</el-button>
+              <el-button v-if="row.deleted" type="primary" @click="reCheckIn" text
+                >补签</el-button
+              >
             </template>
           </pure-table>
         </template>
@@ -109,8 +178,73 @@ const router = useRouter();
 .el-card {
   height: 100%;
   :deep() .el-card__body {
-    padding: 0;
     min-width: 360px;
+  }
+}
+.grid1 {
+  .el-form-item {
+    align-items: center;
+  }
+  .el-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  :deep() .el-card__header {
+    width: 80%;
+    color: #000;
+    font-size: large;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  :deep() .el-card__footer {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  :deep() .el-form-item__label {
+    color: #000;
+    font-size: medium;
+    font-weight: 400;
+  }
+}
+.grid2 {
+  .el-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  :deep() .el-card__body {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .el-progress {
+    transition: var(--pure-transition-duration);
+  }
+  :deep() .el-progress-circle {
+    width: 300px !important;
+    height: 300px !important;
+  }
+  :deep() .el-progress__text {
+    font-size: 48px !important;
+  }
+  .el-progress__text-div {
+    transition: var(--pure-transition-duration);
+    margin-bottom: 10px;
+  }
+  .el-button {
+    font-size: 24px;
+    width: 75px;
+    height: 75px;
+    transition: var(--pure-transition-duration);
   }
 }
 .grid3 {
