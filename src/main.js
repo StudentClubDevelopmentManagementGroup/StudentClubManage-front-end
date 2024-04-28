@@ -7,6 +7,7 @@ import 'dayjs/locale/zh-cn'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
 import Table from "@pureadmin/table";
+import PlusProComponents from 'plus-pro-components'
 
 // 引入重置样式
 import "./style/reset.scss";
@@ -16,6 +17,7 @@ import "./style/tailwind.css";
 import 'element-plus/dist/index.css'
 import 'animate.css/animate.min.css'
 import "./style/homepage.css"
+import 'plus-pro-components/index.css'
 
 const app = createApp(App)
 
@@ -53,4 +55,4 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 import axios from 'axios'
 app.config.globalProperties.$axios = axios
 
-app.use(router).use(Table).use(ElementPlus, { zhCn }).mount('#app')
+app.use(router).use(PlusProComponents).use(Table).use(ElementPlus, { zhCn }).mount('#app')
