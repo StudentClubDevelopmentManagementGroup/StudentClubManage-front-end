@@ -34,7 +34,6 @@
     "path-to-regexp": "^6.2.1",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
-    "plus-pro-components": "^0.1.0-beta.1",
     "qs": "^6.12.0",
     "rollup-plugin-visualizer": "^5.12.0",
     "sass": "^1.71.1",
