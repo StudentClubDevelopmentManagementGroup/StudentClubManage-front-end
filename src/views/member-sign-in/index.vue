@@ -33,9 +33,9 @@ const router = useRouter();
 <template>
   <div>
     <div id="container">
-      <!-- 检索栏 -->
       <div class="grid1">
-        <el-card>
+        <!-- 检索栏 -->
+        <el-card class="card1">
           <template #header>
             <div class="card-header">
               <div>检索</div>
@@ -87,10 +87,8 @@ const router = useRouter();
             </el-form-item>
           </template>
         </el-card>
-      </div>
-      <!-- 签到状态以及签到框 -->
-      <div class="grid2">
-        <el-card>
+        <!-- 签到状态以及签到框 -->
+        <el-card class="card2">
           <el-progress type="circle" :percentage="100" :status="checkStatus">
             <div class="el-progress__text-div">
               {{ checkStatus === "success" ? "已签到" : "待签到" }}
@@ -156,43 +154,28 @@ const router = useRouter();
 #container {
   display: grid;
   grid-template-columns: 1fr 3fr;
-  grid-template-rows: 1fr 1fr;
-  grid-template-areas:
-    "top-left right"
-    "bottom-left right";
   .grid1 {
     padding-right: 20px;
     padding-bottom: 12px;
-    grid-area: top-left;
-  }
-  .grid2 {
-    padding-right: 20px;
-    padding-top: 12px;
-    grid-area: bottom-left;
-  }
-  .grid3 {
-    grid-area: right;
   }
 }
 .el-card {
-  height: 100%;
+  height: fit-content;
   :deep() .el-card__body {
     min-width: 360px;
   }
 }
-.grid1 {
+.card1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   .card-header {
     display: flex;
     align-items: center;
   }
   .el-form-item {
     align-items: center;
-  }
-  .el-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
   }
   :deep() .el-card__header {
     width: 80%;
@@ -215,12 +198,13 @@ const router = useRouter();
     font-weight: 400;
   }
 }
-.grid2 {
-  .el-card {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.card2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 10px;
+
   :deep() .el-card__body {
     display: flex;
     align-items: center;
