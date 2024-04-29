@@ -147,8 +147,6 @@ const handleSelectChange = () => {
               table-layout="auto"
               border
               stripe
-              adaptive
-              :adaptiveConfig="adaptiveConfig"
               :size="size"
               :data="tableData"
               :loading="loading"
@@ -163,7 +161,7 @@ const handleSelectChange = () => {
               @page-current-change="onCurrentChange"
             >
               <template #operation="{ row }">
-                <el-button v-if="row.deleted" type="primary" @click="reCheckIn" text
+                <el-button v-if="row.isDeleted" type="primary" @click="reCheckIn" text
                   >补签</el-button
                 >
               </template>

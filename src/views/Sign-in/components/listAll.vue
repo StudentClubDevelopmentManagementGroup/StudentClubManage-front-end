@@ -3,20 +3,24 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { CirclePlus, Search, Refresh, Download } from "@element-plus/icons-vue";
 import { PureTableBar } from "@/components/PureTableBar";
-import { PlusSearch } from "plus-pro-components";
 import useColumns from "./hook";
 import useStore from "@/store";
 
 const {
   tableData,
+  userInfo,
+  searchStatus,
+  checkStatus,
   loading,
   pagination,
+  shortcuts,
   searchInput,
-  searchColumns,
   columns,
   adaptiveConfig,
   loadingConfig,
+  getDataParams,
 
+  fetchTableData,
   refreshTabaleData,
   addTableData,
   exportExcel,
@@ -54,16 +58,48 @@ const handleSelectChange = () => {
               </div>
             </div>
           </template>
-          <PlusSearch
-            v-model="searchInput"
-            :search-text="searchInput.buttonText[1]"
-            :reset-text="searchInput.buttonText[0]"
-            :columns="searchColumns"
-            label-width="80"
-            label-position="right"
-            @search="handleSearch"
-            @reset="handleReset"
-          />
+          <div class="card-body">
+            <!-- 标签与输入框 -->
+            <div class="inputer">
+              <div class="input-label">姓名：</div>
+              <el-input
+                v-model="searchInput.name"
+                class="!w-[240px]"
+                size="large"
+                placeholder="输入姓名"
+              ></el-input>
+              <div class="input-label">学号：</div>
+              <el-input
+                v-model="searchInput.userId"
+                class="!w-[240px]"
+                size="large"
+                placeholder="输入学号"
+              ></el-input>
+              <div class="input-label">日期范围：</div>
+              <!-- 时间选择器 -->
+              <el-date-picker
+                v-model="searchInput.time"
+                type="daterange"
+                class="!w-[300px]"
+                unlink-panels
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :shortcuts="shortcuts"
+                :popper-options="{
+                  placement: 'bottom-start',
+                }"
+                size="large"
+              />
+            </div>
+            <!-- 按钮 -->
+            <div class="operation">
+              <el-button v-ripple type="primary" :icon="Search" @click="handleSearch"
+                >查询</el-button
+              >
+              <el-button :icon="Refresh" v-ripple @click="handleReset">重置</el-button>
+            </div>
+          </div>
         </el-card>
       </div>
       <!-- 表格 -->
@@ -87,7 +123,6 @@ const handleSelectChange = () => {
               table-layout="auto"
               border
               stripe
-              adaptive
               :adaptiveConfig="adaptiveConfig"
               :size="size"
               :data="tableData"
@@ -104,7 +139,7 @@ const handleSelectChange = () => {
             >
               <template #operation="{ row }">
                 <!-- TODO: 社团负责人帮助补签的按钮另设 -->
-                <el-button v-if="row.deleted" type="primary" text>补签</el-button>
+                <el-button v-if="row.isDeleted" type="primary" text>补签</el-button>
               </template>
             </pure-table>
           </template>
@@ -127,6 +162,24 @@ const handleSelectChange = () => {
     font-weight: 600;
     display: flex;
     align-items: center;
+  }
+  .card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+.card-body {
+  .inputer {
+    display: flex;
+    align-items: center;
+  }
+  .input-label:not(:first-child) {
+    color: #000;
+    font-size: medium;
+    font-weight: 400;
+
+    margin-left: 20px;
   }
 }
 .grid2 {

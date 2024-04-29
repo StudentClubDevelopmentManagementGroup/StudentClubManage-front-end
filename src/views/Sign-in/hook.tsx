@@ -121,9 +121,9 @@ export default function useColumns() {
                     }
 
                     return <div style="line-height:32px;">{time}</div>;
-                } else if (!row.deleted) {
+                } else if (!row.isDeleted) {
                     // 今日已签到，但尚未签退
-                    return <el-tag type="primary">未签退</el-tag>
+                    return <el-tag type="primary">待签退</el-tag>
                 } else {
                     // 未当日签退的记录
                     return <el-tag type="danger" >当天未签退</el-tag>
@@ -163,8 +163,8 @@ export default function useColumns() {
         clubId: 1,
         // userId: userInfo.value.user_id,
         userId: "2100301816",
-        startTime: searchStatus.value ? formatUtil.formatDate(searchInput.value.time[0]) + "00:00:00" : "",
-        endTime: searchStatus.value ? formatUtil.formatDate(searchInput.value.time[1]) + formatUtil.getNowTime() : "",
+        startTime: searchStatus.value ? formatUtil.formatDate(searchInput.value.time[0]) + "00:00:00" : null,
+        endTime: searchStatus.value ? formatUtil.formatDate(searchInput.value.time[1]) + formatUtil.getNowTime() : null,
         currentPage: pagination.currentPage,
         pageSize: pagination.pageSize
     }))
@@ -220,25 +220,24 @@ export default function useColumns() {
     const handleSearch = () => {
         if (searchInput.value.time !== null && searchInput.value.time.length !== 0) {
             searchStatus.value = true;
-        }
-        loading.value = true
-        delay(600).then(() => {
-            fetchTableData()
-        })
-        console.log("检索", getDataParams.value)
-    }
-    // 重置检索
-    const handleReset = () => {
-        // 成功检索
-        if (searchStatus.value) {
-            searchInput.value.time = [];
-            searchInput.value.timeLong.hour = 0;
-            searchInput.value.timeLong.minute = 0;
             loading.value = true
             delay(600).then(() => {
                 fetchTableData()
             })
         }
+    }
+    // 重置检索
+    const handleReset = () => {
+        if (searchStatus.value) {
+            searchStatus.value = false;
+            loading.value = true
+            delay(600).then(() => {
+                fetchTableData()
+            })
+        }
+        searchInput.value.time = [];
+        searchInput.value.timeLong.hour = 0;
+        searchInput.value.timeLong.minute = 0;
     }
     // 获取当前签到状态
     const getCheckStatus = () => {
@@ -300,8 +299,8 @@ export default function useColumns() {
         })
     }
     // 补签
+    // TODO: 补签
     const reCheckIn = () => {
-        // TODO: 补签
         console.log("补签")
     }
     // 处理签到/签退

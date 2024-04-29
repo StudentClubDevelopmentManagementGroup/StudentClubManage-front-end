@@ -1,11 +1,9 @@
 import type { PaginationProps, TableColumns, LoadingConfig, AdaptiveConfig } from "@pureadmin/table";
-import type { PlusColumn } from "plus-pro-components";
 import { delay } from "@pureadmin/utils";
 import { ref, reactive, computed, onMounted } from "vue";
 import useStore from "@/store";
 import registrationApi from "@/api/registration";
 import formatUtil from "@/utils/formatter"
-import { message } from "@/utils/message";
 interface TableColumnList extends Array<TableColumns> { }
 
 export default function useColumns() {
@@ -57,28 +55,14 @@ export default function useColumns() {
     // 搜索框输入内容
     const searchInput = ref({
         buttonText: ["重置", "搜索"],
+        name: "",
+        userId: "",
         time: [],
         timeLong: {
             hour: 0,
             minute: 0
         }
     })
-    /** 搜索框列配置 */
-    const searchColumns: PlusColumn[] = [
-        {
-            label: "日期范围",
-            prop: "time",
-            valueType: "date-picker",
-            fieldProps: {
-                type: "daterange",
-                startPlaceholder: "开始日期",
-                endPlaceholder: "结束日期",
-                shortcuts: shortcuts,
-                popperOptions: { placement: 'bottom-start' }
-
-            }
-        }
-    ]
     /** 表格列配置 */
     const columns: TableColumnList = [
         {
@@ -86,6 +70,16 @@ export default function useColumns() {
             type: "selection",
             fixed: "left",
             reserveSelection: true // 数据刷新后保留选项
+        },
+        {
+            label: "姓名",
+            prop: "name",
+            minWidth: 150,
+        },
+        {
+            label: "学号",
+            prop: "userId",
+            minWidth: 150,
         },
         {
             label: "日期",
@@ -139,7 +133,7 @@ export default function useColumns() {
                     }
 
                     return <div style="line-height:32px;">{time}</div>;
-                } else if (!row.deleted) {
+                } else if (!row.isDeleted) {
                     // 今日已签到，但尚未签退
                     return <el-tag type="primary">未签退</el-tag>
                 } else {
@@ -176,13 +170,11 @@ export default function useColumns() {
           `
     });
     // 统一的访问 API 的参数来源
-    // TODO: 随进入的club页面赋值clubId，userId作为测试用
     const getDataParams = computed(() => ({
         clubId: 1,
-        // userId: userInfo.value.user_id,
-        userId: "2100301816",
-        startTime: searchStatus.value ? formatUtil.formatDate(searchInput.value.time[0]) + "00:00:00" : "",
-        endTime: searchStatus.value ? formatUtil.formatDate(searchInput.value.time[1]) + formatUtil.getNowTime() : "",
+        userId: searchInput.value.userId,
+        startTime: searchStatus.value ? formatUtil.formatDate(searchInput.value.time[0]) + "00:00:00" : null,
+        endTime: searchStatus.value ? formatUtil.formatDate(searchInput.value.time[1]) + formatUtil.getNowTime() : null,
         currentPage: pagination.currentPage,
         pageSize: pagination.pageSize
     }))
@@ -236,27 +228,34 @@ export default function useColumns() {
     }
     // 检索
     const handleSearch = (values) => {
-        if (searchInput.value.time !== null && searchInput.value.time.length !== 0 ) {
+        console.log("searchInput", searchInput.value, "Boolean", searchInput.value.time !== null);
+        console.log("Params", getDataParams.value)
+        if (searchInput.value.name !== "" ||
+            searchInput.value.userId !== "" ||
+            (searchInput.value.time !== null && searchInput.value.time.length !== 0)
+        ) {
             searchStatus.value = true;
-        }
-        loading.value = true
-        delay(600).then(() => {
-            fetchTableData()
-        })
-        console.log("检索", getDataParams.value)
-    }
-    // 重置检索
-    const handleReset = (values) => {
-        // 成功检索
-        if (searchStatus.value) {
-            searchInput.value.time = [];
-            searchInput.value.timeLong.hour = 0;
-            searchInput.value.timeLong.minute = 0;
             loading.value = true
             delay(600).then(() => {
                 fetchTableData()
             })
         }
+    }
+    // 重置检索
+    const handleReset = (values) => {
+        // 成功检索
+        if (searchStatus.value) {
+            searchStatus.value = false
+            loading.value = true
+            delay(600).then(() => {
+                fetchTableData()
+            })
+        }
+        searchInput.value.name = "";
+        searchInput.value.userId = "";
+        searchInput.value.time = [];
+        searchInput.value.timeLong.hour = 0;
+        searchInput.value.timeLong.minute = 0;
     }
 
     onMounted(() => {
@@ -274,7 +273,6 @@ export default function useColumns() {
         pagination,
         shortcuts,
         searchInput,
-        searchColumns,
         columns,
         adaptiveConfig,
         loadingConfig,
