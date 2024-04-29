@@ -201,7 +201,7 @@ export const asyncRoutes = [
         }, {
             path: "/member/seat",
             name: "MemberSeat",
-            component: () => import('@/views/Introduce'),
+            component: () => import('@/views/member/member-seat'),
             meta: {
                 title: "座位表查询",
             },

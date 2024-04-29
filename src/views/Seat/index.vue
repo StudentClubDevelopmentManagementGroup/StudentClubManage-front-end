@@ -1,27 +1,32 @@
 <script setup lang="ts">
-import demoData from "./data.json";
 import "@logicflow/core/dist/style/index.css";
 import "@logicflow/extension/lib/style/index.css";
-
+import { ref, unref, onMounted, computed } from "vue";
+import { toNodeData, toSeatData } from "@/components/FlowChart/src/adpter";
 import LogicFlow from "@logicflow/core";
-import { ref, unref, onMounted } from "vue";
+import { Snapshot, Menu, MiniMap } from "@logicflow/extension";
 import {
   nodeList,
   SeatModel,
   SeatView,
 } from "@/components/FlowChart/src/config";
-import { Snapshot, BpmnElement, Menu } from "@logicflow/extension";
-import { Control, NodePanel, DataDialog ,Property} from "@/components/FlowChart";
+import { message } from "@/utils/message";
+import {
+  Control,
+  NodePanel,
+  DataDialog,
+  Property,
+} from "@/components/FlowChart";
+import useStore from "@/store";
+import seatApi from "@/api/seat";
+import { EditPen, Plus, Download, Star } from "@element-plus/icons-vue";
 
-defineOptions({
-  name: "FlowChart",
-});
-
+const club_id = ref(1);
 const lf = ref(null);
 const graphData = ref(null);
 const dataVisible = ref<boolean>(false);
 const dialogVisible = ref<boolean>(false);
-const clickNode = ref(null);
+const clickNode = ref({});
 const config = ref({
   grid: true,
   background: {
@@ -33,11 +38,20 @@ const config = ref({
   },
 });
 
+const currentUser = computed(() => {
+  return {
+    user_id: useStore.userStore.getUserInfo.user_id,
+    name: useStore.userStore.getName,
+    is_teacher: useStore.userStore.getRoles.is_teacher,
+    is_student: useStore.userStore.getRoles.is_student,
+  };
+});
+
 function initLf() {
   // 画布配置
   LogicFlow.use(Snapshot);
   // 使用bpmn插件，引入bpmn元素
-  LogicFlow.use(BpmnElement);
+  LogicFlow.use(MiniMap);
   // 启动右键菜单
   LogicFlow.use(Menu);
   const domLf = new LogicFlow({
@@ -50,49 +64,101 @@ function initLf() {
     view: SeatView,
     model: SeatModel,
   });
-  // 设置边类型bpmn:sequenceFlow为默认类型
-  unref(lf).setDefaultEdgeType("bpmn:sequenceFlow");
   onRender();
 }
 
-function onRender() {
-  const lFData = demoData;
+async function onRender() {
+  //重写Lf右键菜单
+  lf.value.setMenuConfig({
+    nodeMenu: [
+      {
+        text: "删除",
+        callback(node) {
+          lf.value.deleteNode(node.id);
+        },
+      },
+      {
+        text: "编辑文本",
+        callback: function (node) {
+          lf.value.graphModel.editText(node.id);
+        },
+      },
+    ],
+    edgeMenu: false,
+    graphMenu: [],
+  });
+
+  const seatData = await seatApi.getAllSeat(club_id.value);
+  const lFData = toNodeData(seatData);
   lf.value.render(lFData);
 
+  //监听点击事件
   lf.value.on("node:click", ({ data }) => {
     console.log("node:click", data);
     clickNode.value = data;
     dialogVisible.value = true;
   });
-  // lf.value.on("element:click", () => {
-  //   hideAddPanel();
-  // });
-  lf.value.on("edge:add", ({ data }) => {
-    console.log("edge:add", data);
+  //监听拖拽结束
+  lf.value.on("node:drop", ({ data }) => {
+    console.log("node:drop", data);
   });
-  // lf.value.on("node:mousemove", ({ data }) => {
-  //   console.log("node:mousemove");
-  //   moveData = data;
-  // });
-  // lf.value.on("blank:click", () => {
-  //   hideAddPanel();
-  // });
-  lf.value.on("connection:not-allowed", (data) => {
-    console.log(data.msg);
+  //监听拖拽增加节点事件
+  lf.value.on("node:dnd-add", ({ data }) => {
+    const { id, x, y } = data;
+    seatApi
+      .addSeat({
+        club_id: club_id.value,
+        seat_list: [
+          {
+            x,
+            y,
+            description: "",
+          },
+        ],
+      })
+      .then(() => {
+        lf.value.setProperties(id, { arranger: { ...currentUser.value } });
+        message("添加成功", { type: "success" });
+      })
+      .catch(() => {
+        message("添加失败", { type: "error" });
+        lf.value.undo();
+      });
   });
-  lf.value.on("node:mousemove", () => {
-    console.log("on mousemove");
+  lf.value.on("node:delete", ({ data }) => {
+    seatApi
+      .delSeat({ club_id: club_id.value, seat_id: data.id })
+      .then(() => {
+        message("删除成功", { type: "success" });
+      })
+      .catch(() => {
+        message("删除失败", { type: "error" });
+        lf.value.undo();
+      });
   });
 }
 
 const closeDialog = () => {
   dialogVisible.value = false;
+  clickNode.value = {};
 };
 
 function catData() {
   graphData.value = unref(lf).getGraphData();
   dataVisible.value = true;
 }
+
+const saveAllSeat = () => {
+  const seat_list = toSeatData(lf.value.getGraphData().nodes);
+  seatApi
+    .updateSeatInfo({ club_id: club_id.value, seat_list })
+    .then(() => {
+      message("保存成功", { type: "success" });
+    })
+    .catch(() => {
+      message("保存失败", { type: "error" });
+    });
+};
 
 onMounted(() => {
   initLf();
@@ -102,25 +168,22 @@ onMounted(() => {
 <template>
   <el-card shadow="never">
     <template #header>
-      <div class="card-header">
-        <span class="font-medium">
-          流程图组件，采用开源的
-          <el-link
-            href="https://site.logic-flow.cn/docs/#/zh/guide/start"
-            target="_blank"
-            style="margin: 0 4px 5px; font-size: 16px"
+      <div class="flex justify-between">
+        <div>
+          <el-button v-ripple type="primary" :icon="Plus">添加座位</el-button>
+          <el-button v-ripple type="primary" :icon="EditPen"
+            >编辑座位</el-button
           >
-            LogicFlow
-          </el-link>
-        </span>
+        </div>
+        <div>
+          <el-button v-ripple type="primary" :icon="Star" @click="saveAllSeat"
+            >保存座位表</el-button
+          >
+          <el-button v-ripple type="primary" :icon="Download" plain>
+            导出
+          </el-button>
+        </div>
       </div>
-      <el-link
-        class="mt-2"
-        href="https://github.com/pure-admin/vue-pure-admin/blob/main/src/views/flow-chart"
-        target="_blank"
-      >
-        代码位置 src/views/flow-chart
-      </el-link>
     </template>
     <div class="logic-flow-view">
       <!-- 辅助工具栏 -->
@@ -140,14 +203,14 @@ onMounted(() => {
         title="设置座位属性"
         v-model="dialogVisible"
         direction="rtl"
-        size="500px"
+        size="450px"
         :before-close="closeDialog"
       >
         <Property
           v-if="dialogVisible"
           :nodeData="clickNode"
           :lf="lf"
-          @setPropertiesFinish="closeDialog"
+          @onClose="closeDialog"
         ></Property>
       </el-drawer>
 

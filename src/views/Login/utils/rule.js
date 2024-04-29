@@ -3,7 +3,6 @@ const REGEXP_PWD =
   /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[()])+$)(?!^.*[\u4E00-\u9FA5].*$)([^(0-9a-zA-Z)]|[()]|[a-z]|[A-Z]|[0-9]){8,18}$/;
 
 const validateAct = (rule, value, callback) => {
-  console.log(value);
   if (!value) {
     callback(new Error("账号不能为空"));
   } else if (value.length < 6 || value.length > 17) {

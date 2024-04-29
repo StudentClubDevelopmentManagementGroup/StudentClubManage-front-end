@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessageBox } from 'element-plus'
 import { message } from "@/utils/message";
-import { useUserStore } from '@/store/user.js'
+import useStore from '@/store'
 import router from '@/router'
 import { GetToken } from '@/utils/auth'
 import constants from "@/config";
@@ -40,25 +40,16 @@ service.interceptors.response.use(
       return response
     }
     const res = response.data
-    console.log(res);
-    if (res.status_code !== 200) {
-      const userStore = useUserStore()
-      // 需要动态刷新token
-      if (res.status_code === -2 || res.status_code === -3 || res.status_code === -4 || res.status_code === -5) {
-        userStore.logout().then(() => {
-          message('您的登录状态过期或者无效，请您重新登录！',
-            {
-              type: 'error',
-              duration: 2500
-            })
-        })
-      } else if (res.status_code === 401) {
-        ElMessageBox.confirm('未登录，请先登录！', '提示', {
+    if (res.status_code === 200 || res.status_code === 201) {
+      return res.data
+    }
+    else {
+      if (res.status_code === 401) {
+        ElMessageBox.confirm(res.status_text, '提示', {
           confirmButtonText: '登录',
           showCancelButton: false,
           type: 'warning',
         }).then(() => {
-          // 清除数据然后跳转至登录
           router.replace(`/login`)
         })
       } else if (res.status_code === 999) {
@@ -72,8 +63,6 @@ service.interceptors.response.use(
         )
       }
       return Promise.reject(res.data || "Error")
-    } else {
-      return res.data
     }
   },
   error => {

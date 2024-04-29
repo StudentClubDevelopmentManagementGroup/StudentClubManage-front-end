@@ -8,7 +8,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  lf: null
+  lf: null,
 });
 
 const emit = defineEmits<{
@@ -21,67 +21,64 @@ const controlButton4 = ref();
 const focusIndex = ref<Number>(-1);
 const titleLists = ref([
   {
-    icon: "icon-zoom-out-hs",
+    icon: "icon-suoxiao",
     text: "缩小",
     size: "18",
-    disabled: false
+    disabled: false,
   },
   {
-    icon: "icon-enlarge-hs",
+    icon: "icon-fangda",
     text: "放大",
     size: "18",
-    disabled: false
+    disabled: false,
   },
   {
-    icon: "icon-full-screen-hs",
-    text: "适应",
-    size: "15",
-    disabled: false
+    icon: "icon-quanping",
+    text: "定位还原",
+    size: "18",
+    disabled: false,
   },
   {
-    icon: "icon-previous-hs",
-    text: "上一步",
-    size: "15",
-    disabled: true
-  },
-  {
-    icon: "icon-next-step-hs",
-    text: "下一步",
-    size: "17",
-    disabled: true
-  },
-  {
-    icon: "icon-download-hs",
+    icon: "icon-xiazai",
     text: "下载图片",
-    size: "17",
-    disabled: false
+    size: "16",
+    disabled: false,
   },
   {
-    icon: "icon-watch-hs",
+    icon: "icon-yulan",
+    text: "预览图片",
+    size: "16",
+    disabled: false,
+  },
+  {
+    icon: "icon-chakanshuju",
     text: "查看数据",
-    size: "17",
-    disabled: false
-  }
+    size: "15",
+    disabled: false,
+  },
 ]);
 
 const onControl = (item, key) => {
-  ["zoom", "zoom", "resetZoom", "undo", "redo", "getSnapshot"].forEach(
-    (v, i) => {
-      const domControl = props.lf;
+  const domControl = props.lf;
+  if (key === 4) {
+    domControl.extension.miniMap.show(domControl.graphModel.width - 230, 0);
+  } else if (key === 5) {
+    emit("catData");
+  } else {
+    ["zoom", "zoom", "resetTranslate", "getSnapshot"].forEach((v, i) => {
       if (key === 1) {
         domControl.zoom(true);
       }
-      if (key === 6) {
-        emit("catData");
-      }
       if (key === i) {
+        console.log(v);
+        
         domControl[v]();
       }
-    }
-  );
+    });
+  }
 };
 
-const onEnter = key => {
+const onEnter = (key) => {
   focusIndex.value = key;
 };
 
@@ -108,13 +105,13 @@ onMounted(() => {
         <button
           :ref="'controlButton' + key"
           v-tippy="{
-            content: item.text
+            content: item.text,
           }"
           :disabled="item.disabled"
           :style="{
             cursor: item.disabled === false ? 'pointer' : 'not-allowed',
             color: item.disabled === false ? '' : '#00000040',
-            background: 'transparent'
+            background: 'transparent',
           }"
           @click="onControl(item, key)"
         >

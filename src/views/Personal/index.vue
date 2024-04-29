@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import useStore from "@/store";
-import avatar from "@/assets/avatar-default.jpg";
+import avatar from "@/assets/avatar-default.png";
 
 const userInfo = computed(() => useStore.userStore.getUserInfo);
 const roles = computed(() => useStore.userStore.getRoles);

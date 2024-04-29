@@ -61,7 +61,6 @@ const getThemeColor = computed(() => {
 
 function setLayoutThemeColor(
   theme = getConfig().Theme ?? "light",
-  isClick = true
 ) {
   useStore.appStore.setTheme(theme);
   toggleTheme({

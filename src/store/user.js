@@ -2,7 +2,7 @@ import { reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import userApi from '@/api/user'
 import { GetToken, SetToken, RemoveToken, GetUserInfo, RemoveUserInfo, SetUserInfo, RemoveRoles, SetRoles, GetRoles } from '@/utils/auth'
-import { ElMessage } from 'element-plus'
+import { message } from "@/utils/message";
 
 export const useUserStore = defineStore('user', () => {
 
@@ -10,14 +10,26 @@ export const useUserStore = defineStore('user', () => {
     currentPage: 0,
     token: GetToken(),
     userInfo: GetUserInfo(),
-    roles: GetRoles()
+    roles: GetRoles(),
+    clubId: 1
   })
 
   const getCurrentPage = computed(() => state.currentPage);
+
   const getToken = computed(() => state.token);
+
   const getUserInfo = computed(() => state.userInfo);
+
   const getRoles = computed(() => state.roles);
+
   const getName = computed(() => state.userInfo.name);
+
+  const getClubId = computed(() => state.clubId);
+
+  const setClubId = (value) => {
+    state.clubId = value;
+  }
+
   const setCurrentPage = (value) => {
     state.currentPage = value;
   }
@@ -45,8 +57,8 @@ export const useUserStore = defineStore('user', () => {
     return new Promise((resolve, reject) => {
       userApi.logout()
         .then(() => {
-          state.token = null
-          state.userInfo = null
+          state.token = ""
+          state.userInfo = ""
           state.roles = []
           RemoveUserInfo()
           RemoveToken()
@@ -76,11 +88,11 @@ export const useUserStore = defineStore('user', () => {
           setUserInfo(data.user_info)
           setRoles(data.user_info.role)
         } else {
-          ElMessage({
-            message: '账号或密码错误',
-            type: 'error',
-            duration: 2500
-          })
+          message('账号或密码错误',
+            {
+              type: 'error',
+              duration: 2500
+            })
         }
         resolve()
       }).catch(error => {
@@ -96,12 +108,9 @@ export const useUserStore = defineStore('user', () => {
   }
 
   return {
-    state,
     resetState,
-    setToken,
-    setUserInfo,
-    setRoles,
     setCurrentPage,
+    setClubId,
     logout,
     login,
     updateUserInfo,
@@ -109,7 +118,8 @@ export const useUserStore = defineStore('user', () => {
     getToken,
     getUserInfo,
     getRoles,
-    getName
+    getName,
+    getClubId
   }
 }, {
   persistent: true,

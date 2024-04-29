@@ -14,6 +14,9 @@
 .is-dark {
   z-index: 9999 !important;
 }
+.el-drawer__body{
+  padding: 0 var(--el-drawer-padding-primary) !important;
+}
 
 /* 重置 el-button 中 icon 的 margin */
 .reset-margin [class*="el-icon"] + span {

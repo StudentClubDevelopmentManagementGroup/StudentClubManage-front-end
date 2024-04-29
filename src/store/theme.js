@@ -20,14 +20,9 @@ export const useThemeStore = defineStore('theme', () => {
     });
     
     function setEpThemeColor(newColor) {
-        const layout = storageLocal().getItem(
-            `${responsiveStorageNameSpace()}layout`
-        );
-        this.epTheme = layout?.theme;
-        this.epThemeColor = newColor;
-        if (!layout) return;
-        layout.epThemeColor = newColor;
-        storageLocal().setItem(`${responsiveStorageNameSpace()}layout`, layout);
+
+        state.value.themeColor = newColor;
+
     }
 
     return {
