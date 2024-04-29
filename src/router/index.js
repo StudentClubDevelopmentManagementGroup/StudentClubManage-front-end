@@ -187,7 +187,7 @@ export const asyncRoutes = [
         children: [{
             path: "/member/signin",
             name: "MemberSignin",
-            component: () => import('@/views/Introduce'),
+            component: () => import('@/views/member-sign-in/index.vue'),
             meta: {
                 title: "打卡记录",
             },

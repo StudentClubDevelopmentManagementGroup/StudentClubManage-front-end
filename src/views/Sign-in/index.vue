@@ -147,6 +147,8 @@ const handleSelectChange = () => {
               table-layout="auto"
               border
               stripe
+              adaptive
+              :adaptiveConfig="adaptiveConfig"
               :size="size"
               :data="tableData"
               :loading="loading"

@@ -123,7 +123,6 @@ const handleSelectChange = () => {
               table-layout="auto"
               border
               stripe
-              :adaptiveConfig="adaptiveConfig"
               :size="size"
               :data="tableData"
               :loading="loading"
