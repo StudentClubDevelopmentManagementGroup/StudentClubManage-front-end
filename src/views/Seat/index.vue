@@ -1,18 +1,15 @@
 <script setup lang="ts">
 import "@logicflow/core/dist/style/index.css";
 import "@logicflow/extension/lib/style/index.css";
+import { ref, unref, onMounted, computed } from "vue";
 import { toNodeData, toSeatData } from "@/components/FlowChart/src/adpter";
 import LogicFlow from "@logicflow/core";
-import { ref, unref, onMounted, computed } from "vue";
-import { EditPen, Plus, Download, Star } from "@element-plus/icons-vue";
-import useStore from "@/store";
+import { Snapshot, Menu, MiniMap } from "@logicflow/extension";
 import {
   nodeList,
   SeatModel,
   SeatView,
 } from "@/components/FlowChart/src/config";
-import { Snapshot, Menu, MiniMap } from "@logicflow/extension";
-import seatApi from "@/api/seat";
 import { message } from "@/utils/message";
 import {
   Control,
@@ -20,6 +17,9 @@ import {
   DataDialog,
   Property,
 } from "@/components/FlowChart";
+import useStore from "@/store";
+import seatApi from "@/api/seat";
+import { EditPen, Plus, Download, Star } from "@element-plus/icons-vue";
 
 const club_id = ref(1);
 const lf = ref(null);

@@ -10,7 +10,8 @@ export const useUserStore = defineStore('user', () => {
     currentPage: 0,
     token: GetToken(),
     userInfo: GetUserInfo(),
-    roles: GetRoles()
+    roles: GetRoles(),
+    clubId: 1
   })
 
   const getCurrentPage = computed(() => state.currentPage);
@@ -22,6 +23,12 @@ export const useUserStore = defineStore('user', () => {
   const getRoles = computed(() => state.roles);
 
   const getName = computed(() => state.userInfo.name);
+
+  const getClubId = computed(() => state.clubId);
+
+  const setClubId = (value) => {
+    state.clubId = value;
+  }
 
   const setCurrentPage = (value) => {
     state.currentPage = value;
@@ -50,8 +57,8 @@ export const useUserStore = defineStore('user', () => {
     return new Promise((resolve, reject) => {
       userApi.logout()
         .then(() => {
-          state.token = null
-          state.userInfo = null
+          state.token = ""
+          state.userInfo = ""
           state.roles = []
           RemoveUserInfo()
           RemoveToken()
@@ -103,6 +110,7 @@ export const useUserStore = defineStore('user', () => {
   return {
     resetState,
     setCurrentPage,
+    setClubId,
     logout,
     login,
     updateUserInfo,
@@ -110,7 +118,8 @@ export const useUserStore = defineStore('user', () => {
     getToken,
     getUserInfo,
     getRoles,
-    getName
+    getName,
+    getClubId
   }
 }, {
   persistent: true,

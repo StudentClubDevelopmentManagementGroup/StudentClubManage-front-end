@@ -1,6 +1,6 @@
 import { message } from "@/utils/message";
 import { reactive, ref, onMounted, toRaw,h } from "vue";
-import type { PaginationProps } from "@pureadmin/table";
+import type { PaginationProps ,LoadingConfig} from "@pureadmin/table";
 import type { TableColumns } from "@pureadmin/table";
 interface TableColumnList extends Array<TableColumns> { }
 import { deviceDetection } from "@pureadmin/utils";
@@ -29,7 +29,8 @@ export function useRole() {
     total: 0,
     pageSize: 10,
     currentPage: 1,
-    background: true
+    background: true,
+    align: "center",
   });
   const columns: TableColumnList = [
     {
@@ -76,6 +77,22 @@ export function useRole() {
       slot: "operation"
     }
   ];
+
+  /** 加载动画配置 */
+  const loadingConfig = reactive<LoadingConfig>({
+    text: "正在加载",
+    viewBox: "-10, -10, 50, 50",
+    spinner: `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `
+});
 
   function handleSizeChange(val: number) {
     console.log(`${val} items per page`);
@@ -158,6 +175,7 @@ export function useRole() {
     pagination,
     onSearch,
     resetForm,
+    loadingConfig,
     handleOffline,
     handleSizeChange,
     handleCurrentChange,

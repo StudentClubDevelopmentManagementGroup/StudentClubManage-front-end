@@ -10,6 +10,9 @@ import useStore from "@/store";
 import Full from "@iconify-icons/ri/fullscreen-fill";
 import ExitFull from "@iconify-icons/ri/fullscreen-exit-fill";
 import Bell from "@iconify-icons/ep/bell";
+import Base from "@iconify-icons/ri/bar-chart-box-fill";
+import LogoutCircle from "@iconify-icons/ri/logout-circle-r-line";
+import UserSetting from '@iconify-icons/ri/user-settings-line';
 
 const props = defineProps({
   primary: {
@@ -106,15 +109,22 @@ watch(
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">
             <router-link to="/">
-              <el-dropdown-item>首页</el-dropdown-item>
+              <el-dropdown-item><IconifyIconOffline
+                :icon="Base"
+                style="margin: 5px"
+              />首页</el-dropdown-item>
             </router-link>
             <router-link to="/personal/index">
-              <el-dropdown-item>个人中心</el-dropdown-item>
-            </router-link>
-            <router-link to="/personal/personalSetting">
-              <el-dropdown-item>个人设置</el-dropdown-item>
+              <el-dropdown-item><IconifyIconOffline
+                :icon="UserSetting"
+                style="margin: 5px"
+              />个人设置</el-dropdown-item>
             </router-link>
             <el-dropdown-item divided>
+              <IconifyIconOffline
+                :icon="LogoutCircle"
+                style="margin: 5px"
+              />
               <span style="display: block" @click="logout">退出登录</span>
             </el-dropdown-item>
           </el-dropdown-menu>
