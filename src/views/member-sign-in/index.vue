@@ -13,7 +13,6 @@ const {
   searchInput,
   shortcuts,
   columns,
-  adaptiveConfig,
   loadingConfig,
 
   refreshTabaleData,
@@ -45,8 +44,8 @@ const router = useRouter();
             <!-- 时间选择器 -->
             <el-date-picker
               v-model="searchInput.time"
-              type="daterange"
-              class="!w-[240px]"
+              type="datetimerange"
+              class="!w-[400px]"
               unlink-panels
               range-separator="至"
               start-placeholder="开始日期"
@@ -121,15 +120,16 @@ const router = useRouter();
               ref="tableRef"
               row-key="id"
               align-whole="center"
+              showOverflowTooltip
               table-layout="auto"
-              border
-              stripe
-              :size="size"
-              :data="tableData"
               :loading="loading"
+              :size="size"
+              border
+              :data="tableData"
               :loading-config="loadingConfig"
               :columns="dynamicColumns"
               :pagination="pagination"
+              :paginationSmall="size === 'small' ? true : false"
               :header-cell-style="{
                 background: 'var(--el-fill-color-light)',
                 color: 'var(--el-text-color-primary)',
@@ -153,7 +153,7 @@ const router = useRouter();
 <style lang="scss" scoped>
 #container {
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: 1.5fr 3fr;
   .grid1 {
     padding-right: 20px;
     padding-bottom: 12px;
