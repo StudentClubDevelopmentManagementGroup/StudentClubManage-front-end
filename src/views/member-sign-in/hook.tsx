@@ -17,7 +17,7 @@ export default function useColumns() {
     const pagination = reactive<PaginationProps>({
         pageSize: 15,
         currentPage: 1,
-        pageSizes: [10, 15, 20],
+        pageSizes: [5, 10, 15, 20],
         total: 0,
         align: "center",
         background: true,
@@ -99,7 +99,7 @@ export default function useColumns() {
         },
         {
             label: "时长",
-            minWidth: 200,
+            minWidth: 100,
             cellRenderer: ({ row, props }) => {
                 if (row.checkoutTime) {
                     // 成功签退
@@ -137,11 +137,6 @@ export default function useColumns() {
             slot: "operation",
         },
     ];
-    /** 撑满内容区自适应高度相关配置 */
-    const adaptiveConfig: AdaptiveConfig = {
-        /** 表格距离页面底部的偏移量，默认值为 `96` */
-        offsetBottom: 125// 125 消除初始的右侧滚动
-    };
     /** 加载动画配置 */
     const loadingConfig = reactive<LoadingConfig>({
         text: "正在加载",
@@ -332,7 +327,6 @@ export default function useColumns() {
         searchInput,
         shortcuts,
         columns,
-        adaptiveConfig,
         loadingConfig,
         getDataParams,
 
