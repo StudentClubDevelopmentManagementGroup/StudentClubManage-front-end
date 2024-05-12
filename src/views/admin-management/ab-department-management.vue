@@ -4,12 +4,6 @@ import { CirclePlus } from "@element-plus/icons-vue";
 import { addDepartmentRules, modifyDepartmentRules } from "./utils/rule";
 import { baseData } from "./test-data/mock";
 import { message } from "@/utils/message";
-import {
-  getDepartmentList,
-  addDepartment,
-  deleteDepartment,
-  modifyDepartment,
-} from "@/api/admin-management";
 // TODO: const multipleSelection = ref([]);
 
 const columns = [
@@ -230,8 +224,7 @@ onMounted(() => {
             :columns="columns"
             border
           >
-            <template #operation="{ row }"
-              >
+            <template #operation="{ row }">
               <div>
                 <el-button type="danger" text @click="handleClickBtn(row)"
                   >变更为删除状态</el-button
@@ -269,11 +262,7 @@ onMounted(() => {
       align-center
       destroy-on-close
     >
-      <el-form
-        :model="addDepartmentParams"
-        ref="addFormRef"
-        :rules="addDepartmentRules"
-      >
+      <el-form :model="addDepartmentParams" ref="addFormRef" :rules="addDepartmentRules">
         <el-form-item prop="fullName" label="全名">
           <el-input
             v-model="addDepartmentParams.fullName"
@@ -461,3 +450,4 @@ onMounted(() => {
 }
 /* 弹出对话框样式 */
 </style>
+@/api/tmanagement

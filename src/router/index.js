@@ -216,35 +216,35 @@ export const asyncRoutes = [
     }, {
         path: "/teacher",
         component: Layout,
-        redirect: "/teacher/base",
+        redirect: "/teacher/club",
         meta: {
             icon: "ri:file-settings-fill",
             title: "管理模块",
         },
         children: [{
-            path: "/teacher/base",
-            name: "BaseManagement",
-            component: () => import('@/views/admin-management/base'),
+            path: "/teacher/club",
+            name: "ClubManagement",
+            component: () => import('@/views/admin-management/club'),
             meta: { title: '基地管理' }
         }, {
             path: "/teacher/department",
             name: "DepartmentManagement",
-            component: () => import('@/views/admin-management/department-management'),
+            component: () => import('@/views/admin-management/department'),
             meta: { title: '院系管理' }
         }, {
             path: "/teacher/user",
             name: "UserManagement",
-            component: () => import('@/views/admin-management/user-management'),
-            meta: { title: '人员管理' }
+            component: () => import('@/views/admin-management/user'),
+            meta: { title: '用户管理' }
         }, {
             path: "/teacher/person",
             name: "PersonInformation",
-            component: () => import('@/views/admin-management/person-information'),
+            component: () => import('@/views/admin-management/person'),
             meta: { title: '个人信息' }
         }, {
-            path: "/teacher/operation",
-            name: "OperationLog",
-            component: () => import('@/views/admin-management/operation-log'),
+            path: "/teacher/log",
+            name: "Log",
+            component: () => import('@/views/admin-management/log'),
             meta: { title: '操作日志' }
         }]
     }
