@@ -1,19 +1,58 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
+import formatUtil from "@/utils/formatter";
 
 export const useRegistrationStore = defineStore('registration', () => {
-    const rolePage = ref(2)
+    const state = reactive({
+        currentUserId: "",
+        currentCheckInTime: "",
+        afterPlusCheckInTime: "",
+        switchStatus: "now", // now: 表示当前时间，custom：表示自定义选择时间
+    })
 
-    const setRolePage = (value) => {
-        rolePage.value = value;
+    const setCurrentUserId = (val) => {
+        state.currentUserId = val
     }
 
-    return {
-        // state
-        rolePage,
+    const getCurrentUserId = () => {
+        return state.currentUserId
+    }
 
-        // action
-        setRolePage,
+    const setCurrentCheckInTime = (val) => {
+        state.currentCheckInTime = val
+        setAfterPlusCheckInTime(formatUtil.plusHours(val, 4))
+    }
+
+    const getCurrentCheckInTime = () => {
+        return state.currentCheckInTime;
+    }
+
+    const setAfterPlusCheckInTime = (val) => {
+        state.afterPlusCheckInTime = val
+    }
+
+    const getAfterPlusCheckInTime = () => {
+        return state.afterPlusCheckInTime;
+    }
+
+    const setSwitchStatus = (val) => {
+        state.switchStatus = val
+    }
+
+    const getSwitchStatus = () => {
+        return state.switchStatus;
+    }
+
+
+    return {
+        setCurrentUserId,
+        getCurrentUserId,
+        setCurrentCheckInTime,
+        getCurrentCheckInTime,
+        setAfterPlusCheckInTime,
+        getAfterPlusCheckInTime,
+        setSwitchStatus,
+        getSwitchStatus
     }
 }, {
     persistent: true,

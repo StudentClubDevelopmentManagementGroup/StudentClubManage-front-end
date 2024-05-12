@@ -1,248 +1,226 @@
 <script setup>
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
-import { CirclePlus, Search, Refresh, Download } from "@element-plus/icons-vue";
+import {} from "vue";
 import { PureTableBar } from "@/components/PureTableBar";
 import useColumns from "./hook";
 
+import {
+  CirclePlus,
+  Search,
+  Refresh,
+  Download,
+  Cellphone,
+} from "@element-plus/icons-vue";
+
 const {
+  formRef,
+  tableRef,
   tableData,
+  searchStatus,
   checkStatus,
-  loading,
+  tableLoading,
+  btnLoading,
+  durationTime,
   pagination,
-  searchInput,
+  query,
   shortcuts,
   columns,
   loadingConfig,
+  getDataParams,
 
+  fetchTableData,
   refreshTabaleData,
   addTableData,
-  exportExcel,
   onSizeChange,
   onCurrentChange,
+  getCheckStatus,
+  checkIn,
+  checkOut,
   reCheckIn,
-  handleCheck,
   handleSearch,
   handleReset,
+  handleAdd,
+  handleExport,
+  handleCheck,
+  isMoreThanNDays,
 } = useColumns();
 
-const router = useRouter();
+const handleTimeChange = (val) => {
+  console.log("TimeChange", val);
+};
 </script>
 
 <template>
   <div>
-    <div id="container">
-      <div class="grid1">
-        <!-- 检索栏 -->
-        <el-card class="card1">
-          <template #header>
-            <div class="card-header">
-              <div>检索</div>
-            </div>
+    <!-- 检索栏 -->
+    <el-form
+      ref="formRef"
+      :inline="true"
+      :model="query"
+      class="search-form bg-bg_color w-[99/100] shadow p-4 mb-8 overflow-auto"
+    >
+      <el-form-item class="items-center pr-8" label="日期范围" prop="selectedTime">
+        <!-- 时间选择器 -->
+        <el-date-picker
+          v-model="query.selectedTime"
+          type="datetimerange"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          format="YYYY-MM-DD HH:mm:ss"
+          :clearable="false"
+          unlink-panels
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :shortcuts="shortcuts"
+          :popper-options="{
+            placement: 'bottom-start',
+          }"
+          @change="handleTimeChange"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          v-ripple
+          type="primary"
+          :icon="Search"
+          @click="handleSearch"
+          :loading="btnLoading"
+          >查询</el-button
+        >
+        <el-button :icon="Refresh" v-ripple @click="handleReset">重置</el-button>
+      </el-form-item>
+    </el-form>
+    <!-- 表格 -->
+    <PureTableBar class="shadow" :columns="columns" @refresh="refreshTabaleData">
+      <template #left>
+        <el-popover :width="360" class="pr-4" placement="bottom" trigger="click">
+          <template #reference>
+            <el-button v-ripple type="success" :icon="Cellphone">签到</el-button>
           </template>
-          <el-form-item label="日期范围">
-            <!-- 时间选择器 -->
-            <el-date-picker
-              v-model="searchInput.time"
-              type="datetimerange"
-              class="!w-[400px]"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :shortcuts="shortcuts"
-              :popper-options="{
-                placement: 'bottom-start',
-              }"
-              size="large"
-            />
-          </el-form-item>
 
-          <el-form-item label="时长范围">
-            <!-- TODO:无效功能，后端不提供时长查询参数，由于分页获取数据也无法前端处理 -->
-            <div style="width: 100px">
-              <el-input
-                style="width: 50px; padding-right: 10px"
-                v-model="searchInput.timeLong.hour"
-                placeholder=""
-              />
-              <span>小时</span>
-            </div>
-            <div style="width: 100px">
-              <el-input
-                style="width: 50px; padding-right: 10px"
-                v-model="searchInput.timeLong.minute"
-                placeholder=""
-              />
-              <span>分钟</span>
-            </div>
-          </el-form-item>
-          <template #footer>
-            <el-form-item>
-              <el-button v-ripple type="primary" :icon="Search" @click="handleSearch"
-                >查询</el-button
+          <template #default>
+            <div class="card flex items-center justify-center">
+              <el-progress
+                style="transition: var(--pure-transition-duration)"
+                type="circle"
+                :percentage="100"
+                :status="checkStatus"
               >
-              <el-button :icon="Refresh" v-ripple @click="handleReset">重置</el-button>
-            </el-form-item>
-          </template>
-        </el-card>
-        <!-- 签到状态以及签到框 -->
-        <el-card class="card2">
-          <el-progress type="circle" :percentage="100" :status="checkStatus">
-            <div class="el-progress__text-div">
-              {{ checkStatus === "success" ? "已签到" : "待签到" }}
-            </div>
-            <el-button
-              @click="handleCheck"
-              v-ripple
-              :type="checkStatus === 'success' ? 'success' : 'danger'"
-              circle
-              >{{ checkStatus === "success" ? "签退" : "签到" }}</el-button
-            >
-          </el-progress>
-        </el-card>
-      </div>
-      <!-- 表格 -->
-      <div class="grid3">
-        <PureTableBar :columns="columns" @refresh="refreshTabaleData">
-          <template #left>
-            <el-button v-ripple type="primary" :icon="CirclePlus" @click="addTableData"
-              >新增</el-button
-            >
-          </template>
-          <template #right>
-            <el-button v-ripple type="primary" @click="exportExcel" :icon="Download">
-              导出
-            </el-button>
-          </template>
-          <template v-slot="{ size, dynamicColumns }">
-            <pure-table
-              ref="tableRef"
-              row-key="id"
-              align-whole="center"
-              showOverflowTooltip
-              table-layout="auto"
-              :loading="loading"
-              :size="size"
-              border
-              :data="tableData"
-              :loading-config="loadingConfig"
-              :columns="dynamicColumns"
-              :pagination="pagination"
-              :paginationSmall="size === 'small' ? true : false"
-              :header-cell-style="{
-                background: 'var(--el-fill-color-light)',
-                color: 'var(--el-text-color-primary)',
-              }"
-              @page-size-change="onSizeChange"
-              @page-current-change="onCurrentChange"
-            >
-              <template #operation="{ row }">
-                <el-button v-if="row.isDeleted" type="primary" @click="reCheckIn" text
-                  >补签</el-button
+                <div class="mb-2">
+                  {{ checkStatus === "success" ? "已签到" : "待签到" }}
+                </div>
+                <el-button
+                  class="!w-[75px] !h-[75px] !text-2xl"
+                  @click="handleCheck"
+                  v-ripple
+                  :type="checkStatus === 'success' ? 'success' : 'danger'"
+                  circle
+                  >{{ checkStatus === "success" ? "签退" : "签到" }}</el-button
                 >
-              </template>
-            </pure-table>
+              </el-progress>
+            </div>
           </template>
-        </PureTableBar>
-      </div>
-    </div>
+        </el-popover>
+
+        <el-button v-ripple type="primary" :icon="CirclePlus" @click="addTableData"
+          >新增</el-button
+        >
+        <el-skeleton class="pl-4 leading-8" animated :loading="tableLoading">
+          <template #template>
+            <el-skeleton-item variant="text" class="!w-[100px]" />
+          </template>
+          <template #default>
+            <div class="pl-4 flex transition-all leading-8">
+              <div class="pr-1">打卡有效时长：</div>
+              <div class="font-semibold">{{ durationTime }}</div>
+            </div>
+          </template>
+        </el-skeleton>
+      </template>
+
+      <template #right>
+        <el-button v-ripple type="primary" @click="handleExport" :icon="Download">
+          导出
+        </el-button>
+      </template>
+
+      <template #default="{ size, dynamicColumns }">
+        <pure-table
+          ref="tableRef"
+          row-key="id"
+          align-whole="center"
+          showOverflowTooltip
+          table-layout="auto"
+          :loading="tableLoading"
+          :size="size"
+          border
+          :data="tableData"
+          :loading-config="loadingConfig"
+          :columns="dynamicColumns"
+          :pagination="pagination"
+          :paginationSmall="size === 'small' ? true : false"
+          :header-cell-style="{
+            background: 'var(--el-fill-color-light)',
+            color: 'var(--el-text-color-primary)',
+          }"
+          @page-size-change="onSizeChange"
+          @page-current-change="onCurrentChange"
+        >
+          <template #operation="{ row }">
+            <el-popover
+              placement="bottom"
+              :width="210"
+              v-if="row.isDeleted"
+              :disabled="!isMoreThanNDays(row.checkInTime, 7)"
+              trigger="hover"
+              content="超过7天，请联系管理员补签"
+            >
+              <template #reference>
+                <div>
+                  <el-popconfirm title="是否补签到？" @confirm="reCheckIn(row)">
+                    <template #reference>
+                      <el-button
+                        v-if="row.isDeleted"
+                        :disabled="isMoreThanNDays(row.checkInTime, 7)"
+                        class="!text-base reset-margin"
+                        type="primary"
+                        :size="size"
+                        text
+                      >
+                        补签
+                      </el-button>
+                    </template>
+                  </el-popconfirm>
+                </div>
+              </template>
+            </el-popover>
+          </template>
+        </pure-table>
+      </template>
+    </PureTableBar>
   </div>
 </template>
 
 <style lang="scss" scoped>
-#container {
-  display: grid;
-  grid-template-columns: 1.5fr 3fr;
-  .grid1 {
-    padding-right: 20px;
-    padding-bottom: 12px;
+// 检索容器
+.search-form {
+  ::v-deep(.el-form-item) {
+    margin: 0;
   }
 }
-.el-card {
-  height: fit-content;
-  :deep() .el-card__body {
-    min-width: 360px;
+// pure-table
+.pure-table {
+  ::v-deep(.cell-selection .cell) {
+    justify-content: center; // 防止勾选项的表项由于宽度不足而位移
   }
 }
-.card1 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  .card-header {
-    display: flex;
-    align-items: center;
-  }
-  .el-form-item {
-    align-items: center;
-  }
-  :deep() .el-card__header {
-    width: 80%;
-    color: #000;
-    font-size: large;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  :deep() .el-card__footer {
-    width: 80%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  :deep() .el-form-item__label {
-    color: #000;
-    font-size: medium;
-    font-weight: 400;
-  }
-}
-.card2 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
-  padding: 10px;
-
-  :deep() .el-card__body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-  }
-  .el-progress {
-    transition: var(--pure-transition-duration);
-  }
-  :deep() .el-progress-circle {
+// popper弹出框
+.card {
+  ::v-deep(.el-progress-circle) {
     width: 300px !important;
     height: 300px !important;
   }
-  :deep() .el-progress__text {
+  ::v-deep(.el-progress__text) {
     font-size: 48px !important;
   }
-  .el-progress__text-div {
-    transition: var(--pure-transition-duration);
-    margin-bottom: 10px;
-  }
-  .el-button {
-    font-size: 24px;
-    width: 75px;
-    height: 75px;
-    transition: var(--pure-transition-duration);
-  }
-}
-.grid3 {
-  & > :deep() .mt-2 {
-    margin-top: 0;
-  }
-  /* 修复未指定列的宽度，导致在界面展开/收起时发生的宽度异常，而破坏容器 */
-  :deep() .el-table__body {
-    width: 100% !important;
-  }
-  :deep() .el-scrollbar__view {
-    width: 100%;
-  }
-  /* 修复未指定列的宽度，导致在界面展开/收起时发生的宽度异常，而破坏容器 */
 }
 </style>

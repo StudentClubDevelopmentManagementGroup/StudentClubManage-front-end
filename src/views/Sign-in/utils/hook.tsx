@@ -1,10 +1,16 @@
 import type { PaginationProps, TableColumns, LoadingConfig } from "@pureadmin/table";
+import type { FormItemProps } from "./types"
 import { delay } from "@pureadmin/utils";
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, h } from "vue";
 import { message } from "@/utils/message";
 import useStore from "@/store";
 import registrationApi from "@/api/registration";
 import formatUtil from "@/utils/formatter"
+
+import editForm from "../form.vue";
+import { addDialog } from "@/components/Dialog";
+import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
+
 interface TableColumnList extends Array<TableColumns> { }
 
 export default function useColumns() {
@@ -12,14 +18,27 @@ export default function useColumns() {
     const tableRef = ref()
     const formRef = ref()
     const searchStatus = ref(false) // 用于检测是否处在检索状态
-    const checkStatus = ref("exception") // 用于检测是否处在签到状态 success:签到中、exception：待签到
     const tableLoading = ref(true)
     const btnLoading = ref(false)
     const durationTime = ref('获取时长失败') // 时间段范围内的有效时长
+    const selectValue = ref("签到记录");
+    const svalue = computed(() => selectValue.value)
+    const options = ref([
+        {
+            value: "签到记录",
+            label: "签到记录"
+        },
+        {
+            value: "打卡时长",
+            label: "打卡时长"
+        }
+    ])
 
     // 搜索框输入内容
     const query = ref({
-        selectedTime: ["", ""],
+        name: "",
+        userId: "",
+        selectedTime: ["", ""]
     })
 
     /** 分页器配置 */
@@ -74,40 +93,37 @@ export default function useColumns() {
             reserveSelection: true
         },
         {
-            label: "签到日期",
-            prop: "inDate",
+            label: "学号",
+            prop: "userId",
             minWidth: 100,
-            cellRenderer: ({ row }) => {
-                return row.checkInTime.slice(0, 10)
-            }
+        },
+        {
+            label: "姓名",
+            prop: "userName",
+            minWidth: 100,
         },
         {
             label: "签到时间",
             prop: "checkInTime",
             minWidth: 100,
-            cellRenderer: ({ row }) => {
-                return row.checkInTime.slice(11, 19)
-            }
-        },
-        {
-            label: "签退日期",
-            prop: "outDate",
-            minWidth: 100,
-            cellRenderer: ({ row }) => {
-                return row.checkoutTime ? row.checkoutTime.slice(0, 10) : ""
-            }
+            hide: (value) => svalue.value !== "签到记录",
         },
         {
             label: "签退时间",
             prop: "checkoutTime",
             minWidth: 100,
-            cellRenderer: ({ row }) => {
-                return row.checkoutTime ? row.checkoutTime.slice(11, 19) : ""
-            }
+            hide: (value) => svalue.value !== "签到记录",
+        },
+        {
+            label: "打卡时长",
+            minWidth: 100,
+            hide: (value) => svalue.value !== "打卡时长",
+            cellRenderer: ({ row }) => <div>{formatUtil.formatTime(row.attendanceDurationTime)}</div>,
         },
         {
             label: "有效时长",
             minWidth: 100,
+            hide: (value) => svalue.value !== "签到记录",
             cellRenderer: ({ row }) => {
                 if (row.checkoutTime) {
                     // 成功签退
@@ -126,6 +142,7 @@ export default function useColumns() {
             fixed: "right",
             minWidth: 100,
             slot: "operation",
+            hide: (value) => svalue.value !== "签到记录",
         },
     ];
 
@@ -148,9 +165,8 @@ export default function useColumns() {
     // 统一的访问 API 的参数来源
     const getDataParams = computed(() => ({
         clubName: useStore.useClubStore.getClubName,
-        // userId: useStore.userStore.getUserInfo
-        userId: "2100301816",
-        userName: "",
+        userName: searchStatus.value ? query.value.name : "",
+        userId: searchStatus.value ? query.value.userId : "",
         startTime: searchStatus.value ? query.value.selectedTime[0] : "",
         endTime: searchStatus.value ? query.value.selectedTime[1] : "",
         currentPage: pagination.currentPage,
@@ -188,28 +204,50 @@ export default function useColumns() {
 
     // 获取数据
     const fetchTableData = () => {
-        return new Promise((resolve, reject) => {
-            registrationApi.getRegistrationList(getDataParams.value)
-                .then((data) => {
-                    tableData.value = data.records;
-                    pagination.total = parseInt(data.total_item);
-                    tableLoading.value = false; // 如果提前加载完成，则解除加载状态，否则等待请求超时
-                    resolve(data)
-                })
-                .catch((error) => {
-                    tableData.value = [];
-                    pagination.total = 0;
-                    tableLoading.value = false;
-                    reject(error)
-                })
-        })
+        if (selectValue.value === "签到记录") {
+            // 获取签到记录
+            return new Promise((resolve, reject) => {
+                registrationApi.getRegistrationList(getDataParams.value)
+                    .then((data) => {
+                        tableData.value = data.records;
+                        pagination.total = parseInt(data.total_item);
+                        tableLoading.value = false; // 如果提前加载完成，则解除加载状态，否则等待请求超时
+                        resolve(data)
+                    })
+                    .catch((error) => {
+                        tableData.value = [];
+                        pagination.total = 0;
+                        tableLoading.value = false;
+                        reject(error)
+                    })
+            })
+        } else if (selectValue.value === "打卡时长") {
+            // TODO: 催促后端分页  // 获取打卡时长 
+            return new Promise((resolve, reject) => {
+                registrationApi.getDurationTime(getDataParams.value)
+                    .then((data) => {
+                        // tableData.value = data.records;
+                        // pagination.total = parseInt(data.total_item);
+                        tableData.value = data
+                        pagination.total = data.length
+                        tableLoading.value = false; // 如果提前加载完成，则解除加载状态，否则等待请求超时
+                        resolve(data)
+                    })
+                    .catch((error) => {
+                        tableData.value = [];
+                        pagination.total = 0;
+                        tableLoading.value = false;
+                        reject(error)
+                    })
+            })
+        } else {
+            message("系统出现了未知bug!", { type: "error" })
+        }
     }
 
     // 刷新数据
     const refreshTabaleData = () => {
         onLoading()
-        getAvailableDurationTime()
-        getCheckStatus();
         fetchTableData();
     }
 
@@ -232,48 +270,6 @@ export default function useColumns() {
         })
     }
 
-    // 获取当前签到状态
-    const getCheckStatus = () => {
-        return new Promise((resolve, reject) => {
-            registrationApi.getLatestCheckInRecord({
-                clubName: getDataParams.value.clubName,
-                userId: getDataParams.value.userId,
-            })
-                .then((data) => {
-                    // TODO: 逻辑待调整，后端有些问题，进一步完善时再提
-                    if (data?.checkoutTime === null) {
-                        checkStatus.value = 'success'
-                    } else {
-                        checkStatus.value = 'exception'
-                    }
-                })
-                .catch((error) => {
-                    console.error(error)
-                })
-        })
-    }
-
-    // 签到
-    const checkIn = () => {
-        return new Promise((resolve, reject) => {
-            registrationApi.checkIn({
-                clubName: getDataParams.value.clubName,
-                userId: getDataParams.value.userId,
-                checkInTime: formatUtil.getNowDatetime()
-            })
-                .then((data) => {
-                    checkStatus.value = 'success'
-                    message("签到成功", { type: 'success' })
-                    fetchTableData()
-                })
-                .catch((error) => {
-                    console.error(error)
-                    message("签到失败", { type: 'error' })
-                    tableLoading.value = false;
-                })
-        })
-    }
-
     // 签退
     const checkOut = () => {
         return new Promise((resolve, reject) => {
@@ -283,33 +279,30 @@ export default function useColumns() {
                 checkoutTime: formatUtil.getNowDatetime()
             })
                 .then((data) => {
-                    checkStatus.value = 'exception'
                     message('签退成功', { type: 'success' })
                     fetchTableData()
                 })
                 .catch((error) => {
                     console.error(error)
-                    message('签退失败', { type: 'error' })
                     tableLoading.value = false;
                 })
         })
     }
 
     // 补签
-    const reCheckIn = (row) => {
+    const reCheckIn = (val) => {
         return new Promise((resolve, reject) => {
             registrationApi.replenish({
                 clubName: getDataParams.value.clubName,
-                userId: getDataParams.value.userId,
-                checkInTime: row.checkInTime,
-                checkoutTime: formatUtil.plusHours(row.checkInTime, 4)
+                userId: val.userId,
+                checkInTime: val.checkInTime,
+                checkoutTime: val.checkOutTime
             }).then((data) => {
                 onLoading()
                 message("补签成功", { type: "success" })
                 fetchTableData()
             }).catch((error) => {
                 console.warn(error)
-                message("补签失败", { type: "error" })
             })
         })
     }
@@ -341,16 +334,6 @@ export default function useColumns() {
         addTableData()
     }
 
-    // 处理签到/签退
-    const handleCheck = () => {
-        onLoading()
-        if (checkStatus.value === 'success') {
-            checkOut();
-        } else if (checkStatus.value === 'exception') {
-            checkIn();
-        }
-    }
-
     // 导出Excel
     // TODO:导出EXCEL
     const handleExport = () => {
@@ -359,10 +342,56 @@ export default function useColumns() {
 
     onMounted(() => {
         onLoading()
-        getAvailableDurationTime()
-        getCheckStatus();
         fetchTableData();
     });
+
+    function openDialog(title, item, row?: FormItemProps) {
+        useStore.useRegistrationStore.setCurrentCheckInTime(item.checkInTime)
+        useStore.useRegistrationStore.setCurrentUserId(item.userId)
+        addDialog({
+            title: title,
+            props: {
+                formInline: {
+                    customTime: row?.customTime ?? useStore.useRegistrationStore.getCurrentCheckInTime(),
+                }
+            },
+            width: "40%",
+            draggable: true,
+            fullscreen: deviceDetection(),
+            fullscreenIcon: true,
+            closeOnClickModal: false,
+            contentRenderer: () => h(editForm, { ref: formRef }),
+            beforeSure: (done, { options }) => {
+                const FormRef = formRef.value.getRef();
+                const curData = options.props.formInline as FormItemProps;
+                function chores() {
+                    done(); // 关闭弹框
+                }
+                FormRef.validate((valid: any) => {
+                    //TODO: 调用的接口与打卡记录处的补签接口是同一个接口无法超过7天无法补签的限制
+                    if (valid) {
+                        console.log("curData", curData);
+                        if (useStore.useRegistrationStore.getSwitchStatus() === "now") {
+                            reCheckIn({
+                                userId: useStore.useRegistrationStore.getCurrentUserId(),
+                                checkInTime: useStore.useRegistrationStore.getCurrentCheckInTime(),
+                                checkOutTime: useStore.useRegistrationStore.getAfterPlusCheckInTime(),
+                            })
+                        } else if (useStore.useRegistrationStore.getSwitchStatus() === "custom") {
+                            reCheckIn({
+                                userId: useStore.useRegistrationStore.getCurrentUserId(),
+                                checkInTime: useStore.useRegistrationStore.getCurrentCheckInTime(),
+                                checkOutTime: curData.customTime,
+                            })
+                        } else {
+                            console.log("进入其他")
+                        }
+                        chores();
+                    }
+                });
+            }
+        });
+    }
 
     const isMoreThanNDays = (date1, n) => {
         // 将日期转换为时间戳（毫秒）
@@ -384,10 +413,10 @@ export default function useColumns() {
         tableRef,
         tableData,
         searchStatus,
-        checkStatus,
         tableLoading,
         btnLoading,
-        durationTime,
+        selectValue,
+        options,
         pagination,
         query,
         shortcuts,
@@ -395,20 +424,18 @@ export default function useColumns() {
         loadingConfig,
         getDataParams,
 
+        onLoading,
         fetchTableData,
         refreshTabaleData,
         addTableData,
         onSizeChange,
         onCurrentChange,
-        getCheckStatus,
-        checkIn,
         checkOut,
-        reCheckIn,
         handleSearch,
         handleReset,
         handleAdd,
         handleExport,
-        handleCheck,
         isMoreThanNDays,
+        openDialog,
     }
 }
