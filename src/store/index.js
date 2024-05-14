@@ -6,6 +6,7 @@ import { useUserStore } from "@/store/user"
 import { useThemeStore } from "@/store/theme"
 import { useNavigationStore } from "@/store/navigation"
 import { useClubStore } from "@/store/club"
+import { useDepartmentStore } from "@/store/department"
 import { useRegistrationStore } from "@/store/registration"
 
 const useStore = {}
@@ -19,6 +20,7 @@ export const registerStore = () => {
     useStore.themeStore = useThemeStore()
     useStore.useNavigationStore = useNavigationStore()
     useStore.useClubStore = useClubStore()
+    useStore.useDepartmentStore = useDepartmentStore()
     useStore.useRegistrationStore = useRegistrationStore()
 }
 

@@ -26,7 +26,7 @@ export default {
         })
     },
     // 逻辑恢复基地
-    recoverBase(data) {
+    undeleteBase(data) {
         return request({
             url: '/club/undelete',
             method: 'post',
@@ -49,10 +49,18 @@ export default {
             data
         })
     },
-    // 变更教师负责人
-    setTeacherManager(data) {
+    // 基地设置负责人
+    setManager(data) {
         return request({
-            url: '/ club/select_manager',
+            url: '/club/member/set_manager',
+            method: 'post',
+            data
+        })
+    },
+    // 撤销教师负责人
+    deleteManager(data) {
+        return request({
+            url: '/club/member/unset_manager',
             method: 'post',
             data
         })

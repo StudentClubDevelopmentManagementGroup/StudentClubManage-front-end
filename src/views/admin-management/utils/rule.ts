@@ -1,85 +1,67 @@
-const validateName = (rule, value, callback) => {
-    if (!value) {
-        callback(new Error("名称不能为空"));
-    } else if (value == null) {
-        callback(new Error("名称不能为空"));
-    } else {
-        callback();
-    }
-};
+import { reactive } from "vue";
+import type { FormRules } from "element-plus";
 
-const validateId = (rule, value, callback) => {
-    if (!value) {
-        callback(new Error("请选择院系"));
-    } else if (value == null) {
-        callback(new Error("请选择院系"));
-    } else {
-        callback();
-    }
-};
+/** 自定义表单规则校验 */
+export const clubAddFormRules = reactive(<FormRules>{
+    name: [{
+        required: true,
+        trigger: "blur",
+        validator: (rule, value, callback) => {
+            if (!value) {
+                callback(new Error("名称不能为空"))
+            } else {
+                callback();
+            }
+        },
+    }],
+    department_id: [{
+        required: true,
+        trigger: "blur",
+        validator: (rule, value, callback) => {
+            if (!value) {
+                callback(new Error("请选择院系"))
+            } else {
+                callback();
+            }
+        },
+    }]
+});
 
-export const addBaseRules = {
-    name: [
-        { required: true, validator: validateName, trigger: "blur" }
-    ],
-    department_id: [
-        { required: true, validator: validateId, trigger: "blur" }
-    ]
-}
+export const clubSetFormRules = reactive(<FormRules>{
+    user_id: [{
+        required: true,
+        trigger: "blur",
+        validator: (rule, value, callback) => {
+            if (!value) {
+                callback(new Error("请输入工号"))
+            } else {
+                callback();
+            }
+        },
+    }]
+});
 
-const validateUserId = (rule, value, callback) => {
-    if (!value) {
-        callback(new Error("请输入工号"));
-    } else if (value == null) {
-        callback(new Error("请输入工号"));
-    } else {
-        callback();
-    }
-};
-
-export const setManagerRules = {
-    user_id: [
-        { required: true, validator: validateUserId, trigger: "blur" }
-    ]
-}
-
-const validateFullName = (rule, value, callback) => {
-    if (!value) {
-        callback(new Error("请输入学院名称"))
-    } else if (value == null) {
-        callback(new Error("请输入学院名称"))
-    } else {
-        callback();
-    }
-}
-
-const validateAbbreviation = (rule, value, callback) => {
-    if (!value) {
-        callback(new Error("请输入学院简称"))
-    } else if (value == null) {
-        callback(new Error("请输入学院简称"))
-    } else {
-        callback();
-    }
-}
-
-export const addDepartmentRules = {
-    fullName: [
-        { required: true, validator: validateFullName, trigger: 'blur' }
-    ],
-    abbreviation: [
-        { required: true, validator: validateAbbreviation, trigger: 'blur' }
-    ]
-}
-
-
-
-
-export const modifyDepartmentRules = {
-    fullName: [
-        { required: true, validator: validateFullName, trigger: 'blur' }
-    ],
-    abbreviation: [
-        { required: true, validator: validateAbbreviation, trigger: 'blur' }
-    ]
-}
+export const departmentAddRules = reactive(<FormRules>{
+    fullName: [{
+        required: true,
+        trigger: "blur",
+        validator: (rule, value, callback) => {
+            if (!value) {
+                callback(new Error("请输入学院名称"))
+            } else {
+                callback();
+            }
+        },
+    }],
+    abbreviation: [{
+        required: true,
+        trigger: "blur",
+        validator: (rule, value, callback) => {
+            if (!value) {
+                callback(new Error("请输入学院简称"))
+            } else {
+                callback();
+            }
+        },
+    }],
+});

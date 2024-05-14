@@ -1,10 +1,17 @@
 import type { PaginationProps, TableColumns, LoadingConfig } from "@pureadmin/table";
+import type { clubFormItemProps } from "./types"
 import { delay } from "@pureadmin/utils";
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, h } from "vue";
 import { message } from "@/utils/message";
+import managementApi from "@/api/management";
 import useStore from "@/store";
-import registrationApi from "@/api/registration";
-import formatUtil from "@/utils/formatter"
+
+import addForm from "../clubAddForm.vue";
+import setForm from "../clubSetForm.vue";
+import deleteForm from "../clubDeleteForm.vue"
+import { addDialog, closeDialog } from "@/components/Dialog";
+import { deviceDetection } from "@pureadmin/utils";
+
 interface TableColumnList extends Array<TableColumns> { }
 
 export default function useColumns() {
@@ -12,14 +19,15 @@ export default function useColumns() {
     const tableRef = ref()
     const formRef = ref()
     const searchStatus = ref(false) // 用于检测是否处在检索状态
-    const checkStatus = ref("exception") // 用于检测是否处在签到状态 success:签到中、exception：待签到
     const tableLoading = ref(true)
     const btnLoading = ref(false)
-    const durationTime = ref('获取时长失败') // 时间段范围内的有效时长
+    const btnDeleteStatus = computed(() => useStore.useClubStore.getCheckboxStatus())
+    const deleteState = computed(() => useStore.useClubStore.getDeleteState())
 
     // 搜索框输入内容
     const query = ref({
-        selectedTime: ["", ""],
+        name: "",
+        departmentId: ""
     })
 
     /** 分页器配置 */
@@ -33,37 +41,6 @@ export default function useColumns() {
         small: false
     });
 
-    /** 日期选择器 shortcuts 配置 */
-    const shortcuts = [
-        {
-            text: "一周前",
-            value: () => {
-                const end = new Date();
-                const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                return [start, end];
-            }
-        },
-        {
-            text: "一个月前",
-            value: () => {
-                const end = new Date();
-                const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                return [start, end];
-            }
-        },
-        {
-            text: "三个月前",
-            value: () => {
-                const end = new Date();
-                const start = new Date();
-                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                return [start, end];
-            }
-        }
-    ];
-
     /** 表格列配置 */
     const columns: TableColumnList = [
         {
@@ -74,57 +51,55 @@ export default function useColumns() {
             reserveSelection: true
         },
         {
-            label: "签到日期",
-            prop: "inDate",
+            label: "社团/基地名称",
+            prop: "name",
             minWidth: 100,
-            cellRenderer: ({ row }) => {
-                return row.checkInTime.slice(0, 10)
-            }
         },
         {
-            label: "签到时间",
-            prop: "checkInTime",
-            minWidth: 100,
-            cellRenderer: ({ row }) => {
-                return row.checkInTime.slice(11, 19)
-            }
+            label: "学院",
+            prop: "department_name",
+            minWidth: 150,
         },
         {
-            label: "签退日期",
-            prop: "outDate",
-            minWidth: 100,
-            cellRenderer: ({ row }) => {
-                return row.checkoutTime ? row.checkoutTime.slice(0, 10) : ""
-            }
+            label: "成员数",
+            prop: "number",
+            width: 100,
         },
         {
-            label: "签退时间",
-            prop: "checkoutTime",
-            minWidth: 100,
-            cellRenderer: ({ row }) => {
-                return row.checkoutTime ? row.checkoutTime.slice(11, 19) : ""
-            }
+            label: "社团负责人",
+            prop: "manager",
+            cellRenderer: ({ row }) => <div> {row.manager === null ? "未设置" : row.manager}</div>,
         },
         {
-            label: "有效时长",
-            minWidth: 100,
+            label: "招新状态",
+            prop: "state",
             cellRenderer: ({ row }) => {
-                if (row.checkoutTime) {
-                    // 成功签退
-                    return <div>{formatUtil.formatTime(row.attendanceDuration)}</div>;
-                } else if (!row.isDeleted) {
-                    // 今日已签到，但尚未签退
-                    return <el-tag type="primary">待签退</el-tag>
+                if (!row.state) {
+                    // 招新中
+                    return <el-tag type="success">招新中</el-tag>
                 } else {
-                    // 未当日签退的记录
-                    return <el-tag type="danger" >当天未签退</el-tag>
+                    // 暂停招新
+                    return <el-tag type="info">停止招新</el-tag>
+                }
+            }
+        },
+        {
+            label: "启用状态",
+            prop: "is_deleted",
+            cellRenderer: ({ row }) => {
+                if (row.is_deleted) {
+                    // 已逻辑删除
+                    return <el-tag type="danger">未启用</el-tag>
+                } else {
+                    // 启用中
+                    return <el-tag type="success">启用中</el-tag>
                 }
             }
         },
         {
             label: "操作",
             fixed: "right",
-            minWidth: 100,
+            width: 350,
             slot: "operation",
         },
     ];
@@ -147,14 +122,10 @@ export default function useColumns() {
 
     // 统一的访问 API 的参数来源
     const getDataParams = computed(() => ({
-        clubName: useStore.useClubStore.getClubName,
-        // userId: useStore.userStore.getUserInfo
-        userId: "2100301816",
-        userName: "",
-        startTime: searchStatus.value ? query.value.selectedTime[0] : "",
-        endTime: searchStatus.value ? query.value.selectedTime[1] : "",
-        currentPage: pagination.currentPage,
-        pageSize: pagination.pageSize
+        department_id: searchStatus.value && query.value.departmentId !== "" ? query.value.departmentId : 0,
+        name: searchStatus.value ? query.value.name : "",
+        pageNum: pagination.currentPage,
+        size: pagination.pageSize
     }))
 
     // 表格进入加载流程
@@ -189,7 +160,7 @@ export default function useColumns() {
     // 获取数据
     const fetchTableData = () => {
         return new Promise((resolve, reject) => {
-            registrationApi.getRegistrationList(getDataParams.value)
+            managementApi.getBaseList(getDataParams.value)
                 .then((data) => {
                     tableData.value = data.records;
                     pagination.total = parseInt(data.total_item);
@@ -208,109 +179,69 @@ export default function useColumns() {
     // 刷新数据
     const refreshTabaleData = () => {
         onLoading()
-        getAvailableDurationTime()
-        getCheckStatus();
         fetchTableData();
     }
 
-    // 添加数据
-    // TODO: 预留的其他新增
-    const addTableData = () => {
-        console.log("添加数据行")
-    }
-
-    // 获取当前时间段内的有效签到时长
-    const getAvailableDurationTime = () => {
+    // 新增基地
+    const addClub = (val) => {
         return new Promise((resolve, reject) => {
-            registrationApi.getDurationTime(getDataParams.value)
+            managementApi.addBase(val)
                 .then((data) => {
-                    durationTime.value = formatUtil.formatTime(data[0].attendanceDurationTime)
-                })
-                .catch((error) => {
-                    console.warn(error)
-                })
-        })
-    }
-
-    // 获取当前签到状态
-    const getCheckStatus = () => {
-        return new Promise((resolve, reject) => {
-            registrationApi.getLatestCheckInRecord({
-                clubName: getDataParams.value.clubName,
-                userId: getDataParams.value.userId,
-            })
-                .then((data) => {
-                    // TODO: 逻辑待调整，后端有些问题，进一步完善时再提
-                    if (data?.checkoutTime === null) {
-                        checkStatus.value = 'success'
-                    } else {
-                        checkStatus.value = 'exception'
-                    }
-                })
-                .catch((error) => {
-                    console.error(error)
-                })
-        })
-    }
-
-    // 签到
-    const checkIn = () => {
-        return new Promise((resolve, reject) => {
-            registrationApi.checkIn({
-                clubName: getDataParams.value.clubName,
-                userId: getDataParams.value.userId,
-                checkInTime: formatUtil.getNowDatetime()
-            })
-                .then((data) => {
-                    checkStatus.value = 'success'
-                    message("签到成功", { type: 'success' })
+                    message("添加基地/社团成功", { type: "success" })
+                    onLoading()
                     fetchTableData()
                 })
                 .catch((error) => {
-                    console.error(error)
-                    message("签到失败", { type: 'error' })
-                    tableLoading.value = false;
+                    message("添加基地/社团失败", { type: "error" })
+                    console.warn(error.message)
                 })
         })
     }
 
-    // 签退
-    const checkOut = () => {
+    // 删除基地/社团
+    const deleteClub = (val) => {
         return new Promise((resolve, reject) => {
-            registrationApi.checkOut({
-                clubName: getDataParams.value.clubName,
-                userId: getDataParams.value.userId,
-                checkoutTime: formatUtil.getNowDatetime()
-            })
+            managementApi.deleteBase(val)
                 .then((data) => {
-                    checkStatus.value = 'exception'
-                    message('签退成功', { type: 'success' })
+                    message("删除基地/社团成功", { type: "success" })
+                    onLoading()
                     fetchTableData()
                 })
                 .catch((error) => {
-                    console.error(error)
-                    message('签退失败', { type: 'error' })
-                    tableLoading.value = false;
+                    message("添加基地/社团失败", { type: "error" })
+                    console.warn(error);
                 })
         })
     }
 
-    // 补签
-    const reCheckIn = (row) => {
+    // 恢复基地/社团
+    const undeleteClub = (val) => {
         return new Promise((resolve, reject) => {
-            registrationApi.replenish({
-                clubName: getDataParams.value.clubName,
-                userId: getDataParams.value.userId,
-                checkInTime: row.checkInTime,
-                checkoutTime: formatUtil.plusHours(row.checkInTime, 4)
-            }).then((data) => {
-                onLoading()
-                message("补签成功", { type: "success" })
-                fetchTableData()
-            }).catch((error) => {
-                console.warn(error)
-                message("补签失败", { type: "error" })
-            })
+            managementApi.undeleteBase(val)
+                .then((data) => {
+                    message("恢复基地/社团成功", { type: "success" })
+                    console.log("data", data)
+                })
+                .catch((error) => {
+                    console.warn(error);
+                })
+        })
+    }
+
+    // 设置负责人
+    const setManager = (val) => {
+        return new Promise((resolve, reject) => {
+            managementApi.setManager(val)
+                .then((data) => {
+                    message("设置负责人成功", { type: 'success' })
+                    onLoading()
+                    fetchTableData()
+                })
+                .catch((error) => {
+                    message("设置负责人失败", { type: 'success' })
+                    console.warn(error);
+
+                })
         })
     }
 
@@ -335,20 +266,14 @@ export default function useColumns() {
         }
     }
 
-    // 添加数据
-    const handleAdd = () => {
-        console.log("点击新增按钮")
-        addTableData()
-    }
-
-    // 处理签到/签退
-    const handleCheck = () => {
+    // 处理恢复
+    const handleUnDelete = (row) => {
+        undeleteClub({
+            name: row.name,
+            department_id: row.department_id
+        })
         onLoading()
-        if (checkStatus.value === 'success') {
-            checkOut();
-        } else if (checkStatus.value === 'exception') {
-            checkIn();
-        }
+        fetchTableData()
     }
 
     // 导出Excel
@@ -359,24 +284,110 @@ export default function useColumns() {
 
     onMounted(() => {
         onLoading()
-        getAvailableDurationTime()
-        getCheckStatus();
         fetchTableData();
     });
 
-    const isMoreThanNDays = (date1, n) => {
-        // 将日期转换为时间戳（毫秒）
-        var timestamp1 = new Date(date1).getTime();
-        var timestamp2 = new Date().getTime();
+    function openDialog(title, item, row?: clubFormItemProps) {
+        var state = 0
+        if (title === "新增基地/社团") {
+            state = 1
+        } else if (title === "设置教师负责人") {
+            state = 2
+        }
+        addDialog({
+            title: title,
+            props: {
+                formInline: {
+                    name: row?.name ?? "",
+                    department_id: row?.department_id ?? "",
+                    user_id: row?.user_id ?? "",
+                }
+            },
+            width: "40%",
+            draggable: true,
+            fullscreen: deviceDetection(),
+            fullscreenIcon: true,
+            closeOnClickModal: false,
+            contentRenderer: () => {
+                if (state === 1) {
+                    return h(addForm, { ref: formRef })
+                } else if (state === 2) {
+                    return h(setForm, { ref: formRef })
+                }
+            },
+            beforeSure: (done, { options }) => {
+                const FormRef = formRef.value.getRef();
+                const curData = options.props.formInline as clubFormItemProps;
+                function chores() {
+                    done(); // 关闭弹框
+                }
+                FormRef.validate((valid: any) => {
+                    if (valid) {
+                        if (state === 1) {
+                            addClub({
+                                name: curData.name,
+                                department_id: curData.department_id
+                            })
+                        } else if (state === 2) {
+                            setManager({
+                                user_id: curData.user_id,
+                                club_id: item.club_id,
+                            })
+                        } else {
+                            console.log("进入其他")
+                        }
+                        chores();
+                    }
+                });
+            }
+        });
+    }
 
-        // 计算两个日期之间的差值（毫秒）
-        var diff = Math.abs(timestamp1 - timestamp2);
-
-        // 将差值转换为天数
-        var days = diff / (1000 * 60 * 60 * 24);
-
-        // 检查差值是否超过n天
-        return days > n;
+    function openDeleteDialog(title, item) {
+        addDialog({
+            title: title,
+            width: "30%",
+            draggable: true,
+            closeOnClickModal: false,
+            // hideFooter: true,
+            contentRenderer: ({ options, index }) => {
+                return h(deleteForm, { ref: formRef })
+            },
+            footerRenderer: ({ options, index }) => {
+                return <div>
+                    {deleteState.value === 1 && (
+                        <el-button
+                            onClick={() => {
+                                useStore.useClubStore.setDeleteState(2);
+                            }}
+                            class='w-full'
+                            disabled={!btnDeleteStatus.value}
+                        >
+                            我已阅读注意事项
+                        </el-button>
+                    )}
+                    {deleteState.value === 2 && (
+                        <el-button
+                            onClick={() => {
+                                closeDialog(options, index, { command: "footer" });
+                            }}
+                            type='danger'
+                            class='w-full'
+                        >
+                            确认删除
+                        </el-button>
+                    )}
+                </div>
+            },
+            closeCallBack({ options, index, args }) {
+                if (args.command === "footer") {
+                    deleteClub({
+                        name: item.name,
+                        department_id: item.department_id
+                    })
+                }
+            },
+        });
     }
 
     return {
@@ -384,31 +395,23 @@ export default function useColumns() {
         tableRef,
         tableData,
         searchStatus,
-        checkStatus,
         tableLoading,
         btnLoading,
-        durationTime,
         pagination,
         query,
-        shortcuts,
         columns,
         loadingConfig,
         getDataParams,
 
         fetchTableData,
         refreshTabaleData,
-        addTableData,
         onSizeChange,
         onCurrentChange,
-        getCheckStatus,
-        checkIn,
-        checkOut,
-        reCheckIn,
         handleSearch,
         handleReset,
-        handleAdd,
+        handleUnDelete,
         handleExport,
-        handleCheck,
-        isMoreThanNDays,
+        openDialog,
+        openDeleteDialog
     }
 }
