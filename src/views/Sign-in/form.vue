@@ -53,10 +53,6 @@ const disabledSeconds = (hour: number, minute: number) => {
   return [];
 };
 
-function getRef() {
-  return ruleFormRef.value;
-}
-
 const handleTimeChange = (val) => {
   newFormInline.value.customTime = val ? val : "";
 };
@@ -73,6 +69,10 @@ const handleRadioChange = (val) => {
     disabled.value = false;
   }
 };
+
+function getRef() {
+  return ruleFormRef.value;
+}
 
 defineExpose({ getRef });
 </script>

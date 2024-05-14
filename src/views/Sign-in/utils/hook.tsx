@@ -329,6 +329,7 @@ export default function useColumns() {
     }
 
     // 添加数据
+    // TODO: 预留添加数据
     const handleAdd = () => {
         console.log("点击新增按钮")
         addTableData()
@@ -370,7 +371,6 @@ export default function useColumns() {
                 FormRef.validate((valid: any) => {
                     //TODO: 调用的接口与打卡记录处的补签接口是同一个接口无法超过7天无法补签的限制
                     if (valid) {
-                        console.log("curData", curData);
                         if (useStore.useRegistrationStore.getSwitchStatus() === "now") {
                             reCheckIn({
                                 userId: useStore.useRegistrationStore.getCurrentUserId(),

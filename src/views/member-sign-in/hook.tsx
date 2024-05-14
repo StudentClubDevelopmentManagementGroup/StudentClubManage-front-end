@@ -240,7 +240,6 @@ export default function useColumns() {
                 userId: getDataParams.value.userId,
             })
                 .then((data) => {
-                    // TODO: 逻辑待调整，后端有些问题，进一步完善时再提
                     if (data?.checkoutTime === null) {
                         checkStatus.value = 'success'
                     } else {

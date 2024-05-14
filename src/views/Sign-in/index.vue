@@ -39,17 +39,16 @@ const {
 } = useColumns();
 
 const handleTimeChange = (val) => {
-  console.log("TimeChange", val);
+  // console.log("TimeChange", val);
 };
 
 const handleForce2Checkout = () => {
   // TODO: 无效功能
   message(`"强制签到"是未完成功能`, { type: "error" });
-  console.log("强制签退");
+  // console.log("强制签退");
 };
 
 const handleSelectionChange = (val) => {
-  console.log("SelectionChange", selectValue.value);
   onLoading();
   fetchTableData();
 };
@@ -213,16 +212,6 @@ const handleSelectionChange = (val) => {
 .pure-table {
   ::v-deep(.cell-selection .cell) {
     justify-content: center; // 防止勾选项的表项由于宽度不足而位移
-  }
-}
-// popper弹出框
-.card {
-  ::v-deep(.el-progress-circle) {
-    width: 300px !important;
-    height: 300px !important;
-  }
-  ::v-deep(.el-progress__text) {
-    font-size: 48px !important;
   }
 }
 </style>

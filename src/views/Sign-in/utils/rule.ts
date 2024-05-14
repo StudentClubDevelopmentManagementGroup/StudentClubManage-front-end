@@ -11,11 +11,11 @@ export const formRules = reactive(<FormRules>{
     validator: (rule, value, callback) => {
       if (useStore.useRegistrationStore.getSwitchStatus() === "custom") {
         if (value === "") {
-          callback("当前自定义时间不能为空")
+          callback(new Error("当前自定义时间不能为空"))
         } else if (formatUtil.isPass(useStore.useRegistrationStore.getCurrentCheckInTime(), value)) {
-          callback("签退时间不能小于签到时间")
+          callback(new Error("签退时间不能小于签到时间"))
         } else if (formatUtil.isSameTime(useStore.useRegistrationStore.getCurrentCheckInTime(),value)) {
-          callback("签退时间不能与签到时间相同")
+          callback(new Error("签退时间不能与签到时间相同"))
         } else {
           callback()
         }

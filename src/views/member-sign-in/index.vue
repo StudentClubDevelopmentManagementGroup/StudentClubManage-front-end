@@ -45,7 +45,7 @@ const {
 } = useColumns();
 
 const handleTimeChange = (val) => {
-  console.log("TimeChange", val);
+  // console.log("TimeChange", val);
 };
 </script>
 
