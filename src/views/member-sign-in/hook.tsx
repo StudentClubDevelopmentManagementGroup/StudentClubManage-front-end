@@ -147,7 +147,7 @@ export default function useColumns() {
 
     // 统一的访问 API 的参数来源
     const getDataParams = computed(() => ({
-        clubName: useStore.useClubStore.getClubName,
+        clubName: useStore.useClubStore.getClubName(),
         // userId: useStore.userStore.getUserInfo
         userId: "2100301816",
         userName: "",

@@ -9,6 +9,14 @@ export default {
             params
         })
     },
+    // 查询基地基础信息
+    getBaseInfo(params) {
+        return request({
+            url: '/club/select',
+            method: 'get',
+            params
+        })
+    },
     // 新增基地
     addBase(data) {
         return request({
@@ -49,22 +57,6 @@ export default {
             data
         })
     },
-    // 基地设置负责人
-    setManager(data) {
-        return request({
-            url: '/club/member/set_manager',
-            method: 'post',
-            data
-        })
-    },
-    // 撤销教师负责人
-    deleteManager(data) {
-        return request({
-            url: '/club/member/unset_manager',
-            method: 'post',
-            data
-        })
-    }
 }
 
 

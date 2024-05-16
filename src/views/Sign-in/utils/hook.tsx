@@ -164,7 +164,7 @@ export default function useColumns() {
 
     // 统一的访问 API 的参数来源
     const getDataParams = computed(() => ({
-        clubName: useStore.useClubStore.getClubName,
+        clubName: useStore.useClubStore.getClubName(),
         userName: searchStatus.value ? query.value.name : "",
         userId: searchStatus.value ? query.value.userId : "",
         startTime: searchStatus.value ? query.value.selectedTime[0] : "",

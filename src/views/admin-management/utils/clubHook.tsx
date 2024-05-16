@@ -4,6 +4,7 @@ import { delay } from "@pureadmin/utils";
 import { ref, reactive, computed, onMounted, h } from "vue";
 import { message } from "@/utils/message";
 import managementApi from "@/api/management";
+import memberApi from "@/api/member";
 import useStore from "@/store";
 
 import addForm from "../clubAddForm.vue";
@@ -231,7 +232,7 @@ export default function useColumns() {
     // 设置负责人
     const setManager = (val) => {
         return new Promise((resolve, reject) => {
-            managementApi.setManager(val)
+            memberApi.setManager(val)
                 .then((data) => {
                     message("设置负责人成功", { type: 'success' })
                     onLoading()

@@ -1,8 +1,11 @@
 <script setup>
 import { onMounted, computed } from "vue";
 import { PureTableBar } from "@/components/PureTableBar";
+import { delay } from "@pureadmin/utils";
+import { message } from "@/utils/message";
+import { useRouter } from "vue-router";
 import useStore from "@/store";
-import useColumns from "./utils/hook";
+import useColumns from "./utils/clubHook";
 
 import { CirclePlus, Search, Refresh, Download, Delete } from "@element-plus/icons-vue";
 
@@ -29,7 +32,21 @@ const {
   openDeleteDialog,
 } = useColumns();
 
+const router = useRouter();
+
 const options = computed(() => useStore.useDepartmentStore.getOptions());
+
+const handleClick = (row) => {
+  console.log(row);
+  useStore.useClubStore.setCurrentClub({
+    clubName: row.name,
+    club_id: parseInt(row.club_id),
+  });
+  delay(600).then(() => {
+    message("切换基地成功", { type: "success" });
+    router.push("/");
+  });
+};
 
 onMounted(() => {
   useStore.useDepartmentStore.getOptionsList();
@@ -148,7 +165,9 @@ onMounted(() => {
                 text
                 >设置负责人</el-button
               >
-              <el-button type="success" :size="size">进入详情</el-button>
+              <el-button type="success" :size="size" @click="handleClick(row)"
+                >进入详情</el-button
+              >
             </div>
           </template>
         </pure-table>
