@@ -47,7 +47,7 @@ export const departmentAddRules = reactive(<FormRules>{
         trigger: "blur",
         validator: (rule, value, callback) => {
             if (!value) {
-                callback(new Error("请输入学院名称"))
+                callback(new Error("请输入学院全称"))
             } else {
                 callback();
             }
@@ -59,6 +59,34 @@ export const departmentAddRules = reactive(<FormRules>{
         validator: (rule, value, callback) => {
             if (!value) {
                 callback(new Error("请输入学院简称"))
+            } else {
+                callback();
+            }
+        },
+    }],
+});
+
+export const departmentUpdateRules = reactive(<FormRules>{
+    fullName: [{
+        required: true,
+        trigger: "blur",
+        validator: (rule, value, callback) => {
+            if (!value) {
+                callback(new Error("请输入学院全称"))
+            } else {
+                callback();
+            }
+        },
+    }],
+});
+
+export const departmentDeleteRules = reactive(<FormRules>{
+    name: [{
+        required: true,
+        trigger: "blur",
+        validator: (rule, value, callback) => {
+            if (!value) {
+                callback(new Error("请输入学院全称"))
             } else {
                 callback();
             }

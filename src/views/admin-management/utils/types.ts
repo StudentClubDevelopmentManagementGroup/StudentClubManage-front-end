@@ -8,5 +8,14 @@ interface clubFormProps {
     formInline: clubFormItemProps;
 }
 
+interface departmentItemProps {
+    fullName: string,
+    abbreviation: string,
+}
 
-export type { clubFormItemProps, clubFormProps };
+interface departmentProps {
+    formInline: departmentItemProps;
+}
+
+
+export type { clubFormItemProps, clubFormProps, departmentItemProps, departmentProps };

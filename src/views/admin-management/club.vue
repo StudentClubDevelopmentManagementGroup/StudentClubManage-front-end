@@ -4,8 +4,8 @@ import { PureTableBar } from "@/components/PureTableBar";
 import { delay } from "@pureadmin/utils";
 import { message } from "@/utils/message";
 import { useRouter } from "vue-router";
+import { useClubColumns } from "./utils/hook";
 import useStore from "@/store";
-import useColumns from "./utils/clubHook";
 
 import { CirclePlus, Search, Refresh, Download, Delete } from "@element-plus/icons-vue";
 
@@ -20,7 +20,6 @@ const {
   columns,
   loadingConfig,
 
-  fetchTableData,
   refreshTabaleData,
   onSizeChange,
   onCurrentChange,
@@ -30,7 +29,7 @@ const {
   handleExport,
   openDialog,
   openDeleteDialog,
-} = useColumns();
+} = useClubColumns();
 
 const router = useRouter();
 

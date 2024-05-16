@@ -24,7 +24,7 @@ export default {
     })
   },
   // 修改院系信息
-  modifyDepartment(data) {
+  updateDepartment(data) {
     return request({
       url: '/department/update',
       method: 'put',

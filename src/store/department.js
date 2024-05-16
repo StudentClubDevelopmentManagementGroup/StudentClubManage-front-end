@@ -10,7 +10,9 @@ export const useDepartmentStore = defineStore('department', () => {
             id: 0,
             fullName: "",
             abbreviation: "",
-        }]
+        }],
+        checkboxStatus: false,
+        deleteState: 1,
     })
 
     const getOptions = () => {
@@ -30,9 +32,29 @@ export const useDepartmentStore = defineStore('department', () => {
         });
     }
 
+    const getDeleteState = () => {
+        return state.deleteState
+    }
+
+    const setDeleteState = (val) => {
+        state.deleteState = val
+    }
+
+    const getCheckboxStatus = () => {
+        return state.checkboxStatus
+    }
+
+    const setCheckboxStatus = (val) => {
+        state.checkboxStatus = val
+    }
+
     return {
         getOptions,
-        getOptionsList
+        getOptionsList,
+        getCheckboxStatus,
+        setCheckboxStatus,
+        getDeleteState,
+        setDeleteState,
     }
 }, {
     persistent: true,
