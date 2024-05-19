@@ -1,18 +1,41 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, reactive, computed, watch, onMounted } from "vue";
 import useStore from "@/store";
+
+const props = defineProps({
+  status: {
+    type: Boolean,
+    default: true,
+    required: false,
+  },
+});
+
+const { status } = props;
 
 const options = computed(() => useStore.useClubStore.getClubOptions());
 const currentClub = computed(() => useStore.useClubStore.getCurrentClub());
 
-const currentSelection = ref(currentClub.value.clubName);
+const currentSelection = ref(currentClub.value);
 
 const handleSelectionChange = (val) => {
-  useStore.useClubStore.setCurrentClub(val);
+  if (status) {
+    useStore.useClubStore.setCurrentClub(val);
+  } else {
+  }
+};
+
+const formatLabel = (item) => {
+  return `${item.departmentName}—${item.clubName}—${item.role}`;
 };
 
 watch(currentClub, (newValue, oldValue) => {
   currentSelection.value = newValue;
+});
+
+onMounted(() => {
+  if (options.value.length === 0) {
+    useStore.useClubStore.getClubOptionsList();
+  }
 });
 </script>
 
@@ -20,15 +43,16 @@ watch(currentClub, (newValue, oldValue) => {
   <div class="selection-container">
     <span>选择管理基地：</span>
     <el-select
+      filterable
       v-model="currentSelection"
-      placeholder="请选择管理基地"
-      value-key="club_id"
+      placeholder="请输入/选择管理的基地"
+      value-key="clubId"
       @change="handleSelectionChange"
     >
       <el-option
         v-for="item in options"
-        :key="item.club_id"
-        :label="item.clubName"
+        :key="item.clubId"
+        :label="formatLabel(item)"
         :value="item"
       ></el-option>
     </el-select>

@@ -17,8 +17,6 @@ const props = withDefaults(defineProps<clubFormProps>(), {
 const ruleFormRef = ref();
 const newFormInline = ref(props.formInline);
 
-const options = computed(() => useStore.useDepartmentStore.getOptions());
-
 function getRef() {
   return ruleFormRef.value;
 }
@@ -29,18 +27,6 @@ defineExpose({ getRef });
 <template>
   <el-form ref="ruleFormRef" :model="newFormInline" :rules="clubSetFormRules">
     <el-row :gutter="32">
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="当前社团"> </el-form-item>
-      </re-col>
-
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="当前学院"> </el-form-item>
-      </re-col>
-
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="当前负责人"> </el-form-item>
-      </re-col>
-
       <re-col>
         <el-form-item label="学院" prop="user_id">
           <el-input

@@ -43,4 +43,12 @@ export default {
             data: req
         })
     },
+    // 查询该用户所在的社团的列表
+    getClubList(req) {
+        return request({
+            url: '/club/member/select_member_all_club_info',
+            method: 'post',
+            params: req
+        })
+    }
 }

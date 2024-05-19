@@ -36,14 +36,15 @@ const router = useRouter();
 const options = computed(() => useStore.useDepartmentStore.getOptions());
 
 const handleClick = (row) => {
-  console.log(row);
   useStore.useClubStore.setCurrentClub({
     clubName: row.name,
-    club_id: parseInt(row.club_id),
+    clubId: row.club_id,
+    departmentName: row.department_name,
+    role: "超级管理员",
   });
   delay(600).then(() => {
-    message("切换基地成功", { type: "success" });
-    router.push("/");
+    message("切换基地成功：" + row.name, { type: "success" });
+    // router.push(router.currentRoute.value.path);
   });
 };
 
