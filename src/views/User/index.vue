@@ -23,6 +23,8 @@ import {
   Refresh,
 } from "@element-plus/icons-vue";
 
+const { columns,loadingConfig } = useRole();
+
 const loading = ref(true);
 const dataList = ref([]);
 const department = ref(Data.department);
@@ -164,7 +166,7 @@ function openDialog(title = "新增", row?: FormItemProps) {
   });
 }
 
-const { columns,loadingConfig } = useRole();
+
 </script>
 
 <template>
@@ -308,4 +310,4 @@ const { columns,loadingConfig } = useRole();
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+
