@@ -34,11 +34,11 @@ export default {
         })
     },
     // 签退
-    checkOut({ clubId, userId, checkInTime }) {
+    checkOut({ clubId, userId, checkInTime, checkoutTime }) {
         return request({
             url: '/attendance/checkout',
             method: 'patch',
-            data: { clubId, userId, checkInTime }
+            data: { clubId, userId, checkInTime, checkoutTime }
         })
     },
     // 补签 
