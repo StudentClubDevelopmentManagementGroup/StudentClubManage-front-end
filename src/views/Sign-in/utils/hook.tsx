@@ -164,7 +164,7 @@ export default function useColumns() {
 
     // 统一的访问 API 的参数来源
     const getDataParams = computed(() => ({
-        clubName: useStore.useClubStore.getCurrentClub().clubName,
+        clubId: useStore.useClubStore.getCurrentClub().clubId,
         userName: searchStatus.value ? query.value.name : "",
         userId: searchStatus.value ? query.value.userId : "",
         startTime: searchStatus.value ? query.value.selectedTime[0] : "",
@@ -274,7 +274,7 @@ export default function useColumns() {
     const checkOut = () => {
         return new Promise((resolve, reject) => {
             registrationApi.checkOut({
-                clubName: getDataParams.value.clubName,
+                clubId: getDataParams.value.clubId,
                 userId: getDataParams.value.userId,
                 checkoutTime: formatUtil.getNowDatetime()
             })
@@ -293,7 +293,7 @@ export default function useColumns() {
     const reCheckIn = (val) => {
         return new Promise((resolve, reject) => {
             registrationApi.replenish({
-                clubName: getDataParams.value.clubName,
+                clubId: getDataParams.value.clubId,
                 userId: val.userId,
                 checkInTime: val.checkInTime,
                 checkoutTime: val.checkOutTime

@@ -2,52 +2,51 @@ import request from '@/utils/request'
 
 export default {
     // 查询社团成员指定时间段打卡记录
-    getRegistrationList(data) {
+    getRegistrationList({ clubId, userName, userId, startTime, endTime, currentPage, pageSize }) {
         return request({
             url: '/attendance/record',
             method: 'post',
-            data
+            data: { clubId, userName, userId, startTime, endTime, currentPage, pageSize }
         })
     },
     // 查询社团成员指定时间段打卡有效时长
-    getDurationTime({ clubName, userName, userId, startTime, endTime }) {
+    getDurationTime({ clubId, userName, userId, startTime, endTime }) {
         return request({
             url: '/attendance/durationTime',
             method: 'post',
-            data: { clubName, userName, userId, startTime, endTime }
+            data: { clubId, userName, userId, startTime, endTime }
         })
     },
     // 查询社团成员当天最新的签到记录
-    getLatestCheckInRecord({ userId, clubName }) {
+    getLatestCheckInRecord({ userId, clubId }) {
         return request({
             url: '/attendance/getLatestCheckInRecord',
             method: 'get',
-            params: { userId, clubName }
+            params: { userId, clubId }
         })
     },
     // 签到
-    checkIn(data) {
+    checkIn({ clubId, userId, checkInTime }) {
         return request({
             url: '/attendance/checkIn',
             method: 'post',
-            data
+            data: { clubId, userId, checkInTime }
         })
     },
     // 签退
-    checkOut(data) {
+    checkOut({ clubId, userId, checkInTime }) {
         return request({
             url: '/attendance/checkout',
             method: 'patch',
-            data
+            data: { clubId, userId, checkInTime }
         })
     },
     // 补签 
-    replenish(data) {
-        console.log("data", data)
+    replenish({ clubId, userId, checkInTime, checkoutTime }) {
         return request({
             url: '/attendance/replenish',
             method: "post",
-            data
+            data: { clubId, userId, checkInTime, checkoutTime }
         })
     }
 }

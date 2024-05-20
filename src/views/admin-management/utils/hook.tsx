@@ -1,5 +1,5 @@
 import type { PaginationProps, TableColumns, LoadingConfig } from "@pureadmin/table";
-import type { clubFormItemProps, departmentItemProps } from "./types"
+import type { clubFormItemProps, departmentItemProps, userItemProps } from "./types"
 import { delay } from "@pureadmin/utils";
 import { ref, reactive, computed, onMounted, h } from "vue";
 import { message } from "@/utils/message";
@@ -14,6 +14,7 @@ import clubDeleteForm from "../clubDeleteForm.vue"
 import departmentAddForm from "../departmentAddForm.vue"
 import departmentUpdateForm from "../departmentUpdateForm.vue"
 import departmentDeleteForm from "../departmentDeleteForm.vue"
+import userAddForm from "../userAddForm.vue"
 
 import { addDialog, closeDialog } from "@/components/Dialog";
 import { deviceDetection } from "@pureadmin/utils";
@@ -755,6 +756,257 @@ export function useDepartmentColumns() {
         btnLoading,
         pagination,
         computeTableData,
+        query,
+        columns,
+        loadingConfig,
+        getDataParams,
+
+        fetchTableData,
+        refreshTabaleData,
+        onSizeChange,
+        onCurrentChange,
+        handleSearch,
+        handleReset,
+        handleExport,
+        openDialog,
+        openDeleteDialog
+    }
+}
+
+export function useUserColumns() {
+    const tableData = ref([])
+    const tableRef = ref()
+    const formRef = ref()
+    const searchStatus = ref(false) // 用于检测是否处在检索状态
+    const tableLoading = ref(true)
+    const btnLoading = ref(false)
+    const btnDeleteStatus = computed(() => useStore.useClubStore.getCheckboxStatus())
+    const deleteState = computed(() => useStore.useClubStore.getDeleteState())
+
+    // 搜索框输入内容
+    const query = ref({
+        name: "",
+        departmentId: ""
+    })
+
+    /** 分页器配置 */
+    const pagination = reactive<PaginationProps>({
+        pageSize: 10,
+        currentPage: 1,
+        pageSizes: [5, 10, 15, 20],
+        total: 0,
+        align: "center",
+        background: true,
+        small: false
+    });
+
+    /** 表格列配置 */
+    const columns: TableColumnList = [
+        {
+            label: "勾选列", // 如果需要表格多选，此处label必须设置
+            type: "selection",
+            align: "center", // 在宽度不够的情况下，表项勾选框变形,利用css深度选择器修复
+            className: "cell-selection",
+            reserveSelection: true
+        },
+        {
+            label: "操作",
+            fixed: "right",
+            width: 350,
+            slot: "operation",
+        },
+    ];
+
+    /** 加载动画配置 */
+    const loadingConfig = reactive<LoadingConfig>({
+        text: "正在加载",
+        viewBox: "-10, -10, 50, 50",
+        spinner: `
+            <path class="path" d="
+              M 30 15
+              L 28 17
+              M 25.61 25.61
+              A 15 15, 0, 0, 1, 15 30
+              A 15 15, 0, 1, 1, 27.99 7.5
+              L 15 15
+            " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+          `
+    });
+
+    // 统一的访问 API 的参数来源
+    const getDataParams = computed(() => ({
+        department_id: searchStatus.value && query.value.departmentId !== "" ? query.value.departmentId : 0,
+        name: searchStatus.value ? query.value.name : "",
+        pageNum: pagination.currentPage,
+        size: pagination.pageSize
+    }))
+
+    // 表格进入加载流程
+    const onLoading = async () => {
+        tableLoading.value = true;
+        delay(20000).then(() => {
+            tableLoading.value = false;
+        })
+    }
+
+    // 跳转页
+    function onSizeChange(val) {
+        onLoading()
+        fetchTableData().then(() => {
+            pagination.pageSize = val
+        }).catch((error) => {
+            message("加载失败", { type: "error" })
+        })
+    }
+
+    // 换页
+    function onCurrentChange(val) {
+        loadingConfig.text = `正在加载第${val}页...`;
+        onLoading()
+        fetchTableData().then(() => {
+            pagination.currentPage = val;
+        }).catch((error) => {
+            message("加载失败", { type: "error" })
+        })
+    }
+
+    // 获取数据
+    const fetchTableData = () => {
+        return new Promise((resolve, reject) => {
+            managementApi.getBaseList(getDataParams.value)
+                .then((data) => {
+                    tableData.value = data.records;
+                    pagination.total = parseInt(data.total_item);
+                    tableLoading.value = false; // 如果提前加载完成，则解除加载状态，否则等待请求超时
+                    resolve(data)
+                })
+                .catch((error) => {
+                    tableData.value = [];
+                    pagination.total = 0;
+                    tableLoading.value = false;
+                    reject(error)
+                })
+        })
+    }
+
+    // 刷新数据
+    const refreshTabaleData = () => {
+        onLoading()
+        fetchTableData();
+    }
+
+    // 检索
+    const handleSearch = () => {
+        btnLoading.value = true;
+        delay(1000).then(() => {
+            btnLoading.value = false;
+        })
+        searchStatus.value = true;
+        onLoading()
+        fetchTableData()
+    }
+
+    // 重置检索
+    const handleReset = () => {
+        formRef.value.resetFields()
+        if (searchStatus.value) {
+            searchStatus.value = false;
+            onLoading()
+            fetchTableData()
+        }
+    }
+
+    // 导出Excel
+    // TODO:导出EXCEL
+    const handleExport = () => {
+        console.log("导出Excel")
+    }
+
+    // TODO: 导入Excel
+    const handleImport = () => {
+        console.log("导入Excel")
+    }
+
+    onMounted(() => {
+        onLoading()
+        fetchTableData();
+    });
+
+    function openDialog(title, item, row?: userItemProps) {
+        var state = 0
+        if (title === "新增用户") {
+            state = 1
+        } else if (title === "编辑用户") {
+            state = 2
+        }
+        addDialog({
+            title: title,
+            props: {
+                formInline: {
+                }
+            },
+            width: "40%",
+            draggable: true,
+            fullscreen: deviceDetection(),
+            fullscreenIcon: true,
+            closeOnClickModal: false,
+            contentRenderer: () => {
+                if (state === 1) {
+                    return h(userAddForm, { ref: formRef })
+                } else if (state === 2) {
+                    return h(userAddForm, { ref: formRef })
+                }
+            },
+            beforeSure: (done, { options }) => {
+                const FormRef = formRef.value.getRef();
+                const curData = options.props.formInline as userItemProps;
+                function chores() {
+                    done(); // 关闭弹框
+                }
+                FormRef.validate((valid: any) => {
+                    if (valid) {
+                        if (state === 1) {
+
+                        } else if (state === 2) {
+
+                        } else {
+                            console.log("进入其他")
+                        }
+                        chores();
+                    }
+                });
+            }
+        });
+    }
+
+    function openDeleteDialog(title, item) {
+        addDialog({
+            title: title,
+            width: "30%",
+            draggable: true,
+            closeOnClickModal: false,
+            // hideFooter: true,
+            contentRenderer: ({ options, index }) => {
+                return h(clubDeleteForm, { ref: formRef })
+            },
+            footerRenderer: ({ options, index }) => {
+                return <div></div>
+            },
+            closeCallBack({ options, index, args }) {
+                if (args.command === "footer") {
+                }
+            },
+        });
+    }
+
+    return {
+        formRef,
+        tableRef,
+        tableData,
+        searchStatus,
+        tableLoading,
+        btnLoading,
+        pagination,
         query,
         columns,
         loadingConfig,

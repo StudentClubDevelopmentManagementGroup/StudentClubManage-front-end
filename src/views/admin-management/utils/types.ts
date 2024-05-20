@@ -17,5 +17,13 @@ interface departmentProps {
     formInline: departmentItemProps;
 }
 
+interface userItemProps {
 
-export type { clubFormItemProps, clubFormProps, departmentItemProps, departmentProps };
+}
+
+interface userProps {
+    formInline: userItemProps;
+}
+
+
+export type { clubFormItemProps, clubFormProps, departmentItemProps, departmentProps, userItemProps, userProps };

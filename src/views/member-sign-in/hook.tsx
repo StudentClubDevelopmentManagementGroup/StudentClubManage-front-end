@@ -147,7 +147,7 @@ export default function useColumns() {
 
     // 统一的访问 API 的参数来源
     const getDataParams = computed(() => ({
-        clubName: useStore.useClubStore.getCurrentClub().clubName,
+        clubId: useStore.useClubStore.getCurrentClub().clubId,
         userId: useStore.userStore.getUserInfo.user_id,
         userName: "",
         startTime: searchStatus.value ? query.value.selectedTime[0] : "",
@@ -223,7 +223,11 @@ export default function useColumns() {
         return new Promise((resolve, reject) => {
             registrationApi.getDurationTime(getDataParams.value)
                 .then((data) => {
-                    durationTime.value = formatUtil.formatTime(data[0].attendanceDurationTime)
+                    if (data[0]?.attendanceDurationTime) {
+                        durationTime.value = formatUtil.formatTime(data[0]?.attendanceDurationTime)
+                    } else {
+                        durationTime.value = "无有效打卡时长"
+                    }
                 })
                 .catch((error) => {
                     console.warn(error)
@@ -235,7 +239,7 @@ export default function useColumns() {
     const getCheckStatus = () => {
         return new Promise((resolve, reject) => {
             registrationApi.getLatestCheckInRecord({
-                clubName: getDataParams.value.clubName,
+                clubId: getDataParams.value.clubId,
                 userId: getDataParams.value.userId,
             })
                 .then((data) => {
@@ -255,7 +259,7 @@ export default function useColumns() {
     const checkIn = () => {
         return new Promise((resolve, reject) => {
             registrationApi.checkIn({
-                clubName: getDataParams.value.clubName,
+                clubId: getDataParams.value.clubId,
                 userId: getDataParams.value.userId,
                 checkInTime: formatUtil.getNowDatetime()
             })
@@ -276,7 +280,7 @@ export default function useColumns() {
     const checkOut = () => {
         return new Promise((resolve, reject) => {
             registrationApi.checkOut({
-                clubName: getDataParams.value.clubName,
+                clubId: getDataParams.value.clubId,
                 userId: getDataParams.value.userId,
                 checkoutTime: formatUtil.getNowDatetime()
             })
@@ -297,7 +301,7 @@ export default function useColumns() {
     const reCheckIn = (row) => {
         return new Promise((resolve, reject) => {
             registrationApi.replenish({
-                clubName: getDataParams.value.clubName,
+                clubId: getDataParams.value.clubId,
                 userId: getDataParams.value.userId,
                 checkInTime: row.checkInTime,
                 checkoutTime: formatUtil.plusHours(row.checkInTime, 4)

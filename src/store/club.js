@@ -69,19 +69,9 @@ export const useClubStore = defineStore('club', () => {
         state.checkboxStatus = val
     }
 
-    const getClubName = () => {
-        return state.clubName
-    }
-
-    const setClubName = (val) => {
-        state.clubName = val;
-    }
-
     return {
         isOptionsExist,
         isOptionsListEmpty,
-        getClubName,
-        setClubName,
         getCheckboxStatus,
         setCheckboxStatus,
         getDeleteState,
