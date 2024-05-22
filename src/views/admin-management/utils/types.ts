@@ -18,7 +18,8 @@ interface departmentProps {
 }
 
 interface userItemProps {
-
+    pwd: string,
+    rePwd: string
 }
 
 interface userProps {

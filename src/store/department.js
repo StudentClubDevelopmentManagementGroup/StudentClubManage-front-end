@@ -6,11 +6,7 @@ import departmentApi from "@/api/department";
 
 export const useDepartmentStore = defineStore('department', () => {
     const state = reactive({
-        options: [{
-            id: 0,
-            fullName: "",
-            abbreviation: "",
-        }],
+        options: [],
         checkboxStatus: false,
         deleteState: 1,
     })
@@ -20,16 +16,18 @@ export const useDepartmentStore = defineStore('department', () => {
     }
 
     const getOptionsList = () => {
-        return new Promise((resolve, reject) => {
-            departmentApi
-                .getAllDepartment()
-                .then((data) => {
-                    state.options = data;
-                })
-                .catch((error) => {
-                    message("获取院系信息失败，请重新加载", { type: "error" });
-                });
-        });
+        if (state.options.length === 0) {
+            return new Promise((resolve, reject) => {
+                departmentApi
+                    .getAllDepartment()
+                    .then((data) => {
+                        state.options = data;
+                    })
+                    .catch((error) => {
+                        message("获取院系信息失败，请重新加载", { type: "error" });
+                    });
+            });
+        }
     }
 
     const getDeleteState = () => {

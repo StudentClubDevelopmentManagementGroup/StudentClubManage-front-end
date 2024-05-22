@@ -3,9 +3,11 @@ import type { clubFormItemProps, departmentItemProps, userItemProps } from "./ty
 import { delay } from "@pureadmin/utils";
 import { ref, reactive, computed, onMounted, h } from "vue";
 import { message } from "@/utils/message";
-import managementApi from "@/api/management";
+import baseApi from "@/api/base";
 import memberApi from "@/api/member";
 import departmentApi from "@/api/department"
+import userinfoApi from "@/api/userinfo"
+import userApi from "@/api/user"
 import useStore from "@/store";
 
 import clubAddForm from "../clubAddForm.vue";
@@ -14,7 +16,7 @@ import clubDeleteForm from "../clubDeleteForm.vue"
 import departmentAddForm from "../departmentAddForm.vue"
 import departmentUpdateForm from "../departmentUpdateForm.vue"
 import departmentDeleteForm from "../departmentDeleteForm.vue"
-import userAddForm from "../userAddForm.vue"
+import userUpdatePwdForm from "../userUpdatePwdForm.vue"
 
 import { addDialog, closeDialog } from "@/components/Dialog";
 import { deviceDetection } from "@pureadmin/utils";
@@ -167,7 +169,7 @@ export function useClubColumns() {
     // 获取数据
     const fetchTableData = () => {
         return new Promise((resolve, reject) => {
-            managementApi.getBaseList(getDataParams.value)
+            baseApi.getBaseList(getDataParams.value)
                 .then((data) => {
                     tableData.value = data.records;
                     pagination.total = parseInt(data.total_item);
@@ -192,7 +194,7 @@ export function useClubColumns() {
     // 新增基地
     const addClub = (val: { name: string, department_id: string | number }) => {
         return new Promise((resolve, reject) => {
-            managementApi.addBase(val)
+            baseApi.addBase(val)
                 .then((data) => {
                     message("添加基地/社团成功", { type: "success" })
                     onLoading()
@@ -208,7 +210,7 @@ export function useClubColumns() {
     // 删除基地/社团
     const deleteClub = (val: { name: string, department_id: string | number }) => {
         return new Promise((resolve, reject) => {
-            managementApi.deleteBase(val)
+            baseApi.deleteBase(val)
                 .then((data) => {
                     message("删除基地/社团成功", { type: "success" })
                     onLoading()
@@ -224,7 +226,7 @@ export function useClubColumns() {
     // 恢复基地/社团
     const undeleteClub = (val: { name: string, department_id: string | number }) => {
         return new Promise((resolve, reject) => {
-            managementApi.undeleteBase(val)
+            baseApi.undeleteBase(val)
                 .then((data) => {
                     message("恢复基地/社团成功", { type: "success" })
                 })
@@ -780,13 +782,13 @@ export function useUserColumns() {
     const searchStatus = ref(false) // 用于检测是否处在检索状态
     const tableLoading = ref(true)
     const btnLoading = ref(false)
-    const btnDeleteStatus = computed(() => useStore.useClubStore.getCheckboxStatus())
-    const deleteState = computed(() => useStore.useClubStore.getDeleteState())
+    const radioStatus = computed(() => useStore.usePublicStore.getRadioStatus())
 
     // 搜索框输入内容
     const query = ref({
-        name: "",
-        departmentId: ""
+        user_id: "",
+        user_name: "",
+        department_id: "",
     })
 
     /** 分页器配置 */
@@ -810,9 +812,43 @@ export function useUserColumns() {
             reserveSelection: true
         },
         {
+            type: "expand",
+            slot: "expand"
+        },
+        {
+            label: "用户ID",
+            prop: "user_id",
+            minWidth: 80,
+        },
+        {
+            label: "用户名",
+            prop: "name",
+            minWidth: 60,
+        },
+        {
+            label: "学院",
+            minWidth: 100,
+            cellRenderer: ({ row }) => row.department.department_name,
+        },
+        {
+            label: "电话",
+            prop: "tel",
+            minWidth: 80,
+        },
+        {
+            label: "邮箱",
+            prop: "mail",
+            minWidth: 80,
+        },
+        {
+            label: "拥有角色",
+            slot: 'role',
+            minWidth: 100,
+        },
+        {
             label: "操作",
             fixed: "right",
-            width: 350,
+            width: 120,
             slot: "operation",
         },
     ];
@@ -835,10 +871,11 @@ export function useUserColumns() {
 
     // 统一的访问 API 的参数来源
     const getDataParams = computed(() => ({
-        department_id: searchStatus.value && query.value.departmentId !== "" ? query.value.departmentId : 0,
-        name: searchStatus.value ? query.value.name : "",
-        pageNum: pagination.currentPage,
-        size: pagination.pageSize
+        user_id: searchStatus.value ? query.value.user_id : "",
+        user_name: searchStatus.value ? query.value.user_name : "",
+        department_id: searchStatus.value && query.value.department_id !== "" ? query.value.department_id : 0,
+        page_num: pagination.currentPage,
+        page_size: pagination.pageSize
     }))
 
     // 表格进入加载流程
@@ -873,7 +910,7 @@ export function useUserColumns() {
     // 获取数据
     const fetchTableData = () => {
         return new Promise((resolve, reject) => {
-            managementApi.getBaseList(getDataParams.value)
+            userinfoApi.getUserList(getDataParams.value)
                 .then((data) => {
                     tableData.value = data.records;
                     pagination.total = parseInt(data.total_item);
@@ -922,9 +959,19 @@ export function useUserColumns() {
         console.log("导出Excel")
     }
 
-    // TODO: 导入Excel
-    const handleImport = () => {
-        console.log("导入Excel")
+    // 更改密码
+    const changePwd = (val: { user_id: string | number, pwd: string }) => {
+        console.log("val", val)
+        return new Promise((resolve, reject) => {
+            userinfoApi.updatePwd(val)
+                .then((data) => {
+                    message("成功修改密码", { type: "success" })
+                })
+                .catch((error) => {
+                    message("修改密码失败,请重新尝试", { type: "error" })
+                    console.warn(error)
+                })
+        })
     }
 
     onMounted(() => {
@@ -934,15 +981,15 @@ export function useUserColumns() {
 
     function openDialog(title, item, row?: userItemProps) {
         var state = 0
-        if (title === "新增用户") {
+        if (title === "修改密码") {
             state = 1
-        } else if (title === "编辑用户") {
-            state = 2
         }
         addDialog({
             title: title,
             props: {
                 formInline: {
+                    pwd: row?.pwd ?? "",
+                    rePwd: row?.rePwd ?? "",
                 }
             },
             width: "40%",
@@ -952,9 +999,7 @@ export function useUserColumns() {
             closeOnClickModal: false,
             contentRenderer: () => {
                 if (state === 1) {
-                    return h(userAddForm, { ref: formRef })
-                } else if (state === 2) {
-                    return h(userAddForm, { ref: formRef })
+                    return h(userUpdatePwdForm, { ref: formRef })
                 }
             },
             beforeSure: (done, { options }) => {
@@ -966,9 +1011,19 @@ export function useUserColumns() {
                 FormRef.validate((valid: any) => {
                     if (valid) {
                         if (state === 1) {
-
-                        } else if (state === 2) {
-
+                            if (radioStatus.value) {
+                                // 预设密码
+                                changePwd({
+                                    user_id: item.user_id,
+                                    pwd: useStore.usePublicStore.getDefaultPwd()
+                                })
+                            } else {
+                                // 自定义密码
+                                changePwd({
+                                    user_id: item.user_id,
+                                    pwd: curData.pwd
+                                })
+                            }
                         } else {
                             console.log("进入其他")
                         }
