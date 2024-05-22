@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import useStore from "@/store";
 
 const props = defineProps({
   status: {
-    type: Boolean,
+    type: Boolean, // true：表示内部界面切换管理的社团，false：表示外部界面用于选择进入的社团管理端
     default: true,
     required: false,
   },
@@ -20,7 +20,6 @@ const currentSelection = ref(currentClub.value);
 const handleSelectionChange = (val) => {
   if (status) {
     useStore.useClubStore.setCurrentClub(val);
-  } else {
   }
 };
 
@@ -33,9 +32,7 @@ watch(currentClub, (newValue, oldValue) => {
 });
 
 onMounted(() => {
-  if (options.value.length === 0) {
-    useStore.useClubStore.getClubOptionsList();
-  }
+  useStore.useClubStore.getClubOptionsList();
 });
 </script>
 

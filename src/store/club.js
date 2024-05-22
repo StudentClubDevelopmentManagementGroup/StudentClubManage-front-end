@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { reactive } from 'vue'
 import { getClub, setClub, removeClub } from '../utils/auth';
 import { message } from "@/utils/message";
+import { useRouter } from 'vue-router';
 import memberApi from "@/api/member"
 import useStore from '@/store';
 
@@ -22,19 +23,30 @@ export const useClubStore = defineStore('club', () => {
         return state.clubOptions.length === 0 || state.clubOptions.length === null;
     }
 
+    const clearOptionsList = () => {
+        state.clubOptions = []
+        removeClub()
+    }
+
     const getClubOptions = () => {
         return state.clubOptions
     }
 
     const getClubOptionsList = () => {
-        if (state.memberInfo.userId === "") {
-            state.memberInfo.userId = useStore.userStore.getUserInfo.user_id
-        }
+        const router = useRouter()
+        console.log("state.memberInfo.userId", useStore.userStore.getUserInfo.user_id)
+        state.memberInfo.userId = useStore.userStore.getUserInfo.user_id
         // 获取当前社团成员所属的所有社团列表
         return new Promise((resolve, reject) => {
             memberApi.getClubList(state.memberInfo)
                 .then((data) => {
-                    state.clubOptions = data;
+                    if (data === "" || data === "查无对象") {
+                        clearOptionsList();
+                        message("未加入任何社团，如有疑问请联系管理员处理", { type: "warning" });
+                        router.push("/homepage");
+                    } else {
+                        state.clubOptions = data;
+                    }
                 }).catch((error) => {
                     console.warn(error.message)
                 })
@@ -78,6 +90,7 @@ export const useClubStore = defineStore('club', () => {
         setDeleteState,
         getCurrentClub,
         setCurrentClub,
+        clearOptionsList,
         getClubOptions,
         getClubOptionsList,
     }
