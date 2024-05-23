@@ -24,7 +24,7 @@ const handleSelectionChange = (val) => {
 };
 
 const formatLabel = (item) => {
-  return `${item.departmentName}—${item.clubName}—${item.role}`;
+  return `${item.department_name}—${item.club_name}—${item.role}`;
 };
 
 watch(currentClub, (newValue, oldValue) => {
@@ -43,12 +43,12 @@ onMounted(() => {
       filterable
       v-model="currentSelection"
       placeholder="请输入/选择管理的基地"
-      value-key="clubId"
+      value-key="club_id"
       @change="handleSelectionChange"
     >
       <el-option
         v-for="item in options"
-        :key="item.clubId"
+        :key="item.club_id"
         :label="formatLabel(item)"
         :value="item"
       ></el-option>

@@ -12,7 +12,7 @@ export const useClubStore = defineStore('club', () => {
         deleteState: 1,
         currentClub: getClub(),
         clubOptions: [],
-        memberInfo: { userId: "" }
+        memberInfo: { user_id: "" }
     })
 
     function isOptionsExist(obj) {
@@ -34,8 +34,7 @@ export const useClubStore = defineStore('club', () => {
 
     const getClubOptionsList = () => {
         const router = useRouter()
-        console.log("state.memberInfo.userId", useStore.userStore.getUserInfo.user_id)
-        state.memberInfo.userId = useStore.userStore.getUserInfo.user_id
+        state.memberInfo.user_id = useStore.userStore.getUserInfo.user_id
         // 获取当前社团成员所属的所有社团列表
         return new Promise((resolve, reject) => {
             memberApi.getClubList(state.memberInfo)

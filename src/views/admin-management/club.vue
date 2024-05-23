@@ -62,17 +62,17 @@ onMounted(() => {
       :model="query"
       class="search-form bg-bg_color w-[99/100] shadow p-4 mb-8 overflow-auto"
     >
-      <el-form-item class="items-center pr-8" label="基地" prop="name">
+      <el-form-item class="items-center pr-8" label="基地" prop="club_name">
         <el-input
-          v-model="query.name"
+          v-model="query.club_name"
           style="width: 240px"
           placeholder="请输入基地/社团名称"
         />
       </el-form-item>
 
-      <el-form-item class="items-center pr-8" label="学院" prop="departmentId">
+      <el-form-item class="items-center pr-8" label="学院" prop="department_id">
         <el-select
-          v-model="query.departmentId"
+          v-model="query.department_id"
           placeholder="请选择学院名称"
           class="!w-[240px]"
         >

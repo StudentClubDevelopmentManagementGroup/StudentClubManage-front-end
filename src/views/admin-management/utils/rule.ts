@@ -8,7 +8,7 @@ import useStore from "@/store";
 
 /** 自定义表单规则校验 */
 export const clubAddFormRules = reactive(<FormRules>{
-    name: [{
+    club_name: [{
         required: true,
         trigger: "blur",
         validator: (rule, value, callback) => {

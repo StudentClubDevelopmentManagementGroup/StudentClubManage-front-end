@@ -8,7 +8,7 @@ import ReCol from "@/components/ReCol";
 
 const props = withDefaults(defineProps<clubFormProps>(), {
   formInline: () => ({
-    name: "",
+    club_name: "",
     department_id: "",
     user_id: "",
   }),
@@ -30,9 +30,9 @@ defineExpose({ getRef });
   <el-form ref="ruleFormRef" :model="newFormInline" :rules="clubAddFormRules">
     <el-row :gutter="32">
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="名称" prop="name">
+        <el-form-item label="名称" prop="club_name">
           <el-input
-            v-model="newFormInline.name"
+            v-model="newFormInline.club_name"
             placeholder="请输入基地/社团名称"
           ></el-input>
         </el-form-item>

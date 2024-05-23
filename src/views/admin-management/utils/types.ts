@@ -1,5 +1,5 @@
 interface clubFormItemProps {
-    name: string,
+    club_name: string,
     department_id: number | string,
     user_id: number | string,
 }

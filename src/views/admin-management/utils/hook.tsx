@@ -35,8 +35,8 @@ export function useClubColumns() {
 
     // 搜索框输入内容
     const query = ref({
-        name: "",
-        departmentId: ""
+        club_name: "",
+        department_id: ""
     })
 
     /** 分页器配置 */
@@ -61,7 +61,7 @@ export function useClubColumns() {
         },
         {
             label: "社团/基地名称",
-            prop: "name",
+            prop: "club_name",
             minWidth: 100,
         },
         {
@@ -131,10 +131,10 @@ export function useClubColumns() {
 
     // 统一的访问 API 的参数来源
     const getDataParams = computed(() => ({
-        department_id: searchStatus.value && query.value.departmentId !== "" ? query.value.departmentId : 0,
-        name: searchStatus.value ? query.value.name : "",
-        pageNum: pagination.currentPage,
-        size: pagination.pageSize
+        department_id: searchStatus.value && query.value.department_id !== "" ? query.value.department_id : 0,
+        club_name: searchStatus.value ? query.value.club_name : "",
+        page_num: pagination.currentPage,
+        page_size: pagination.pageSize
     }))
 
     // 表格进入加载流程
@@ -192,7 +192,7 @@ export function useClubColumns() {
     }
 
     // 新增基地
-    const addClub = (val: { name: string, department_id: string | number }) => {
+    const addClub = (val: { club_name: string, department_id: string | number }) => {
         return new Promise((resolve, reject) => {
             baseApi.addBase(val)
                 .then((data) => {
@@ -208,7 +208,7 @@ export function useClubColumns() {
     }
 
     // 删除基地/社团
-    const deleteClub = (val: { name: string, department_id: string | number }) => {
+    const deleteClub = (val: { club_name: string, department_id: string | number }) => {
         return new Promise((resolve, reject) => {
             baseApi.deleteBase(val)
                 .then((data) => {
@@ -224,7 +224,7 @@ export function useClubColumns() {
     }
 
     // 恢复基地/社团
-    const undeleteClub = (val: { name: string, department_id: string | number }) => {
+    const undeleteClub = (val: { club_name: string, department_id: string | number }) => {
         return new Promise((resolve, reject) => {
             baseApi.undeleteBase(val)
                 .then((data) => {
@@ -277,7 +277,7 @@ export function useClubColumns() {
     // 处理恢复
     const handleUnDelete = (row) => {
         undeleteClub({
-            name: row.name,
+            club_name: row.club_name,
             department_id: row.department_id
         })
         onLoading()
@@ -306,7 +306,7 @@ export function useClubColumns() {
             title: title,
             props: {
                 formInline: {
-                    name: row?.name ?? "",
+                    club_name: row?.club_name ?? "",
                     department_id: row?.department_id ?? "",
                     user_id: row?.user_id ?? "",
                 }
@@ -333,7 +333,7 @@ export function useClubColumns() {
                     if (valid) {
                         if (state === 1) {
                             addClub({
-                                name: curData.name,
+                                club_name: curData.club_name,
                                 department_id: curData.department_id
                             })
                         } else if (state === 2) {
@@ -390,7 +390,7 @@ export function useClubColumns() {
             closeCallBack({ options, index, args }) {
                 if (args.command === "footer") {
                     deleteClub({
-                        name: item.name,
+                        club_name: item.club_name,
                         department_id: item.department_id
                     })
                 }
