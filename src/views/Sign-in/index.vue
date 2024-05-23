@@ -45,7 +45,6 @@ const handleTimeChange = (val) => {
 const handleForce2Checkout = () => {
   // TODO: 无效功能
   message(`"强制签到"是未完成功能`, { type: "error" });
-  // console.log("强制签退");
 };
 
 const handleSelectionChange = (val) => {
