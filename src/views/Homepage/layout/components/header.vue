@@ -1,53 +1,110 @@
-<script setup>
-import { reactive, ref, onMounted, computed } from "vue";
+<script setup lang="ts">
+import { ref, reactive, computed, h } from "vue";
 import { User, SwitchButton } from "@element-plus/icons-vue";
-import useStore from "@/store";
 import { useRouter } from "vue-router";
+import { addDialog } from "@/components/Dialog";
+import { deviceDetection } from "@pureadmin/utils";
+import { message } from "@/utils/message";
+import toRouterForm from "./toRouterForm.vue";
+import useStore from "@/store";
 
 import navbar from "./navigation.vue";
 import search from "./search.vue";
 
 const router = useRouter();
+const formRef = ref();
+const userInfo = computed(() => useStore.userStore.getUserInfo);
+const isShowManagementBtn = ref(userInfo.value.role.is_club_member);
 
 const logout = async () => {
   await useStore.userStore.logout();
   router.replace("/login");
 };
-const push2Management = () => {
-  // TODO: 接上管理端的方法
-  router.push("/welcome");
-};
+
+function openDialog(title) {
+  let state = 0;
+  if (title === "进入管理端") {
+    state = 1;
+  }
+  addDialog({
+    title: title,
+    props: {
+      formInline: {},
+    },
+    width: "32%",
+    draggable: true,
+    fullscreen: deviceDetection(),
+    fullscreenIcon: true,
+    closeOnClickModal: false,
+    contentRenderer: () => h(toRouterForm),
+    beforeSure: (done, { options }) => {
+      function chores() {
+        done(); // 关闭弹框
+      }
+      // 表单规则校验通过
+      if (state === 1) {
+        // 实际开发先调用新增接口，再进行下面操作
+        console.log("进入管理端选择界面");
+        message(`当前选择的基地为：${state}，所属学院是：${state}，身份是：${state}`, {
+          type: "success",
+        });
+        router.push("/welcome");
+      } else {
+        console.log("进入了其他");
+      }
+      chores();
+    },
+  });
+}
 </script>
 
 <template>
   <div id="container">
-    <div id="up-wrapper" class="container__mw">
-      <div class="inner container__center">
-        <div class="inner__div">
+    <div class="up-wrapper container__mw">
+      <div class="flex justify-between container__center">
+        <div class="w-full">
           <navbar />
         </div>
-        <div class="inner__div inner-right">
+        <div class="btn-container flex items-center">
           <!-- TODO:这里进入管理端：通过role判断是否显示 -->
-          <el-button v-if="true" @click="push2Management" type="primary"
-            >进入管理端</el-button
+          <el-button
+            class="!pr-2 !pl-2"
+            v-if="isShowManagementBtn"
+            @click="openDialog('进入管理端')"
+            type="primary"
+            >【进入管理端】</el-button
           >
-          <div v-if="true" class="div-divider1"></div>
+          <el-divider
+            v-if="isShowManagementBtn"
+            direction="vertical"
+            border-style="solid"
+          />
+
           <!-- TODO:这里添加用户名 -->
-          <el-button :icon="User" type="primary">用户名占位符</el-button>
-          <div class="div-divider1"></div>
-          <el-button @click="logout" :icon="SwitchButton" type="primary">注销</el-button>
+          <el-button class="!pr-2 !pl-2" :icon="User" type="primary">{{
+            userInfo.name ? userInfo.name : "未登录"
+          }}</el-button>
+          <el-divider direction="vertical" border-style="solid" />
+
+          <el-button
+            class="!pr-2 !pl-2"
+            :icon="SwitchButton"
+            type="primary"
+            @click="logout"
+            >注销</el-button
+          >
         </div>
       </div>
     </div>
-    <div id="down-wrapper" class="container__mw">
+    <div class="down-wrapper container__mw">
       <div class="inner container__center">
-        <div class="inner__div" style="height: 92px">
-          <img src="@/assets/school-logo.png" alt="" />
+        <div class="flex flex-1 items-center justify-center h-[92px]">
+          <img src="@/assets/school-logo.png" />
         </div>
-        <div class="inner__div">
-          <img src="@/assets/school-motto.png" alt="" />
+        <div class="flex flex-1 items-center justify-center">
+          <img src="@/assets/school-motto.png" />
         </div>
-        <div class="inner__div" style="flex: 2">
+        <div class="flex flex-auto items-center justify-center">
           <search />
         </div>
       </div>
@@ -55,21 +112,21 @@ const push2Management = () => {
   </div>
 </template>
 
-<style scoped>
-#up-wrapper {
+<style lang="scss" scoped>
+.up-wrapper {
   background-image: url("@/assets/header-pattern1.png");
   background-color: rgb(0, 113, 174);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
 }
-#down-wrapper {
+.down-wrapper {
   padding: 12px;
   background-image: url("@/assets/header-pattern2.jpg");
   background-color: #fff;
   background-position: center center;
-  background-size: cover;
   background-repeat: no-repeat;
+  background-size: cover;
 }
 .inner {
   display: flex;
@@ -81,19 +138,15 @@ const push2Management = () => {
   align-items: center;
   justify-content: center;
 }
-.inner__div > img {
-  height: 53px;
-}
-.inner-right {
-  flex: 0;
-  justify-content: right;
-}
-.inner-right .el-button {
-  color: #fff;
-  background: none !important;
-  border: none !important;
-}
-.inner-right .el-button:hover {
-  opacity: 0.8;
+.btn-container {
+  .el-button {
+    color: #fff;
+    background: none !important;
+    border: none !important;
+  }
+
+  .el-button:hover {
+    opacity: 0.8;
+  }
 }
 </style>

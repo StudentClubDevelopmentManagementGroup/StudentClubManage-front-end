@@ -67,7 +67,9 @@ watch(
   <div class="navbar bg-[#fff] shadow-sm shadow-[rgba(0,21,41,0.08)]">
     <breadcrumb class="breadcrumb-container" />
     <div class="vertical-header-right">
-      <ClubSelection />
+      <div class="mr-4">
+        <ClubSelection />
+      </div>
       <search id="header-search"></search>
 
       <el-dropdown class="nitoce">

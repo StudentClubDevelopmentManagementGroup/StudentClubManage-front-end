@@ -237,11 +237,6 @@ export const asyncRoutes = [
             component: () => import('@/views/admin-management/user'),
             meta: { title: '用户管理' }
         }, {
-            path: "/teacher/person",
-            name: "PersonInformation",
-            component: () => import('@/views/admin-management/person'),
-            meta: { title: '个人信息' }
-        }, {
             path: "/teacher/log",
             name: "Log",
             component: () => import('@/views/admin-management/log'),

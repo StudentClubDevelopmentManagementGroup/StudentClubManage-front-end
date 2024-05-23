@@ -81,7 +81,9 @@ watch(
       />
     </el-menu>
     <div class="horizontal-header-right">
-      <ClubSelection />
+      <div class="mr-4">
+        <ClubSelection />
+      </div>
       <!-- 菜单搜索 -->
       <search id="header-search"></search>
       <el-dropdown class="nitoce">

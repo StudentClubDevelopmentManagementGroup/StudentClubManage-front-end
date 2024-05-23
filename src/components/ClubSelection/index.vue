@@ -15,16 +15,14 @@ const { status } = props;
 const options = computed(() => useStore.useClubStore.getClubOptions());
 const currentClub = computed(() => useStore.useClubStore.getCurrentClub());
 
-const currentSelection = ref(currentClub.value);
-
-const handleSelectionChange = (val) => {
-  if (status) {
-    useStore.useClubStore.setCurrentClub(val);
-  }
-};
+const currentSelection = ref(status ? currentClub.value : "");
 
 const formatLabel = (item) => {
   return `${item.department_name}—${item.club_name}—${item.role}`;
+};
+
+const handleSelectionChange = (val) => {
+  useStore.useClubStore.setCurrentClub(val);
 };
 
 watch(currentClub, (newValue, oldValue) => {
@@ -38,7 +36,7 @@ onMounted(() => {
 
 <template>
   <div class="selection-container">
-    <span>选择管理基地：</span>
+    <span>{{ status ? "当前基地：" : "选择管理基地：" }}</span>
     <el-select
       filterable
       v-model="currentSelection"
@@ -61,7 +59,6 @@ onMounted(() => {
   height: 100%;
   width: fit-content;
   min-width: 338px;
-  margin: 0 16px;
   display: flex;
   align-items: center;
 

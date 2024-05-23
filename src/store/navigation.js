@@ -1,21 +1,37 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue'
+import { reactive } from 'vue'
 import { homePageRoutes } from '@/router'
 
 export const useNavigationStore = defineStore('navigation', () => {
-  const naviOptions = ref([]);
-  const routes = ref(homePageRoutes)
-  const currentIndex = ref('')
+  const state = reactive({
+    naviOptions: [],
+    routes: homePageRoutes,
+    currentIndex: '',
+  })
+
+  const getCurrentIndex = () => {
+    return state.currentIndex;
+  }
 
   const setCurrentIndex = (index) => {
-    currentIndex.value = index;
+    state.currentIndex = index;
   }
   const addNaviOptions = (value) => {
-    naviOptions.value.push(value);
+    state.naviOptions.push(value);
   }
 
   const getNaviOptions = () => {
-    routes.value.forEach(element => {
+    return state.naviOptions;
+  }
+
+  const clearOptionsList = () => {
+    state.currentIndex = "";
+    state.naviOptions = [];
+  }
+
+  const getNaviOptionsList = () => {
+    clearOptionsList();
+    state.routes.forEach(element => {
       if (!element?.meta || (element?.meta && !element.meta?.hidden)) {
         for (let route of element.children) {
           if (!element?.meta || (element?.meta && !element.meta?.hidden)) {
@@ -27,14 +43,11 @@ export const useNavigationStore = defineStore('navigation', () => {
   }
 
   return {
-    // state
-    naviOptions,
-    currentIndex,
-
-    // action
+    getCurrentIndex,
     setCurrentIndex,
     addNaviOptions,
     getNaviOptions,
+    getNaviOptionsList,
   }
 }, {
   persistent: true,

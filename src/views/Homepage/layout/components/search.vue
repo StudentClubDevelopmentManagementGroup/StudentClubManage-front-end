@@ -13,8 +13,8 @@ const route = useRoute();
 const searchParams = reactive({
   content: "",
 });
+
 const handleInput = (value) => {
-  console.log("value", value);
   if (regex.test(value)) {
     message("只允许输入汉字、数字、字母", { type: "warning", showClose: true });
     searchParams.content = value.replaceAll(regex, "");
@@ -26,42 +26,34 @@ const handleSearch = () => {
 </script>
 
 <template>
-  <div id="container">
-    <div id="wrapper">
+  <div class="h-auto w-full">
+    <div class="search-container relative">
       <el-input
-        @input="handleInput"
+        class=""
+        @change="handleInput"
         clearable
         v-model="searchParams.content"
         placeholder="请输入要查找标题"
       />
-      <el-button type="primary" size="large" @click="handleSearch">
+      <el-button class="absolute" type="primary" size="large" @click="handleSearch">
         <el-icon size="24"><Search /></el-icon>
       </el-button>
     </div>
   </div>
 </template>
 
-<style scoped>
-#container {
-  height: auto;
-  width: 100%;
-}
-#wrapper {
-  padding: 0px var(--search-input-padding);
-  position: relative;
-}
-.el-input {
-  font-size: large;
-}
-.el-input:deep() .el-input__wrapper {
-  height: auto;
-  border: 1px #b4cfe4 solid;
-  padding: 4px 15px;
-  padding-right: 79px;
-}
-.el-button {
-  border: none;
-  position: absolute;
-  right: var(--search-btn-position);
+<style lang="scss" scoped>
+.search-container {
+  padding: 0 var(--search-input-padding);
+
+  .el-input:deep() .el-input__wrapper {
+    border: 1px #b4cfe4 solid;
+    padding: 4px 16px;
+    padding-right: 80px;
+  }
+
+  .el-button {
+    right: var(--search-input-padding);
+  }
 }
 </style>

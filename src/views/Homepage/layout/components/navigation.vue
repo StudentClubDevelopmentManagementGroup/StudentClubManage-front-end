@@ -4,18 +4,15 @@ import useStore from "@/store";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-const naviOptions = computed(() => {
-  return useStore.useNavigationStore.naviOptions;
-});
-const activeIndex = computed(() => {
-  return useStore.useNavigationStore.currentIndex;
-});
+const naviOptions = computed(() => useStore.useNavigationStore.getNaviOptions());
+const activeIndex = computed(() => useStore.useNavigationStore.getCurrentIndex());
+
 const hanldeSelect = (key, keyPath) => {
   useStore.useNavigationStore.setCurrentIndex(key);
 };
+
 onMounted(() => {
-  useStore.useNavigationStore.getNaviOptions();
-  console.log("naviOptions", useStore.useNavigationStore.naviOptions);
+  useStore.useNavigationStore.getNaviOptionsList();
   useStore.useNavigationStore.setCurrentIndex(route.path);
 });
 </script>
