@@ -19,11 +19,11 @@ export const registerStore = () => {
     useStore.tabStore = useTabStore()
     useStore.userStore = useUserStore()
     useStore.themeStore = useThemeStore()
-    useStore.useNavigationStore = useNavigationStore()
-    useStore.useClubStore = useClubStore()
-    useStore.useDepartmentStore = useDepartmentStore()
-    useStore.useRegistrationStore = useRegistrationStore()
-    useStore.usePublicStore = usePublicStore()
+    useStore.navigationStore = useNavigationStore()
+    useStore.clubStore = useClubStore()
+    useStore.departmentStore = useDepartmentStore()
+    useStore.registrationStore = useRegistrationStore()
+    useStore.publicStore = usePublicStore()
 }
 
 export default useStore;

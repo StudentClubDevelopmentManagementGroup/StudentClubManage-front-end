@@ -5,15 +5,15 @@ import useStore from "@/store";
 const ruleFormRef = ref();
 
 const checked = ref(false);
-const state = computed(() => useStore.useDepartmentStore.getDeleteState());
+const state = computed(() => useStore.departmentStore.getDeleteState());
 
 const handleCheckboxChange = (val) => {
-  useStore.useDepartmentStore.setCheckboxStatus(val);
+  useStore.departmentStore.setCheckboxStatus(val);
 };
 
 onMounted(() => {
-  useStore.useDepartmentStore.setCheckboxStatus(false);
-  useStore.useDepartmentStore.setDeleteState(1);
+  useStore.departmentStore.setCheckboxStatus(false);
+  useStore.departmentStore.setDeleteState(1);
 });
 
 function getRef() {

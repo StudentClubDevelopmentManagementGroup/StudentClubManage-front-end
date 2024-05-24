@@ -15,9 +15,9 @@ const props = withDefaults(defineProps<FormProps>(), {
 const ruleFormRef = ref();
 const newFormInline = ref(props.formInline);
 
-const checkInTime = computed(() => useStore.useRegistrationStore.getCurrentCheckInTime());
+const checkInTime = computed(() => useStore.registrationStore.getCurrentCheckInTime());
 const afterPlusCheckInTime = computed(() =>
-  useStore.useRegistrationStore.getAfterPlusCheckInTime()
+  useStore.registrationStore.getAfterPlusCheckInTime()
 );
 
 const loading = ref(false);
@@ -58,7 +58,7 @@ const handleTimeChange = (val) => {
 };
 
 const handleRadioChange = (val) => {
-  useStore.useRegistrationStore.setSwitchStatus(val);
+  useStore.registrationStore.setSwitchStatus(val);
   if (val === "custom") {
     // 自定义时间
     type.value = "info";

@@ -164,7 +164,7 @@ export default function useColumns() {
 
     // 统一的访问 API 的参数来源
     const getDataParams = computed(() => ({
-        clubId: useStore.useClubStore.getCurrentClub().club_id,
+        clubId: useStore.clubStore.getCurrentClub().club_id,
         userName: searchStatus.value ? query.value.name : "",
         userId: searchStatus.value ? query.value.userId : "",
         startTime: searchStatus.value ? query.value.selectedTime[0] : "",
@@ -347,13 +347,13 @@ export default function useColumns() {
     });
 
     function openDialog(title, item, row?: FormItemProps) {
-        useStore.useRegistrationStore.setCurrentCheckInTime(item.checkInTime)
-        useStore.useRegistrationStore.setCurrentUserId(item.userId)
+        useStore.registrationStore.setCurrentCheckInTime(item.checkInTime)
+        useStore.registrationStore.setCurrentUserId(item.userId)
         addDialog({
             title: title,
             props: {
                 formInline: {
-                    customTime: row?.customTime ?? useStore.useRegistrationStore.getCurrentCheckInTime(),
+                    customTime: row?.customTime ?? useStore.registrationStore.getCurrentCheckInTime(),
                 }
             },
             width: "40%",
@@ -371,16 +371,16 @@ export default function useColumns() {
                 FormRef.validate((valid: any) => {
                     //TODO: 调用的接口与打卡记录处的补签接口是同一个接口无法超过7天无法补签的限制
                     if (valid) {
-                        if (useStore.useRegistrationStore.getSwitchStatus() === "now") {
+                        if (useStore.registrationStore.getSwitchStatus() === "now") {
                             reCheckIn({
-                                userId: useStore.useRegistrationStore.getCurrentUserId(),
-                                checkInTime: useStore.useRegistrationStore.getCurrentCheckInTime(),
-                                checkOutTime: useStore.useRegistrationStore.getAfterPlusCheckInTime(),
+                                userId: useStore.registrationStore.getCurrentUserId(),
+                                checkInTime: useStore.registrationStore.getCurrentCheckInTime(),
+                                checkOutTime: useStore.registrationStore.getAfterPlusCheckInTime(),
                             })
-                        } else if (useStore.useRegistrationStore.getSwitchStatus() === "custom") {
+                        } else if (useStore.registrationStore.getSwitchStatus() === "custom") {
                             reCheckIn({
-                                userId: useStore.useRegistrationStore.getCurrentUserId(),
-                                checkInTime: useStore.useRegistrationStore.getCurrentCheckInTime(),
+                                userId: useStore.registrationStore.getCurrentUserId(),
+                                checkInTime: useStore.registrationStore.getCurrentCheckInTime(),
                                 checkOutTime: curData.customTime,
                             })
                         } else {

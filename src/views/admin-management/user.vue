@@ -40,12 +40,12 @@ const {
 
 const router = useRouter();
 
-const options = computed(() => useStore.useDepartmentStore.getOptions());
+const options = computed(() => useStore.departmentStore.getOptions());
 
 const handleInitBtn = (val) => {};
 
 onMounted(() => {
-  useStore.useDepartmentStore.getOptionsList();
+  useStore.departmentStore.getOptionsList();
 });
 </script>
 

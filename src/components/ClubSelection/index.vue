@@ -12,8 +12,8 @@ const props = defineProps({
 
 const { status } = props;
 
-const options = computed(() => useStore.useClubStore.getClubOptions());
-const currentClub = computed(() => useStore.useClubStore.getCurrentClub());
+const options = computed(() => useStore.clubStore.getClubOptions());
+const currentClub = computed(() => useStore.clubStore.getCurrentClub());
 
 const currentSelection = ref(status ? currentClub.value : "");
 
@@ -22,7 +22,7 @@ const formatLabel = (item) => {
 };
 
 const handleSelectionChange = (val) => {
-  useStore.useClubStore.setCurrentClub(val);
+  useStore.clubStore.setCurrentClub(val);
 };
 
 watch(currentClub, (newValue, oldValue) => {
@@ -30,7 +30,7 @@ watch(currentClub, (newValue, oldValue) => {
 });
 
 onMounted(() => {
-  useStore.useClubStore.getClubOptionsList();
+  useStore.clubStore.getClubOptionsList();
 });
 </script>
 

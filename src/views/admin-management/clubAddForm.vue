@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<clubFormProps>(), {
 const ruleFormRef = ref();
 const newFormInline = ref(props.formInline);
 
-const options = computed(() => useStore.useDepartmentStore.getOptions());
+const options = computed(() => useStore.departmentStore.getOptions());
 
 function getRef() {
   return ruleFormRef.value;

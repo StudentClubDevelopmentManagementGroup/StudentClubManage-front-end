@@ -30,8 +30,8 @@ export function useClubColumns() {
     const searchStatus = ref(false) // 用于检测是否处在检索状态
     const tableLoading = ref(true)
     const btnLoading = ref(false)
-    const btnDeleteStatus = computed(() => useStore.useClubStore.getCheckboxStatus())
-    const deleteState = computed(() => useStore.useClubStore.getDeleteState())
+    const btnDeleteStatus = computed(() => useStore.clubStore.getCheckboxStatus())
+    const deleteState = computed(() => useStore.clubStore.getDeleteState())
 
     // 搜索框输入内容
     const query = ref({
@@ -366,7 +366,7 @@ export function useClubColumns() {
                     {deleteState.value === 1 && (
                         <el-button
                             onClick={() => {
-                                useStore.useClubStore.setDeleteState(2);
+                                useStore.clubStore.setDeleteState(2);
                             }}
                             class='w-full'
                             disabled={!btnDeleteStatus.value}
@@ -432,8 +432,8 @@ export function useDepartmentColumns() {
     const searchStatus = ref(false) // 用于检测是否处在检索状态
     const tableLoading = ref(true)
     const btnLoading = ref(false)
-    const btnDeleteStatus = computed(() => useStore.useDepartmentStore.getCheckboxStatus())
-    const deleteState = computed(() => useStore.useDepartmentStore.getDeleteState())
+    const btnDeleteStatus = computed(() => useStore.departmentStore.getCheckboxStatus())
+    const deleteState = computed(() => useStore.departmentStore.getDeleteState())
 
 
 
@@ -721,7 +721,7 @@ export function useDepartmentColumns() {
                     {deleteState.value === 1 && (
                         <el-button
                             onClick={() => {
-                                useStore.useDepartmentStore.setDeleteState(2);
+                                useStore.departmentStore.setDeleteState(2);
                             }}
                             class='w-full'
                             disabled={!btnDeleteStatus.value}
@@ -782,7 +782,7 @@ export function useUserColumns() {
     const searchStatus = ref(false) // 用于检测是否处在检索状态
     const tableLoading = ref(true)
     const btnLoading = ref(false)
-    const radioStatus = computed(() => useStore.usePublicStore.getRadioStatus())
+    const radioStatus = computed(() => useStore.publicStore.getRadioStatus())
 
     // 搜索框输入内容
     const query = ref({
@@ -1015,7 +1015,7 @@ export function useUserColumns() {
                                 // 预设密码
                                 changePwd({
                                     user_id: item.user_id,
-                                    pwd: useStore.usePublicStore.getDefaultPwd()
+                                    pwd: useStore.publicStore.getDefaultPwd()
                                 })
                             } else {
                                 // 自定义密码

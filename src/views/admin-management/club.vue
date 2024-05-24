@@ -33,10 +33,10 @@ const {
 
 const router = useRouter();
 
-const options = computed(() => useStore.useDepartmentStore.getOptions());
+const options = computed(() => useStore.departmentStore.getOptions());
 
 const handleClick = (row) => {
-  useStore.useClubStore.setCurrentClub({
+  useStore.clubStore.setCurrentClub({
     clubName: row.name,
     clubId: row.club_id,
     departmentName: row.department_name,
@@ -49,7 +49,7 @@ const handleClick = (row) => {
 };
 
 onMounted(() => {
-  useStore.useDepartmentStore.getOptionsList();
+  useStore.departmentStore.getOptionsList();
 });
 </script>
 
