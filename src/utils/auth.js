@@ -53,3 +53,24 @@ export function GetRoles() {
 export function RemoveRoles() {
   Cookies.remove("roles")
 }
+
+export function getClub() {
+  let currentClub = Cookies.get("currentClub")
+  if (currentClub) {
+    return JSON.parse(currentClub)
+  } else {
+    return null
+  }
+}
+
+export function setClub(club) {
+  let currentClub = {}
+  if (club) {
+    currentClub = JSON.stringify(club)
+  }
+  Cookies.set("currentClub", currentClub)
+}
+
+export function removeClub() {
+  Cookies.remove("currentClub")
+}
