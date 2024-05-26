@@ -11,6 +11,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  placeholder: {
+    type: String,
+    default: "请输入内容...",
+  },
 });
 
 const emits = defineEmits(["update:modelValue"]);
@@ -24,7 +28,7 @@ const editorRef = shallowRef();
 const toolbarConfig: any = {
   excludeKeys: ["fullScreen", "codeBlock", "insertVideo"],
 };
-const editorConfig = { placeholder: "请输入内容...", MENU_CONF: {} };
+const editorConfig = { placeholder: props.placeholder, MENU_CONF: {} };
 
 editorConfig.MENU_CONF["uploadImage"] = {
   server: `${constants.baseUrl}/upload_file_to_local_file_system`,

@@ -55,7 +55,7 @@ service.interceptors.response.use(
       } else if (res.status_code === 999) {
 
       } else {
-        message(res.status_text || 'Error',
+        message(res.data + ',' + res.status_text || 'Error',
           {
             type: 'error',
             duration: 2500
