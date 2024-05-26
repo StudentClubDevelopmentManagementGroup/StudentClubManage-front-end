@@ -7,53 +7,27 @@ const route = useRoute();
 </script>
 
 <template>
-  <div id="container">
-    <div id="wrapper" class="container__mw">
-      <div id="inner" class="container__center">
+  <div class="wrapper container__mwidth">
+    <div class="container-width h-[144px] flex items-center justify-center m-auto">
+      <div style="flex: 1" class="h-full flex items-center justify-center">
+        <img style="width: 90%" src="@/assets/logo10.png" alt="" />
+      </div>
+      <div style="flex: 2" class="text-white flex flex-col">
         <div>
-          <img src="@/assets/logo10.png" alt="" />
+          版权所有：桂林电子科技大学　校址：中国广西桂林金鸡路1号　邮编：541004　传真：0773-2290083
         </div>
-        <div>
-          <div>
-            版权所有：桂林电子科技大学　校址：中国广西桂林金鸡路1号　邮编：541004　传真：0773-2290083
-          </div>
-          <div>占位符</div>
-        </div>
+        <div>占位符</div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-#wrapper {
+.wrapper {
   background-image: url("@/assets/footer-pattern.png");
   background-color: rgb(0, 113, 174);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
-}
-#inner {
-  height: 144px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#inner > div:first-child {
-  height: 100%;
-  flex: 1;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#inner > div:last-child {
-  color: #fff;
-  padding-left: 24px;
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-}
-#inner > div img {
-  width: 90%;
 }
 </style>

@@ -2,11 +2,10 @@
   --main-width: 1360px;
   --search-input-padding: 18px;
 }
-.container__center {
+.container-width {
   width: var(--main-width);
-  margin: auto;
 }
-.container__mw {
+.container__mwidth {
   min-width: var(--main-width);
 }
 .div__mr {

@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, ref, watch, toRaw, computed } from "vue";
 import { useRouter } from "vue-router";
+import Image from "@/components/Image";
 
 const router = useRouter();
 const hanldeSelect = (key, keyPath) => {
@@ -9,7 +10,15 @@ const hanldeSelect = (key, keyPath) => {
 </script>
 
 <template>
-  <div id="container">2</div>
+  <div id="container">
+    <Image
+      src="/a/image/13.jpg"
+      fit="contain"
+      :empty-image-style="{
+        width: '150px',
+      }"
+    />
+  </div>
 </template>
 
 <style scoped>

@@ -15,7 +15,7 @@ export default {
     },
     getFlieUrl(file_id) {
         return request({
-            url: 'get_uploaded_file_url',
+            url: 'get_file_url',
             method: 'get',
             params: { file_id }
         })

@@ -59,9 +59,9 @@ function openDialog(title) {
 </script>
 
 <template>
-  <div id="container">
-    <div class="up-wrapper container__mw">
-      <div class="flex justify-between container__center">
+  <div>
+    <div class="up-wrapper container__mwidth">
+      <div class="container-width flex justify-between m-auto">
         <div class="w-full">
           <navbar />
         </div>
@@ -84,6 +84,7 @@ function openDialog(title) {
           <el-button class="!pr-2 !pl-2" :icon="User" type="primary">{{
             userInfo.name ? userInfo.name : "未登录"
           }}</el-button>
+
           <el-divider direction="vertical" border-style="solid" />
 
           <el-button
@@ -96,8 +97,8 @@ function openDialog(title) {
         </div>
       </div>
     </div>
-    <div class="down-wrapper container__mw">
-      <div class="inner container__center">
+    <div class="down-wrapper container__mwidth">
+      <div class="container-width flex m-auto">
         <div class="flex flex-1 items-center justify-center h-[92px]">
           <img src="@/assets/school-logo.png" />
         </div>
@@ -127,16 +128,6 @@ function openDialog(title) {
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
-}
-.inner {
-  display: flex;
-  justify-content: space-between;
-}
-.inner__div {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 .btn-container {
   .el-button {
