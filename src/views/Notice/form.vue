@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { formRules } from "./util/rule";
-import { FormProps } from "./hook";
+import { FormProps } from "./notice/hookce/hook";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({

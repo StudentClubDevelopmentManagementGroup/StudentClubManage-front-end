@@ -25,22 +25,24 @@ interface FormProps {
 export type { FormItemProps, FormProps };
 
 export function useRole() {
-  const dataList = ref([]);
   const loading = ref(true);
   const formRef = ref();
-  const pagination = reactive<PaginationProps>({
-    total: 0,
-    pageSize: 10,
-    currentPage: 1,
-    background: true,
-    align: "center",
-  });
   const noticeColumns: TableColumnList = [
     {
       label: "序号",
       type: "index",
       fixed: "left",
       reserveSelection: true
+    },
+    {
+      label: "标题",
+      prop: "title",
+      width: 240,
+    },
+    {
+      label: "摘要",
+      prop: "summary",
+      width: 240,
     },
     // {
     //   label: "学院名称",
@@ -67,51 +69,7 @@ export function useRole() {
       prop: "publish_time",
       minWidth: 160
     },
-    {
-      label: "标题",
-      prop: "title",
-      width: 240,
-    },
-    {
-      label: "摘要",
-      prop: "summary",
-      width: 240,
-    },
-    {
-      label: "操作",
-      fixed: "right",
-      width: 300,
-      slot: "operation"
-    }
-  ];
-
-  const draftColumns: TableColumnList = [
-    {
-      label: "序号",
-      type: "index",
-      fixed: "left",
-      reserveSelection: true
-    },
-    {
-      label: "创建时间",
-      prop: "create_time",
-      minWidth: 160
-    },
-    {
-      label: "发布时间",
-      prop: "update_time",
-      minWidth: 160
-    },
-    {
-      label: "标题",
-      prop: "title",
-      width: 240,
-    },
-    {
-      label: "摘要",
-      prop: "summary",
-      width: 240,
-    },
+    
     {
       label: "操作",
       fixed: "right",
@@ -134,38 +92,6 @@ export function useRole() {
           L 15 15
         " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
       `
-  });
-
-  function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
-  }
-
-  function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
-  }
-
-  function handleOffline(row) {
-    message(`${row.username}已被强制下线`, { type: "success" });
-    onSearch();
-  }
-
-  /** 取消选择 */
-  async function onSearch() {
-    loading.value = true;
-
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
-  }
-
-  const resetForm = formEl => {
-    if (!formEl) return;
-    formEl.resetFields();
-    onSearch();
-  };
-
-  onMounted(() => {
-    onSearch();
   });
 
   function openDialog(title, announcementId) {
@@ -198,15 +124,7 @@ export function useRole() {
   return {
     loading,
     noticeColumns,
-    draftColumns,
-    dataList,
-    pagination,
-    onSearch,
-    resetForm,
     loadingConfig,
-    handleOffline,
-    handleSizeChange,
-    handleCurrentChange,
     openDialog
   };
 }

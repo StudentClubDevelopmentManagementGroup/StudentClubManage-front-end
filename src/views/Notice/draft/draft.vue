@@ -9,6 +9,7 @@ import { Download, Delete } from "@element-plus/icons-vue";
 import { exportExcel } from "@/utils/export.ts";
 
 const { loadingConfig, openDialog, draftColumns } = useRole();
+const emit = defineEmits(["updateDraft"]);
 
 const club_id = computed(() => useStore.userStore.getClubId);
 const loading = ref(true);
@@ -59,6 +60,7 @@ const delDraft = (draftId) => {
     .delDraft(draftId)
     .then(() => {
       message("删除成功", { type: "success" });
+      getAllDraft();
     })
     .catch((e) => {
       console.error(e.message);
@@ -75,6 +77,10 @@ const delAllDraft = () => {
     .catch((e) => {
       console.error(e.message);
     });
+};
+
+const updateDraft = (draftId) => {
+  emit("updateDraft", draftId);
 };
 </script>
 
@@ -128,7 +134,7 @@ const delAllDraft = () => {
             type="primary"
             plain
             :size="size"
-            @click="noticeToDraft(row.draft_id)"
+            @click="updateDraft(row.draft_id)"
           >
             编辑
           </el-button>

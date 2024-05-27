@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { FormProps } from "./hook.tsx";
+import { FormProps } from "./hook.tsx"
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
