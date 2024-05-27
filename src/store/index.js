@@ -9,6 +9,7 @@ import { useClubStore } from "@/store/club"
 import { useDepartmentStore } from "@/store/department"
 import { useRegistrationStore } from "@/store/registration"
 import { usePublicStore } from "@/store/public"
+import { useFileStore } from "@/store/file";
 
 const useStore = {}
 
@@ -24,6 +25,7 @@ export const registerStore = () => {
     useStore.departmentStore = useDepartmentStore()
     useStore.registrationStore = useRegistrationStore()
     useStore.publicStore = usePublicStore()
+    useStore.fileStore = useFileStore()
 }
 
 export default useStore;

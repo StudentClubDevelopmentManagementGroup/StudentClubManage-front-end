@@ -5,6 +5,7 @@ import { message } from "@/utils/message";
 
 export const usePublicStore = defineStore('public', () => {
     const state = reactive({
+        // 超级管理员用户操作相关参数
         defaultPwd: "Guet@123",
         pwd: "",
         radioStatus: true,
