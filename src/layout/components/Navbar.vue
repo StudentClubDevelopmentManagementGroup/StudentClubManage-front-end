@@ -138,7 +138,7 @@ watch(
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    min-width: 535px;
+    min-width: 565px;
     height: 48px;
     color: #000000d9;
 

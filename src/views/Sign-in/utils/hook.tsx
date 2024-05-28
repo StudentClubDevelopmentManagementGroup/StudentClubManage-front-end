@@ -257,19 +257,6 @@ export default function useColumns() {
         console.log("添加数据行")
     }
 
-    // 获取当前时间段内的有效签到时长
-    const getAvailableDurationTime = () => {
-        return new Promise((resolve, reject) => {
-            registrationApi.getDurationTime(getDataParams.value)
-                .then((data) => {
-                    durationTime.value = formatUtil.formatTime(data[0].attendanceDurationTime)
-                })
-                .catch((error) => {
-                    console.warn(error)
-                })
-        })
-    }
-
     // 签退
     const checkOut = () => {
         return new Promise((resolve, reject) => {

@@ -229,9 +229,7 @@ export default function useColumns() {
                         durationTime.value = "无有效打卡时长"
                     }
                 })
-                .catch((error) => {
-                    console.warn(error)
-                })
+                .catch((error) => { })
         })
     }
 
@@ -310,7 +308,6 @@ export default function useColumns() {
                 message("补签成功", { type: "success" })
                 fetchTableData()
             }).catch((error) => {
-                console.warn(error)
                 message("补签失败", { type: "error" })
             })
         })

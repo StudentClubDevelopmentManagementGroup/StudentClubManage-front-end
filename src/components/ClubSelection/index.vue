@@ -3,14 +3,27 @@ import { ref, computed, watch, onMounted } from "vue";
 import useStore from "@/store";
 
 const props = defineProps({
+  /** 是否为内部界面切换管理的社团 */
   status: {
     type: Boolean, // true：表示内部界面切换管理的社团，false：表示外部界面用于选择进入的社团管理端
     default: true,
     required: false,
   },
+  /** 是否显示标签 */
+  showLabel: {
+    type: Boolean,
+    default: true,
+    required: false,
+  },
+  /** 编辑标签 */
+  label: {
+    type: String,
+    default: "",
+    required: false,
+  },
 });
 
-const { status } = props;
+const { status, showLabel, label } = props;
 
 const options = computed(() => useStore.clubStore.getClubOptions());
 const currentClub = computed(() => useStore.clubStore.getCurrentClub());
@@ -37,7 +50,8 @@ onMounted(() => {
 
 <template>
   <div class="selection-container">
-    <span>{{ status ? "当前基地：" : "选择管理基地：" }}</span>
+    <span v-if="showLabel && !label">{{ status ? "当前基地:" : "选择管理基地:" }}</span>
+    <span v-else>{{ label }}</span>
     <el-select
       filterable
       v-model="currentSelection"
@@ -59,19 +73,20 @@ onMounted(() => {
 .selection-container {
   height: 100%;
   width: fit-content;
-  min-width: 338px;
   display: flex;
   align-items: center;
 
   .el-select {
-    width: 300px !important;
+    width: 300px;
   }
 
   span {
-    min-width: 112px;
+    width: 100%;
+    width: fit-content;
     color: #000;
     text-align: right;
     font-weight: 600;
+    padding-right: 12px;
   }
 }
 </style>
