@@ -5,11 +5,9 @@ const REGEXP_PWD =
 const validateAct = (rule, value, callback) => {
   if (!value) {
     callback(new Error("账号不能为空"));
-  } else if (value.length < 6 || value.length > 17) {
+  } else if (value.length < 0 || value.length > 17) {
     callback(new Error("账号长度为6-17个字符"));
-  } else if (!/^[0-9]{6,16}$/.test(value.trim())) {
-    callback(new Error("请输入正确的学号"));
-  } else {
+  }  else {
     callback();
   }
 };
@@ -17,7 +15,7 @@ const validateAct = (rule, value, callback) => {
 const validatePwd = (rule, value, callback) => {
   if (!value) {
     callback(new Error("密码不能为空"));
-  } else if (value.length < 4 || value.length > 16) {
+  } else if (value.length < 0 || value.length > 16) {
     callback(new Error("密码的长度在4~16之间"));
   } else {
     callback();
