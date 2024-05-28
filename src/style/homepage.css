@@ -1,0 +1,13 @@
+:root {
+  --main-width: 1360px;
+  --search-input-padding: 18px;
+}
+.container-width {
+  width: var(--main-width);
+}
+.container__mwidth {
+  min-width: var(--main-width);
+}
+.div__mr {
+  margin-right: 15px;
+}

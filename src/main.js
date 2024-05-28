@@ -15,6 +15,7 @@ import "./style/index.scss";
 import "./style/tailwind.css";
 import 'element-plus/dist/index.css'
 import 'animate.css/animate.min.css'
+import "./style/homepage.css"
 
 const app = createApp(App)
 

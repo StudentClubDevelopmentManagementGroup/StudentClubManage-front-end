@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import useStore from "@/store";
 import Layout from "@/layout"
+import homePageLayout from "@/views/HomePage/layout"
 
 export const constantRoutes = [
     {
@@ -186,7 +187,7 @@ export const asyncRoutes = [
         children: [{
             path: "/member/signin",
             name: "MemberSignin",
-            component: () => import('@/views/Introduce'),
+            component: () => import('@/views/member-sign-in/index.vue'),
             meta: {
                 title: "打卡记录",
             },
@@ -215,46 +216,91 @@ export const asyncRoutes = [
     }, {
         path: "/teacher",
         component: Layout,
-        redirect: "/teacher/base",
+        redirect: "/teacher/club",
         meta: {
             icon: "ri:file-settings-fill",
             title: "管理模块",
         },
         children: [{
-            path: "/teacher/base",
-            name: "BaseManagement",
-            component: () => import('@/views/admin-management/base'),
+            path: "/teacher/club",
+            name: "ClubManagement",
+            component: () => import('@/views/admin-management/club'),
             meta: { title: '基地管理' }
         }, {
             path: "/teacher/department",
             name: "DepartmentManagement",
-            component: () => import('@/views/admin-management/department-management'),
+            component: () => import('@/views/admin-management/department'),
             meta: { title: '院系管理' }
         }, {
             path: "/teacher/user",
             name: "UserManagement",
-            component: () => import('@/views/admin-management/user-management'),
-            meta: { title: '人员管理' }
+            component: () => import('@/views/admin-management/user'),
+            meta: { title: '用户管理' }
         }, {
-            path: "/teacher/person",
-            name: "PersonInformation",
-            component: () => import('@/views/admin-management/person-information'),
-            meta: { title: '个人信息' }
-        }, {
-            path: "/teacher/operation",
-            name: "OperationLog",
-            component: () => import('@/views/admin-management/operation-log'),
+            path: "/teacher/log",
+            name: "Log",
+            component: () => import('@/views/admin-management/log'),
             meta: { title: '操作日志' }
         }]
     }
 ]
+
+export const homePageRoutes = [
+    {
+        path: "/homepage",
+        name: "HomePage",
+        redirect: '/home',
+        component: homePageLayout,
+        children: [
+            {
+                path: "/home",
+                name: "Home",
+                component: () => import('@/views/homepage/home.vue'),
+                meta: {
+                    title: "首页",
+                },
+            },
+            {
+                path: "/club",
+                name: "Club",
+                component: () => import('@/views/homepage/club.vue'),
+                meta: {
+                    title: "社团信息",
+                },
+            },
+            {
+                path: "/recruitment",
+                name: "Recruitment",
+                component: () => import('@/views/homepage/recruitment.vue'),
+                meta: {
+                    title: "招新信息",
+                },
+            },
+            {
+                path: "/activity",
+                name: "AcitivityInfo",
+                component: () => import('@/views/homepage/activity.vue'),
+                meta: {
+                    title: "活动信息",
+                },
+            }
+        ]
+    },
+    {
+        path: '/test',
+        name: 'Test',
+        meta: { hidden: true, title: '测试' }
+    }
+]
+
+const MergedRoutes = [...constantRoutes, ...homePageRoutes]
 
 const router = createRouter({
     history: createWebHashHistory(),
     scrollBehavior: () => ({
         top: 0
     }),
-    routes: constantRoutes
+    routes: MergedRoutes
 })
 
 router.beforeEach(async (to, from, next) => {
