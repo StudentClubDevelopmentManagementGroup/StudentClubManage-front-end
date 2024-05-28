@@ -8,13 +8,21 @@ import useStore from '@/store';
 
 export const useClubStore = defineStore('club', () => {
     const state = reactive({
-        selectionStatus: true,
         checkboxStatus: false,
         deleteState: 1,
         currentClub: getClub(),
         clubOptions: [],
-        memberInfo: { user_id: "" }
+        memberInfo: { user_id: "" },
+        roleSuperAdmin: false,
+        roleClubMember: false,
     })
+
+    function isAvailable() {
+        const roles = useStore.userStore.getRoles;
+        // 检查当前账号的角色是否达成任一条件：是社团成员；是社团负责人； 是超级管理员 
+        state.roleSuperAdmin = roles.is_super_admin;
+        state.roleClubMember = roles.is_club_member || roles.is_club_manager;
+    }
 
     function isOptionsExist(obj) {
         return state.clubOptions.some(item => item.club_id === obj.club_id)
@@ -24,17 +32,24 @@ export const useClubStore = defineStore('club', () => {
         return state.clubOptions.length === 0 || state.clubOptions.length === null;
     }
 
-    const getSelectiongStatus = () => {
-        return state.selectionStatus
+    const getRoleClubMember = () => {
+        return state.roleClubMember
     }
 
-    const setSelectionStatus = (val) => {
-        state.selectionStatus = val
+    const setRoleClubMember = (val) => {
+        state.roleClubMember = val
+    }
+
+    const getRoleSuperAdmin = () => {
+        return state.roleSuperAdmin
+    }
+
+    const setRoleSuperAdmin = (val) => {
+        state.roleSuperAdmin = val
     }
 
     const clearOptionsList = () => {
         state.clubOptions = []
-        removeClub()
     }
 
     const getClubOptions = () => {
@@ -48,13 +63,16 @@ export const useClubStore = defineStore('club', () => {
         return new Promise((resolve, reject) => {
             memberApi.getClubList(state.memberInfo)
                 .then((data) => {
-                    if (state.selectionStatus && (data === "" || data === "查无对象")) {
+                    if (data === "" || data === "查无对象") {
                         clearOptionsList();
-                        message("未加入任何社团，如有疑问请联系管理员处理", { type: "warning" });
-                        router.push("/homepage");
+                        removeClub()
+                        if (!state.roleSuperAdmin) {
+                            message("用户未加入任何社团，如有疑问请联系管理员处理！", { type: "warning" });
+                        }
                     } else {
                         state.clubOptions = data;
                     }
+
                 }).catch((error) => {
                     console.warn(error.message)
                 })
@@ -90,10 +108,13 @@ export const useClubStore = defineStore('club', () => {
     }
 
     return {
+        isAvailable,
         isOptionsExist,
         isOptionsListEmpty,
-        getSelectiongStatus,
-        setSelectionStatus,
+        getRoleClubMember,
+        setRoleClubMember,
+        getRoleSuperAdmin,
+        setRoleSuperAdmin,
         getCheckboxStatus,
         setCheckboxStatus,
         getDeleteState,

@@ -35,7 +35,7 @@ export const constantRoutes = [
         component: Layout,
         redirect: "/personal/index",
         meta: {
-            hidden: true,
+            icon: "",
             title: "个人中心",
         },
         children: [{
@@ -285,11 +285,6 @@ export const homePageRoutes = [
                 },
             }
         ]
-    },
-    {
-        path: '/test',
-        name: 'Test',
-        meta: { hidden: true, title: '测试' }
     }
 ]
 

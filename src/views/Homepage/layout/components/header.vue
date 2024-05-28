@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, h } from "vue";
+import { ref, onMounted, computed, h } from "vue";
 import { User, SwitchButton } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { addDialog } from "@/components/Dialog";
@@ -14,11 +14,22 @@ import search from "./search.vue";
 const router = useRouter();
 const formRef = ref();
 const userInfo = computed(() => useStore.userStore.getUserInfo);
-const isShowManagementBtn = ref(userInfo.value.role.is_club_member);
+const roleSuperAdmin = computed(() => useStore.clubStore.getRoleSuperAdmin());
+const isShowManagementBtn = computed(
+  () => useStore.clubStore.getRoleSuperAdmin() || useStore.clubStore.getRoleClubMember()
+);
 
 const logout = async () => {
   await useStore.userStore.logout();
   router.replace("/login");
+};
+
+const handleSuperAdmin = () => {
+  router.push("/welcome");
+};
+
+const handleClickBtn = () => {
+  router.push("/personal/index");
 };
 
 function openDialog(title) {
@@ -56,6 +67,10 @@ function openDialog(title) {
     },
   });
 }
+
+onMounted(() => {
+  useStore.clubStore.isAvailable();
+});
 </script>
 
 <template>
@@ -70,7 +85,7 @@ function openDialog(title) {
           <el-button
             class="!pr-2 !pl-2"
             v-if="isShowManagementBtn"
-            @click="openDialog('进入管理端')"
+            @click="roleSuperAdmin ? handleSuperAdmin() : openDialog('进入管理端')"
             type="primary"
             >【进入管理端】</el-button
           >
@@ -81,9 +96,13 @@ function openDialog(title) {
           />
 
           <!-- TODO:这里添加用户名 -->
-          <el-button class="!pr-2 !pl-2" :icon="User" type="primary">{{
-            userInfo.name ? userInfo.name : "未登录"
-          }}</el-button>
+          <el-button
+            class="!pr-2 !pl-2"
+            :icon="User"
+            type="primary"
+            @click="handleClickBtn"
+            >{{ userInfo.name ? userInfo.name : "未登录" }}</el-button
+          >
 
           <el-divider direction="vertical" border-style="solid" />
 

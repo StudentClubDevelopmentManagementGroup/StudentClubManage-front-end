@@ -3,9 +3,10 @@ import { ref, computed, watch, onMounted } from "vue";
 import useStore from "@/store";
 
 const props = defineProps({
-  /** 是否为内部界面切换管理的社团 */
+  /** 社团选择器状态 */
   status: {
-    type: Boolean, // true：表示内部界面切换管理的社团，false：表示外部界面用于选择进入的社团管理端
+    // true：表示内部界面切换管理的社团，false：表示外部界面用于选择进入的社团管理端
+    type: Boolean,
     default: true,
     required: false,
   },
@@ -27,6 +28,9 @@ const { status, showLabel, label } = props;
 
 const options = computed(() => useStore.clubStore.getClubOptions());
 const currentClub = computed(() => useStore.clubStore.getCurrentClub());
+const rolesAvailable = computed(
+  () => useStore.clubStore.getRoleSuperAdmin() || useStore.clubStore.getRoleClubMember()
+);
 
 const currentSelection = ref(status ? currentClub.value : "");
 
@@ -43,13 +47,15 @@ watch(currentClub, (newValue, oldValue) => {
 });
 
 onMounted(() => {
-  useStore.clubStore.setSelectionStatus(status);
-  useStore.clubStore.getClubOptionsList();
+  useStore.clubStore.isAvailable();
+  if (useStore.clubStore.getRoleClubMember()) {
+    useStore.clubStore.getClubOptionsList();
+  }
 });
 </script>
 
 <template>
-  <div class="selection-container">
+  <div v-if="rolesAvailable" class="selection-container">
     <span v-if="showLabel && !label">{{ status ? "当前基地:" : "选择管理基地:" }}</span>
     <span v-else>{{ label }}</span>
     <el-select
@@ -67,6 +73,7 @@ onMounted(() => {
       ></el-option>
     </el-select>
   </div>
+  <div v-else />
 </template>
 
 <style lang="scss" scoped>
