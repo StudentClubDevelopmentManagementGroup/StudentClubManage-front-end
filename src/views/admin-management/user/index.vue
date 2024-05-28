@@ -1,13 +1,12 @@
 <script setup>
 import { onMounted, computed } from "vue";
 import { PureTableBar } from "@/components/PureTableBar";
-import { delay } from "@pureadmin/utils";
-import { message } from "@/utils/message";
-import { useRouter } from "vue-router";
-import { useClubColumns } from "./utils/hook";
+import { useUserColumns } from "./hook";
 import useStore from "@/store";
 
-import { CirclePlus, Search, Refresh, Download, Delete } from "@element-plus/icons-vue";
+import ReCol from "@/components/ReCol";
+
+import { Search, Refresh, Download } from "@element-plus/icons-vue";
 
 const {
   formRef,
@@ -25,28 +24,11 @@ const {
   onCurrentChange,
   handleSearch,
   handleReset,
-  handleUnDelete,
   handleExport,
   openDialog,
-  openDeleteDialog,
-} = useClubColumns();
-
-const router = useRouter();
+} = useUserColumns();
 
 const options = computed(() => useStore.departmentStore.getOptions());
-
-const handleClick = (row) => {
-  useStore.clubStore.setCurrentClub({
-    clubName: row.name,
-    clubId: row.club_id,
-    departmentName: row.department_name,
-    role: "超级管理员",
-  });
-  delay(600).then(() => {
-    message("切换基地成功：" + row.name, { type: "success" });
-    // router.push(router.currentRoute.value.path);
-  });
-};
 
 onMounted(() => {
   useStore.departmentStore.getOptionsList();
@@ -62,11 +44,19 @@ onMounted(() => {
       :model="query"
       class="search-form bg-bg_color w-[99/100] shadow p-4 mb-8 overflow-auto"
     >
-      <el-form-item class="items-center pr-8" label="基地" prop="club_name">
+      <el-form-item class="items-center pr-8" label="用户ID" prop="user_id">
         <el-input
-          v-model="query.club_name"
+          v-model="query.user_id"
           style="width: 240px"
-          placeholder="请输入基地/社团名称"
+          placeholder="请输入用户学号/工号"
+        />
+      </el-form-item>
+
+      <el-form-item class="items-center pr-8" label="用户名" prop="user_name">
+        <el-input
+          v-model="query.user_name"
+          style="width: 240px"
+          placeholder="请输入用户名"
         />
       </el-form-item>
 
@@ -97,15 +87,7 @@ onMounted(() => {
     </el-form>
     <!-- 表格 -->
     <PureTableBar class="shadow" :columns="columns" @refresh="refreshTabaleData">
-      <template #left>
-        <el-button
-          v-ripple
-          type="primary"
-          :icon="CirclePlus"
-          @click="openDialog('新增基地/社团')"
-          >新增</el-button
-        >
-      </template>
+      <template #left> </template>
 
       <template #right>
         <el-button v-ripple type="primary" @click="handleExport" :icon="Download">
@@ -116,7 +98,7 @@ onMounted(() => {
       <template #default="{ size, dynamicColumns }">
         <pure-table
           ref="tableRef"
-          row-key="id"
+          row-key="user_id"
           align-whole="center"
           showOverflowTooltip
           table-layout="auto"
@@ -135,39 +117,28 @@ onMounted(() => {
           @page-size-change="onSizeChange"
           @page-current-change="onCurrentChange"
         >
+          <template #expand="{ row }">
+            <el-row class="pr-8 pl-8">
+              <re-col :value="12" :xs="24" :sm="24">
+                <el-form-item label="学院全称" prop=""> </el-form-item>
+              </re-col>
+
+              <re-col :value="12" :xs="24" :sm="24">
+                <el-form-item label="学院简称" prop=""> </el-form-item>
+              </re-col>
+            </el-row>
+          </template>
+          <template #role="{ row }">
+            <el-tag v-if="row.role.is_club_manager" type="danger">负责人</el-tag>
+            <el-tag v-else type="primary">普通成员</el-tag>
+            <el-tag v-if="row.role.is_teacher" class="ml-4" type="success">教师</el-tag>
+            <el-tag v-else class="ml-4" type="success">学生</el-tag>
+          </template>
           <template #operation="{ row }">
             <div>
-              <el-button
-                v-if="!row.is_deleted"
-                type="danger"
-                :size="size"
-                :icon="Delete"
-                text
-                @click="openDeleteDialog('删除基地/社团', row)"
-                >删除</el-button
-              >
-              <el-popconfirm
-                v-if="row.is_deleted"
-                title="无法恢复数据"
-                @confirm="handleUnDelete(row)"
-              >
-                <template #reference>
-                  <el-button type="danger" :size="size" :icon="Refresh" text
-                    >恢复</el-button
-                  >
-                </template>
-              </el-popconfirm>
-
-              <el-button
-                type="primary"
-                :size="size"
-                @click="openDialog('设置教师负责人', row)"
-                text
-                >设置负责人</el-button
-              >
-              <el-button type="success" :size="size" @click="handleClick(row)"
-                >进入详情</el-button
-              >
+              <el-button type="primary" @click="openDialog('修改密码', row)">
+                修改密码
+              </el-button>
             </div>
           </template>
         </pure-table>
@@ -187,6 +158,18 @@ onMounted(() => {
 .pure-table {
   ::v-deep(.cell-selection .cell) {
     justify-content: center; // 防止勾选项的表项由于宽度不足而位移
+  }
+  .icon-btn {
+    border: none;
+    padding: 0px;
+    ::v-deep(i) {
+      width: fit-content;
+      height: fit-content;
+    }
+    ::v-deep(svg) {
+      width: 25px;
+      height: 25px;
+    }
   }
 }
 </style>

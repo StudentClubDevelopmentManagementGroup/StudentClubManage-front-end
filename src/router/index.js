@@ -224,22 +224,22 @@ export const asyncRoutes = [
         children: [{
             path: "/teacher/club",
             name: "ClubManagement",
-            component: () => import('@/views/admin-management/club'),
+            component: () => import('@/views/admin-management/club/index'),
             meta: { title: '基地管理' }
         }, {
             path: "/teacher/department",
             name: "DepartmentManagement",
-            component: () => import('@/views/admin-management/department'),
+            component: () => import('@/views/admin-management/department/index'),
             meta: { title: '院系管理' }
         }, {
             path: "/teacher/user",
             name: "UserManagement",
-            component: () => import('@/views/admin-management/user'),
+            component: () => import('@/views/admin-management/user/index'),
             meta: { title: '用户管理' }
         }, {
             path: "/teacher/log",
             name: "Log",
-            component: () => import('@/views/admin-management/log'),
+            component: () => import('@/views/admin-management/log/index'),
             meta: { title: '操作日志' }
         }]
     }

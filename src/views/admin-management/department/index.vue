@@ -1,7 +1,7 @@
 <script setup>
 import {} from "vue";
 import { PureTableBar } from "@/components/PureTableBar";
-import { useDepartmentColumns } from "./utils/hook";
+import { useDepartmentColumns } from "./hook";
 
 import { CirclePlus, Search, Refresh, Download, Delete } from "@element-plus/icons-vue";
 

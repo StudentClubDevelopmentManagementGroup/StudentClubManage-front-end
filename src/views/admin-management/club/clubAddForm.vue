@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { clubAddFormRules } from "./utils/rule";
-import { clubFormProps } from "./utils/types";
+import { clubAddFormRules } from "./rule";
+import { clubFormProps } from "./types";
 import useStore from "@/store";
 
 import ReCol from "@/components/ReCol";

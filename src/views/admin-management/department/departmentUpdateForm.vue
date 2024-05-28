@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { departmentAddRules } from "./utils/rule";
-import { departmentProps } from "./utils/types";
+import { departmentUpdateRules } from "./rule";
+import { departmentProps } from "./types";
 import useStore from "@/store";
 
 import ReCol from "@/components/ReCol";
@@ -26,22 +26,13 @@ defineExpose({ getRef });
 </script>
 
 <template>
-  <el-form ref="ruleFormRef" :model="newFormInline" :rules="departmentAddRules">
+  <el-form ref="ruleFormRef" :model="newFormInline" :rules="departmentUpdateRules">
     <el-row :gutter="32">
       <re-col :value="12" :xs="24" :sm="24">
         <el-form-item label="学院全称" prop="fullName">
           <el-input
             v-model="newFormInline.fullName"
             placeholder="请输入学院全称"
-          ></el-input>
-        </el-form-item>
-      </re-col>
-
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="学院简称" prop="abbreviation">
-          <el-input
-            v-model="newFormInline.abbreviation"
-            placeholder="请输入学院简称"
           ></el-input>
         </el-form-item>
       </re-col>

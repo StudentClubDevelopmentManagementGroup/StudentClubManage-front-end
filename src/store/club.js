@@ -8,6 +8,7 @@ import useStore from '@/store';
 
 export const useClubStore = defineStore('club', () => {
     const state = reactive({
+        selectionStatus: true,
         checkboxStatus: false,
         deleteState: 1,
         currentClub: getClub(),
@@ -16,11 +17,19 @@ export const useClubStore = defineStore('club', () => {
     })
 
     function isOptionsExist(obj) {
-        return state.clubOptions.some(item => item.clubId === obj.clubId)
+        return state.clubOptions.some(item => item.club_id === obj.club_id)
     }
 
     function isOptionsListEmpty() {
         return state.clubOptions.length === 0 || state.clubOptions.length === null;
+    }
+
+    const getSelectiongStatus = () => {
+        return state.selectionStatus
+    }
+
+    const setSelectionStatus = (val) => {
+        state.selectionStatus = val
     }
 
     const clearOptionsList = () => {
@@ -39,7 +48,7 @@ export const useClubStore = defineStore('club', () => {
         return new Promise((resolve, reject) => {
             memberApi.getClubList(state.memberInfo)
                 .then((data) => {
-                    if (data === "" || data === "查无对象") {
+                    if (state.selectionStatus && (data === "" || data === "查无对象")) {
                         clearOptionsList();
                         message("未加入任何社团，如有疑问请联系管理员处理", { type: "warning" });
                         router.push("/homepage");
@@ -57,11 +66,11 @@ export const useClubStore = defineStore('club', () => {
     }
 
     const setCurrentClub = (val) => {
-        setClub(val)
-        state.currentClub = val
         if (!isOptionsExist(val)) {
             state.clubOptions.push(val)
         }
+        setClub(val)
+        state.currentClub = val
     }
 
     const getDeleteState = () => {
@@ -83,6 +92,8 @@ export const useClubStore = defineStore('club', () => {
     return {
         isOptionsExist,
         isOptionsListEmpty,
+        getSelectiongStatus,
+        setSelectionStatus,
         getCheckboxStatus,
         setCheckboxStatus,
         getDeleteState,

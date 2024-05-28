@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { userUpdatePwdRules } from "./utils/rule";
-import { userProps } from "./utils/types";
+import { userUpdatePwdRules } from "./rule";
+import { userProps } from "./types";
 import useStore from "@/store";
 
 import ReCol from "@/components/ReCol";

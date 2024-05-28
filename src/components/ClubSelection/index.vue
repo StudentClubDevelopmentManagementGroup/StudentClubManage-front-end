@@ -30,6 +30,7 @@ watch(currentClub, (newValue, oldValue) => {
 });
 
 onMounted(() => {
+  useStore.clubStore.setSelectionStatus(status);
   useStore.clubStore.getClubOptionsList();
 });
 </script>

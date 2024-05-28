@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
-import { clubSetFormRules } from "./utils/rule";
-import { clubFormProps } from "./utils/types";
-import useStore from "@/store";
+import { ref } from "vue";
+import { clubSetFormRules } from "./rule";
+import { clubFormProps } from "./types";
 
 import ReCol from "@/components/ReCol";
 
 const props = withDefaults(defineProps<clubFormProps>(), {
   formInline: () => ({
-    name: "",
+    club_name: "",
     department_id: "",
     user_id: "",
   }),
