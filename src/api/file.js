@@ -22,7 +22,7 @@ export default {
     },
     getFlie(file_id) {
         return request({
-            url: 'get_uploaded_file',
+            url: 'get_file',
             method: 'get',
             params: { file_id }
         })

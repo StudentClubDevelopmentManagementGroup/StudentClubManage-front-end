@@ -71,4 +71,11 @@ export default {
             params: { draftId }
         })
     },
+    getFile(file_id) {
+        return request({
+            url: '/club/announcement/file/get',
+            method: 'get',
+            params: { file_id }
+        })
+    },
 }

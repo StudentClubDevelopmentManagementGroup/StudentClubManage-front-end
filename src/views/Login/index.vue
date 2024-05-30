@@ -54,6 +54,10 @@ const handleLogin = async () => {
     }
   });
 };
+
+watch(checked, bool => {
+  useStore.userStore.setIsRemembered(bool);
+});
 </script>
 
 <template>

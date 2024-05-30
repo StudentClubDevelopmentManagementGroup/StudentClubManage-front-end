@@ -36,7 +36,7 @@ const loginRules = {
 const validateName = (rule, value, callback) => {
   if (!value) {
     callback(new Error("姓名不能为空"));
-  } else if (/^[\u4e00-\u9fa5]{2,4}$/.test(value)) {
+  } else if (!/^[\u4e00-\u9fa5]{2,4}$/.test(value)) {
     callback(new Error("姓名必须是2到4个汉字"));
   } else {
     callback();
@@ -46,8 +46,8 @@ const validateName = (rule, value, callback) => {
 const validateUserId = (rule, value, callback) => {
   if (!value) {
     callback(new Error("工号/学号不能为空"));
-  } else if (/^(\\d{7}|\\d{8}|\\d{10}|\\d{11})$/.test(value)) {
-    callback(new Error("工号/学号必须是7位、8位、10位或11位"));
+  } else if (!/^(\d{7,11})$/.test(value)) {
+    callback(new Error("工号/学号必须是7~11位"));
   } else {
     callback();
   }
@@ -56,8 +56,8 @@ const validateUserId = (rule, value, callback) => {
 const validatePassword = (rule, value, callback) => {
   if (!value) {
     callback(new Error("密码不能为空"));
-  } else if (REGEXP_PWD.test(value)) {
-    callback(new Error("密码的长度在4~16之间"));
+  } else if (!REGEXP_PWD.test(value)) {
+    callback(new Error("密码应为8-18位数字、字母的任意组合"));
   } else {
     callback();
   }
@@ -80,8 +80,11 @@ const registRules = {
   user_id: [
     { validator: validateUserId, trigger: "blur" },
   ],
-  departmentId: [
+  department_id: [
     { required: true, message: "学院不能为空", trigger: "blur" },
+  ],
+  tel: [
+    { required: true, message: "手机号不能为空", trigger: "blur" },
   ],
   mail: [
     { required: true, message: '邮箱不能为空', trigger: 'blur' },

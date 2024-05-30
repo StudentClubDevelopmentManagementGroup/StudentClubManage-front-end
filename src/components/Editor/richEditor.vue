@@ -2,7 +2,7 @@
 import { ref, onMounted, watch, onBeforeUnmount, shallowRef, toRef } from "vue";
 import "@wangeditor/editor/dist/css/style.css";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
-import flieApi from "@/api/file";
+import announcementApi from "@/api/announcement";
 import constants from "@/config";
 import { message } from "@/utils/message";
 import { GetToken } from "@/utils/auth";
@@ -40,16 +40,16 @@ editorConfig.MENU_CONF["uploadImage"] = {
   allowedFileTypes: ["image/png", "image/jpg", "image/jpeg"],
   // 自定义插入图片
   customInsert(res: any, insertFn) {
-    flieApi
-      .getFlieUrl(res.data)
-      .then((data) => {
-        console.log(data);
-        
-        insertFn(data);
-      })
-      .catch((error) => {
-        message("上传失败", { type: "error" });
-      });
+    insertFn(`${constants.baseUrl}/club/announcement/file/get?file_id=${res.data}`);
+
+    // flieApi
+    //   .getFlie(res.data)
+    //   .then((data) => {
+    //     insertFn(data);
+    //   })
+    //   .catch((error) => {
+    //     message("上传失败", { type: "error" });
+    //   });
   },
 };
 

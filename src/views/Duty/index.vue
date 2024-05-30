@@ -7,10 +7,11 @@ import { exportExcel } from "@/utils/export.ts";
 import dutyApi from "@/api/duty";
 import { PureTableBar } from "@/components/PureTableBar";
 import type { PaginationProps } from "@pureadmin/table";
+import { message } from "@/utils/message";
 
 import { CirclePlus, Delete, Download, Refresh } from "@element-plus/icons-vue";
 
-const { columns, loadingConfig } = useRole();
+const { columns, loadingConfig, openDialog } = useRole();
 
 const loading = ref(true);
 const dataList = ref([]);
@@ -21,8 +22,8 @@ const query = ref({
   club_id: club_id.value,
   number: "",
   name: "",
-  pagenum: 1,
-  size: 10,
+  page_num: 1,
+  page_size: 10,
 });
 
 const pagination = reactive<PaginationProps>({
@@ -53,13 +54,13 @@ const getDutyData = async () => {
 };
 
 function handleSizeChange(val: number) {
-  query.value.size = val;
-  getMemberData();
+  query.value.page_size = val;
+  getDutyData();
 }
 
 function handleCurrentChange(val: number) {
-  query.value.pagenum = val;
-  getMemberData();
+  query.value.page_num = val;
+  getDutyData();
 }
 
 onMounted(() => {
@@ -69,12 +70,28 @@ onMounted(() => {
 const resetForm = (formEl) => {
   if (!formEl) return;
   formEl.resetFields();
-  getMemberData();
+  getDutyData();
 };
 
 function tabClick({ index }) {
   selected.value = index;
 }
+
+const delDuty = (row) => {
+  const req = {
+    date_time: row.date_time,
+    cleaner_id: row.cleaner_id,
+    club_id: club_id.value,
+  };
+  dutyApi
+    .delDuty(req)
+    .then((data) => {
+      message("删除成功", { type: "success" });
+    })
+    .catch((e) => {
+      console.error(e.message);
+    });
+};
 </script>
 
 <template>
@@ -162,11 +179,18 @@ function tabClick({ index }) {
             background: 'var(--el-fill-color-light)',
             color: 'var(--el-text-color-primary)',
           }"
-          @selection-change="handleSelectionChange"
           @page-size-change="handleSizeChange"
           @page-current-change="handleCurrentChange"
         >
-          <template #operation="{ row }"> </template>
+          <template #operation="{ row }">
+            <el-popconfirm title="是否确认删除?" @confirm="delDuty(row)">
+              <template #reference>
+                <el-button class="reset-margin" type="danger" :size="size">
+                  删除
+                </el-button>
+              </template>
+            </el-popconfirm>
+          </template>
         </pure-table>
       </template>
     </PureTableBar>

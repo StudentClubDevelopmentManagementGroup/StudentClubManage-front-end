@@ -4,6 +4,7 @@ import { message } from "@/utils/message";
 import router from '@/router'
 import { GetToken } from '@/utils/auth'
 import constants from "@/config";
+import NProgress from "./nprogress";
 
 const service = axios.create({
   baseURL: constants.baseUrl,
@@ -19,6 +20,7 @@ service.defaults.headers.post['Content-Type'] = 'application/json'
 // 请求拦截器
 service.interceptors.request.use(
   config => {
+    NProgress.start();
     const token = GetToken()
     if (token) {
       config.headers['guet-s-c-m-s-token'] = token
@@ -34,6 +36,7 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   response => {
+    NProgress.done();
     // 文件下载
     if (response.config.responseType === 'blob') {
       return response
