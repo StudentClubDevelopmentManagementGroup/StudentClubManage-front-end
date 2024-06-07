@@ -20,7 +20,9 @@ const {
   columns,
   loadingConfig,
 
+  fetchTableData,
   refreshTabaleData,
+  onLoading,
   onSizeChange,
   onCurrentChange,
   handleSearch,
@@ -49,6 +51,8 @@ const handleClick = (row) => {
 };
 
 onMounted(() => {
+  onLoading();
+  fetchTableData();
   useStore.departmentStore.getOptionsList();
 });
 </script>

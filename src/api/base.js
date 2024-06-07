@@ -2,11 +2,11 @@ import request from '@/utils/request'
 
 export default {
     // 查询基地：全部-关键字
-    getBaseList(data) {
+    getBaseList({ department_id, club_name, page_num, page_size }) {
         return request({
             url: '/club/select_all',
             method: 'post',
-            data
+            data: { department_id, club_name, page_num, page_size }
         })
     },
     // 查询基地基础信息

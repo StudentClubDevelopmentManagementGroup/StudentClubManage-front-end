@@ -284,11 +284,6 @@ export function useClubColumns() {
         console.log("导出Excel")
     }
 
-    onMounted(() => {
-        onLoading()
-        fetchTableData();
-    });
-
     function openDialog(title, item, row?: clubFormItemProps) {
         var state = 0
         if (title === "新增基地/社团") {
@@ -407,6 +402,7 @@ export function useClubColumns() {
 
         fetchTableData,
         refreshTabaleData,
+        onLoading,
         onSizeChange,
         onCurrentChange,
         handleSearch,

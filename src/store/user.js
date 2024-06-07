@@ -11,7 +11,7 @@ export const useUserStore = defineStore('user', () => {
     token: GetToken(),
     userInfo: GetUserInfo(),
     roles: GetRoles(),
-    clubId: 1
+    clubId: 7
   })
 
   const getCurrentPage = computed(() => state.currentPage);

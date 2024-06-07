@@ -10,6 +10,7 @@ import { useDepartmentStore } from "@/store/department"
 import { useRegistrationStore } from "@/store/registration"
 import { usePublicStore } from "@/store/public"
 import { useFileStore } from "@/store/file";
+import { useHomePageStore } from "@/store/homepage";
 
 const useStore = {}
 
@@ -26,6 +27,7 @@ export const registerStore = () => {
     useStore.registrationStore = useRegistrationStore()
     useStore.publicStore = usePublicStore()
     useStore.fileStore = useFileStore()
+    useStore.homepageStore = useHomePageStore()
 }
 
 export default useStore;

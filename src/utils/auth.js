@@ -74,3 +74,45 @@ export function setClub(club) {
 export function removeClub() {
   Cookies.remove("currentClub")
 }
+
+export function removeParams() {
+  Cookies.remove("p")
+}
+
+export function getParams() {
+  let params = Cookies.get("p")
+  if (params) {
+    return JSON.parse(params)
+  } else {
+    return null
+  }
+}
+
+export function setParams(params) {
+  let currentParams = {}
+  if (params) {
+    currentParams = JSON.stringify(params)
+  }
+  Cookies.set("p", currentParams)
+}
+
+export function removeRoute() {
+  Cookies.remove("r")
+}
+
+export function getRoute() {
+  let route = Cookies.get("r")
+  if (route) {
+    return JSON.parse(route)
+  } else {
+    return null
+  }
+}
+
+export function setRoute(route) {
+  let currentRoute = {}
+  if (route) {
+    currentRoute = JSON.stringify(route)
+  }
+  Cookies.set("r", currentRoute)
+}

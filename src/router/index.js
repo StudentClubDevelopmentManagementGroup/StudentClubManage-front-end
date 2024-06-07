@@ -1,7 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import formatUtil from "@/utils/formatter";
 import useStore from "@/store";
 import Layout from "@/layout"
-import homePageLayout from "@/views/HomePage/layout"
+import homePageLayout from "@/views/HomePage"
 
 export const constantRoutes = [
     {
@@ -35,6 +36,7 @@ export const constantRoutes = [
         component: Layout,
         redirect: "/personal/index",
         meta: {
+            hidden: true,
             icon: "",
             title: "个人中心",
         },
@@ -253,39 +255,35 @@ export const homePageRoutes = [
         component: homePageLayout,
         children: [
             {
-                path: "/home",
+                path: "/homepage/home",
                 name: "Home",
-                component: () => import('@/views/homepage/home.vue'),
+                component: () => import('@/views/homepage/home/index.vue'),
                 meta: {
+                    fixed: true,
+                    hidden: false,
                     title: "首页",
                 },
             },
             {
-                path: "/club",
-                name: "Club",
-                component: () => import('@/views/homepage/club.vue'),
+                path: "/homepage/list",
+                name: "List",
+                component: () => import('@/views/homepage/list/index.vue'),
                 meta: {
-                    title: "社团信息",
+                    hidden: true,
+                    title: "资讯页",
                 },
             },
             {
-                path: "/recruitment",
-                name: "Recruitment",
-                component: () => import('@/views/homepage/recruitment.vue'),
+                path: "/homepage/detail",
+                name: "InfoDetail",
+                component: () => import('@/views/homepage/detail/index.vue'),
                 meta: {
-                    title: "招新信息",
+                    hidden: true,
+                    title: "详情页",
                 },
             },
-            {
-                path: "/activity",
-                name: "AcitivityInfo",
-                component: () => import('@/views/homepage/activity.vue'),
-                meta: {
-                    title: "活动信息",
-                },
-            }
         ]
-    }
+    },
 ]
 
 const MergedRoutes = [...constantRoutes, ...homePageRoutes]
@@ -307,6 +305,13 @@ router.beforeEach(async (to, from, next) => {
         tabStore.addTab({ route: to.path, title: to.meta.title, name: to.name })
     }
     tabStore.setCurrentIndex(to.path)
+
+    const naviStore = useStore.navigationStore
+    const naviFlag = naviStore.getNaviOptions().findIndex(tab => tab.route === to.path) > -1
+    if (!naviFlag && !to.meta.hiddenTab) {
+        naviStore.addNaviOptions({ path: formatUtil.constructUrl(to.path, to.query), meta: to.meta, name: to.name, query: to.query })
+    }
+    naviStore.setCurrentIndex(formatUtil.constructUrl(to.path, to.query))
 
     const hasGetUserInfo = userStore.getUserInfo
     if (to.path === '/login') {

@@ -1,4 +1,7 @@
 <script setup>
+/**
+ * //TODO: 首页一版 被废弃 未完工
+ */
 import { reactive, ref, watch, toRaw, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import testData from "./test-data/mock.js";

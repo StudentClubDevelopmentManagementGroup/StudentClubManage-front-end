@@ -1,36 +1,49 @@
 <script setup>
-import { reactive, ref, onMounted, computed } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { Search } from "@element-plus/icons-vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import useStore from "@/store";
 import { message } from "@/utils/message";
 
 const regex = /[^\w\s《》<>一-龥]/g; // 允许 汉字、数字、字母、《》、<>
+const regexTrim = /^\s+|\s+$/g; // 匹配开头或结尾的空格
 
+const router = useRouter();
 const route = useRoute();
 
-// TODO： 预留的搜索，暂无作用
 const searchParams = reactive({
-  content: "",
+  content: route.query?.search ? route.query?.search : "",
 });
 
 const handleInput = (value) => {
-  if (regex.test(value)) {
+  if (regexTrim.test(value)) {
+    message("开头或结尾不能有空格", { type: "warning", showClose: true });
+    searchParams.content = value.replaceAll(regexTrim, "");
+  } else if (regex.test(value)) {
     message("只允许输入汉字、数字、字母", { type: "warning", showClose: true });
     searchParams.content = value.replaceAll(regex, "");
   }
 };
+
 const handleSearch = () => {
-  console.log("搜索成功", searchParams);
+  const value = searchParams.content;
+  if (!regexTrim.test(value) && !regex.test(value)) {
+    router.push(`/homepage/list?search=${searchParams.content}`);
+    useStore.homepageStore.setTitleKeyword(searchParams.content);
+  }
 };
+
+onMounted(() => {
+  useStore.homepageStore.setTitleKeyword(searchParams.content);
+});
 </script>
 
 <template>
   <div class="h-auto w-full">
     <div class="search-container relative">
       <el-input
-        class=""
         @change="handleInput"
+        @keyup.enter="handleSearch"
         clearable
         v-model="searchParams.content"
         placeholder="请输入要查找标题"

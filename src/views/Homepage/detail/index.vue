@@ -1,12 +1,17 @@
 <script setup>
-import { reactive, ref, watch, toRaw, computed } from "vue";
-import { useRouter } from "vue-router";
+import { ref, reactive, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import Image from "@/components/Image";
+import { message } from "@/utils/message";
 
-const router = useRouter();
+const route = useRoute();
 const hanldeSelect = (key, keyPath) => {
   console.log(key, keyPath);
 };
+
+onMounted(() => {
+  message(`获取到的参数为：${JSON.stringify(route.query)}`);
+});
 </script>
 
 <template>

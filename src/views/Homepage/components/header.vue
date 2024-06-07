@@ -77,7 +77,7 @@ onMounted(() => {
   <div>
     <div class="up-wrapper container__mwidth">
       <div class="container-width flex justify-between m-auto">
-        <div class="w-full">
+        <div class="overflow-hidden">
           <navbar />
         </div>
         <div class="btn-container flex items-center">
@@ -117,16 +117,8 @@ onMounted(() => {
       </div>
     </div>
     <div class="down-wrapper container__mwidth">
-      <div class="container-width flex m-auto">
-        <div class="flex flex-1 items-center justify-center h-[92px]">
-          <img src="@/assets/school-logo.png" />
-        </div>
-        <div class="flex flex-1 items-center justify-center">
-          <img src="@/assets/school-motto.png" />
-        </div>
-        <div class="flex flex-auto items-center justify-center">
-          <search />
-        </div>
+      <div class="container-width flex items-center justify-end m-auto h-[92px]">
+        <search class="!w-[636px]" />
       </div>
     </div>
   </div>

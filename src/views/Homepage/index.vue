@@ -1,13 +1,6 @@
 <script setup>
-import { useRouter } from "vue-router";
-
 import headview from "./components/header.vue";
 import feet from "./components/footer.vue";
-
-const router = useRouter();
-const hanldeSelect = (key, keyPath) => {
-  console.log(key, keyPath);
-};
 </script>
 
 <template>

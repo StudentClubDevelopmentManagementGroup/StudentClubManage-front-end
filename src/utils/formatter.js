@@ -98,4 +98,17 @@ export default {
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     },
+    constructUrl(basePath, queryParams) {
+        // 构建URL查询参数params
+        let queryString = ''
+        if (queryParams) {
+            // 使用 URLSearchParams 来安全地构建查询字符串  
+            const params = new URLSearchParams();
+            for (const [key, value] of Object.entries(queryParams)) {
+                params.append(key, value);
+            }
+            queryString = params.size ? `?${params.toString()}` : "";
+        }
+        return basePath + queryString
+    }
 }
