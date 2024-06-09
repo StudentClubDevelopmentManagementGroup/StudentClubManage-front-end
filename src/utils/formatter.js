@@ -99,6 +99,9 @@ export default {
         return `${year}-${month}-${day}`;
     },
     constructUrl(basePath, queryParams) {
+        // 检查basePath是否已经有查询参数（即是否包含?）  
+        let hasExistingQuery = basePath.indexOf('?') !== -1;
+
         // 构建URL查询参数params
         let queryString = ''
         if (queryParams) {
@@ -107,8 +110,9 @@ export default {
             for (const [key, value] of Object.entries(queryParams)) {
                 params.append(key, value);
             }
-            queryString = params.size ? `?${params.toString()}` : "";
+            queryString = params.toString();
         }
-        return basePath + queryString
+        // 如果basePath已经有查询参数，使用&连接新参数；否则使用?  
+        return basePath + (queryString && (hasExistingQuery ? '&' : '?') + queryString);
     }
 }

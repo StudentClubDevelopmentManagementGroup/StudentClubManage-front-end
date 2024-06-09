@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";
 import useStore from "@/store";
@@ -12,7 +12,12 @@ const router = useRouter();
 const route = useRoute();
 
 const searchParams = reactive({
-  content: route.query?.search ? route.query?.search : "",
+  content: route.query?.search ? route.query.search : "",
+});
+
+watch(route, () => {
+  searchParams.content = route.query?.search ? route.query.search : "";
+  useStore.homepageStore.setTitleKeyword(searchParams.content);
 });
 
 const handleInput = (value) => {

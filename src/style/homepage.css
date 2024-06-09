@@ -8,6 +8,3 @@
 .container__mwidth {
   min-width: var(--main-width);
 }
-.div__mr {
-  margin-right: 15px;
-}

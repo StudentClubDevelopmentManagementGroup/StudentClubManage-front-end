@@ -32,15 +32,25 @@ const {
   handleReset,
 } = useColumns();
 
-watch(searchParams, () => {
-  onLoading();
-  fetchTableData();
-});
+const initQuery = () => {
+  query.value.club_name = route.query?.club_name ? route.query?.club_name : "";
+  query.value.author_name = route.query?.author_name ? route.query?.author_name : "";
+  query.value.department_id = route.query?.department_id
+    ? route.query?.department_id
+    : "";
+  query.value.search = route.query?.search ? route.query?.search : "";
+  query.value.from_date = route.query?.from_date ? route.query?.from_date : "";
+  query.value.to_date = route.query?.to_date ? route.query?.to_date : "";
+};
 
 onMounted(() => {
+  // 获取院系选择数据
+  useStore.departmentStore.getOptionsList();
+  // 获取搜索关键字
+  initQuery();
+  // 获取数据
   onLoading();
   fetchTableData();
-  useStore.departmentStore.getOptionsList();
 });
 </script>
 
@@ -67,10 +77,11 @@ onMounted(() => {
                 />
               </el-form-item>
 
-              <el-form-item class="items-center" label="学院" prop="department_id">
+              <el-form-item label="学院" prop="department_id">
                 <el-select
                   v-model="query.department_id"
                   placeholder="请选择学院名称"
+                  filterable
                   class=""
                 >
                   <el-option
@@ -79,6 +90,28 @@ onMounted(() => {
                     :value="item.id"
                   ></el-option>
                 </el-select>
+              </el-form-item>
+
+              <el-form-item label="开始时间" prop="from_date">
+                <el-date-picker
+                  class="!w-full"
+                  format="YYYY-MM-DD"
+                  value-format="YYYY-MM-DD"
+                  v-model="query.from_date"
+                  type="date"
+                  placeholder="请选择开始时间"
+                />
+              </el-form-item>
+
+              <el-form-item label="结束时间" prop="to_date">
+                <el-date-picker
+                  class="!w-full"
+                  format="YYYY-MM-DD"
+                  value-format="YYYY-MM-DD"
+                  v-model="query.to_date"
+                  type="date"
+                  placeholder="请选择结束时间"
+                />
               </el-form-item>
 
               <el-form-item>
@@ -92,7 +125,7 @@ onMounted(() => {
                     >查询</el-button
                   >
                   <el-button :icon="Refresh" v-ripple @click="handleReset"
-                    >重置</el-button
+                    >清空</el-button
                   >
                 </div>
               </el-form-item>
@@ -158,7 +191,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .wrapper {
-  min-height: 632px;
+  min-height: 592px;
   display: grid;
   grid-template-columns: 980px 1fr;
   grid-template-areas: "left right";

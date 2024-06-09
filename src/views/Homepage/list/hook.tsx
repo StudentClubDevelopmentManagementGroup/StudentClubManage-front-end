@@ -15,18 +15,18 @@ export function useColumns() {
     const tableData = ref([])
     const tableRef = ref()
     const formRef = ref()
-    const searchStatus = ref(false) // 用于检测是否处在检索状态
     const tableLoading = ref(true)
     const btnLoading = ref(false)
     const route = useRoute()
 
     // 检索区域框输入内容 -- 搜索框逻辑独立于该参数
     const query = ref({
+        search: "",
         club_name: "",
         department_id: "",
         author_name: "",
-        from_date: null,
-        to_date: null,
+        from_date: "",
+        to_date: "",
     })
 
     /** 分页器配置 */
@@ -63,14 +63,13 @@ export function useColumns() {
               `
     });
 
-    // 统一的访问 API 的参数来源
     const getDataParams = computed(() => ({
-        club_name: searchStatus.value ? query.value.club_name : null,
-        author_name: searchStatus.value ? query.value.author_name : null,
-        department_id: searchStatus.value ? query.value.department_id : null,
+        club_name: query.value.club_name,
+        author_name: query.value.author_name,
+        department_id: query.value.department_id,
         title_keyword: useStore.homepageStore.getTitleKeyword() ? useStore.homepageStore.getTitleKeyword() : null,
-        // from_date: searchStatus.value ? "" : "",
-        // to_date: searchStatus.value ? "" : "",
+        from_date: query.value.from_date,
+        to_date: query.value.to_date,
         page_num: pagination.currentPage,
         page_size: pagination.pageSize
     }))
@@ -126,11 +125,11 @@ export function useColumns() {
 
     // 检索
     const handleSearch = () => {
+        useStore.navigationStore.updateNaviOption(route.path, route.fullPath, query.value)
         btnLoading.value = true;
         delay(1000).then(() => {
             btnLoading.value = false;
         })
-        searchStatus.value = true;
         onLoading()
         fetchTableData()
     }
@@ -138,18 +137,19 @@ export function useColumns() {
     // 重置检索
     const handleReset = () => {
         formRef.value.resetFields()
-        if (searchStatus.value) {
-            searchStatus.value = false;
-            onLoading()
-            fetchTableData()
-        }
+        useStore.navigationStore.updateNaviOption(route.path, route.fullPath, query.value)
+        btnLoading.value = true;
+        delay(1000).then(() => {
+            btnLoading.value = false;
+        })
+        onLoading()
+        fetchTableData()
     }
 
     return {
         tableData,
         tableRef,
         formRef,
-        searchStatus,
         tableLoading,
         btnLoading,
         query,

@@ -251,7 +251,7 @@ export const homePageRoutes = [
     {
         path: "/homepage",
         name: "HomePage",
-        redirect: '/home',
+        redirect: '/homepage/home',
         component: homePageLayout,
         children: [
             {

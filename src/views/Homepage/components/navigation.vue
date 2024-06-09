@@ -3,9 +3,6 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import useStore from "@/store";
 
-// import { CloseBold } from "@element-plus/icons-vue";
-// import Down from "@iconify-icons/ri/arrow-down-s-line";
-
 const router = useRouter();
 const naviOptions = computed(() => useStore.navigationStore.getNaviOptions());
 const activeIndex = computed(() => useStore.navigationStore.getCurrentIndex());
@@ -14,6 +11,7 @@ const currentIndex = ref(activeIndex.value);
 
 watch(activeIndex, (newValue) => {
   currentIndex.value = newValue;
+  router.replace(activeIndex.value);
 });
 
 const removeOption = (path) => {

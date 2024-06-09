@@ -16,13 +16,13 @@ onMounted(() => {
 
 <template>
   <div id="container">
-    <Image
+    <!-- <Image
       src="/a/image/13.jpg"
       fit="contain"
       :empty-image-style="{
         width: '150px',
       }"
-    />
+    /> -->
   </div>
 </template>
 

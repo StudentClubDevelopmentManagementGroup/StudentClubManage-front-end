@@ -72,11 +72,12 @@ const fetchDataList4 = () => {
 
 const handleClickBtn1 = () => {
   // 跳转到更多社团信息列表
+  router.push("/homepage/list");
 };
 
 const handleClickBtn2 = () => {
   // 跳转到更多活动/比赛信息列表
-  router.push("/homepage/list?search=");
+  router.push("/homepage/list");
 };
 
 const handleClickBtn3 = () => {
@@ -88,7 +89,7 @@ const handleClickBtn4 = () => {
 };
 
 const handleClickList1 = (val) => {
-  router.push(`/homepage/list?search=`);
+  router.push(`/homepage/list?club_name=${val.club_name}`);
 };
 
 const handleClickList2 = (val) => {
@@ -113,6 +114,7 @@ onMounted(() => {
 
 <template>
   <div class="container-width m-auto bg-white p-5">
+    <!--  -->
     <div class="inner1 flex">
       <!-- 左上角 -->
       <div class="flex-1">
@@ -204,6 +206,7 @@ onMounted(() => {
         </el-card>
       </div>
     </div>
+    <!--  -->
     <div class="inner2 flex">
       <!-- 左下角 -->
       <div class="flex-1">
