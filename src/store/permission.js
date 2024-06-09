@@ -91,8 +91,6 @@ export const usePermissionStore = defineStore('permission', () => {
         accessRoutes,
         routes,
         authedRoutes,
-
-        // actions
         setRoles,
         setAccessRoutes,
         setRoutes,

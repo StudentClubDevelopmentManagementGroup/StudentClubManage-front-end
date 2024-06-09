@@ -66,7 +66,7 @@ const validatePassword = (rule, value, callback) => {
 const validateCode = (rule, value, callback) => {
   if (!value) {
     callback(new Error("验证码不能为空"));
-  } else if (value.length !== 4) {
+  } else if (value.length !== 7) {
     callback(new Error("验证码长度为4个字符"));
   } else {
     callback();

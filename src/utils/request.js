@@ -68,6 +68,7 @@ service.interceptors.response.use(
     }
   },
   error => {
+    NProgress.done();
     message(error.message,
       {
         type: 'error',

@@ -112,6 +112,31 @@ export const useUserStore = defineStore('user', () => {
     })
   }
 
+  const emailLogin = async (req) => {
+    return new Promise((resolve, reject) => {
+      userApi
+        .emailLogin(req).then((data) => {
+          if (data !== null) {
+            state.token = data.token
+            state.userInfo = data.user_info
+            state.roles = data.user_info.role
+            setToken(data.token)
+            setUserInfo(data.user_info)
+            setRoles(data.user_info.role)
+          } else {
+            message('验证码错误',
+              {
+                type: 'error',
+                duration: 2500
+              })
+          }
+          resolve()
+        }).catch(error => {
+          reject(error);
+        });
+    })
+  }
+
   const updateUserInfo = (newUserInfo) => {
     SetUserInfo(newUserInfo)
   }
@@ -123,6 +148,7 @@ export const useUserStore = defineStore('user', () => {
     setIsRemembered,
     logout,
     login,
+    emailLogin,
     updateUserInfo,
     getCurrentPage,
     getToken,
