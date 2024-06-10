@@ -6,6 +6,7 @@ import formatUtils from "@/utils/formatter"
 
 export const useNavigationStore = defineStore('navigation', () => {
   const state = reactive({
+    routeStatus: true, // 用于表示全局路由一种行为的标识符
     naviOptions: [],
     // naviOptions: [{
     //   path: "/homepage/home",
@@ -25,6 +26,14 @@ export const useNavigationStore = defineStore('navigation', () => {
 
   function isOptionExist(value) {
     return state.naviOptions.some(item => item.path === value.path);
+  }
+
+  const getRouteStatus = () => {
+    return state.routeStatus
+  }
+
+  const setRouteStatus = (val) => {
+    state.routeStatus = val
   }
 
   const getCurrentIndex = () => {
@@ -90,6 +99,8 @@ export const useNavigationStore = defineStore('navigation', () => {
 
 
   return {
+    getRouteStatus,
+    setRouteStatus,
     getCurrentIndex,
     updateNaviOption,
     setCurrentIndex,

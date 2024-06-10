@@ -18,9 +18,9 @@ const route = useRoute();
     <el-scrollbar height="100vh">
       <el-backtop
         target=".el-scrollbar__wrap"
-        :visibility-height="200"
-        :right="550"
-        :bottom="300"
+        :visibility-height="100"
+        :right="300"
+        :bottom="350"
       >
         <backTop />
       </el-backtop>

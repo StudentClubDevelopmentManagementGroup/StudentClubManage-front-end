@@ -306,12 +306,15 @@ router.beforeEach(async (to, from, next) => {
     }
     tabStore.setCurrentIndex(to.path)
 
-    const naviStore = useStore.navigationStore
-    const naviFlag = naviStore.getNaviOptions().findIndex(tab => tab.route === to.path) > -1
-    if (!naviFlag && !to.meta.hiddenTab) {
-        naviStore.addNaviOptions({ path: formatUtil.constructUrl(to.path, to.query), meta: to.meta, name: to.name, query: to.query })
+    if (useStore.navigationStore.getRouteStatus()) {
+        const naviStore = useStore.navigationStore
+        const naviFlag = naviStore.getNaviOptions().findIndex(tab => tab.route === to.path) > -1
+        if (!naviFlag && !to.meta.hiddenTab) {
+            naviStore.addNaviOptions({ path: formatUtil.constructUrl(to.path, to.query), meta: to.meta, name: to.name, query: to.query })
+        }
+        naviStore.setCurrentIndex(formatUtil.constructUrl(to.path, to.query))
+        naviStore.setRouteStatus(false); // 关闭路由行为
     }
-    naviStore.setCurrentIndex(formatUtil.constructUrl(to.path, to.query))
 
     const hasGetUserInfo = userStore.getUserInfo
     if (to.path === '/login') {

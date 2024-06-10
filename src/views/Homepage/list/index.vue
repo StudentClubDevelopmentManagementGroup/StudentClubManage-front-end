@@ -193,7 +193,7 @@ onMounted(() => {
 .wrapper {
   min-height: 592px;
   display: grid;
-  grid-template-columns: 980px 1fr;
+  grid-template-columns: 2.5fr 1fr;
   grid-template-areas: "left right";
 
   .search-container {
