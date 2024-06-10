@@ -17,17 +17,12 @@ const content = reactive({
   author_name: "",
 });
 
-const hanldeSelect = (key, keyPath) => {
-  console.log(key, keyPath);
-};
-
 const fetchContent = () => {
   console.log("fetchContent");
   return new Promise((resolve, reject) => {
     announcementApi
       .getNoticeContent(route.query.announcementId)
       .then((data) => {
-        console.log("Data", data);
         content.title = data.title;
         content.html = data.content;
         content.publish_time = data.publish_time;
@@ -43,7 +38,6 @@ const fetchContent = () => {
 
 onMounted(() => {
   fetchContent();
-  message(`获取到的参数为：${JSON.stringify(route.query)}`);
 });
 </script>
 
