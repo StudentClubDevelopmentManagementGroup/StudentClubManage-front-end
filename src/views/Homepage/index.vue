@@ -7,17 +7,13 @@ import feet from "./components/footer.vue";
 import backTop from "@/assets/back_top.svg?component";
 
 const route = useRoute();
-
-// <el-backtop target=".el-scrollbar__wrap" :visibility-height="100">
-//         <backTop />
-//       </el-backtop>
 </script>
 
 <template>
-  <div id="container">
+  <div class="cter">
     <el-scrollbar height="100vh">
       <el-backtop
-        target=".el-scrollbar__wrap"
+        target=".cter .el-scrollbar__wrap"
         :visibility-height="100"
         :right="300"
         :bottom="350"

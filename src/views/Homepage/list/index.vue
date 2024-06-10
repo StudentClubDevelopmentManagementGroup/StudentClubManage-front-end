@@ -43,6 +43,14 @@ const initQuery = () => {
   query.value.to_date = route.query?.to_date ? route.query?.to_date : "";
 };
 
+const onFromDateChange = (value) => {
+  query.value.from_date = value ? value : "";
+};
+
+const onToDateChange = (value) => {
+  query.value.to_date = value ? value : "";
+};
+
 onMounted(() => {
   // 获取院系选择数据
   useStore.departmentStore.getOptionsList();
@@ -100,6 +108,7 @@ onMounted(() => {
                   v-model="query.from_date"
                   type="date"
                   placeholder="请选择开始时间"
+                  @change="onFromDateChange"
                 />
               </el-form-item>
 
@@ -111,6 +120,7 @@ onMounted(() => {
                   v-model="query.to_date"
                   type="date"
                   placeholder="请选择结束时间"
+                  @change="onToDateChange"
                 />
               </el-form-item>
 
