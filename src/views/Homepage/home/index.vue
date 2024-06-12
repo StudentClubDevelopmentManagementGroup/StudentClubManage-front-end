@@ -72,13 +72,11 @@ const fetchDataList4 = () => {
 
 const handleClickBtn1 = () => {
   // 跳转到更多社团信息列表
-  useStore.navigationStore.setRouteStatus(true);
   router.replace("/homepage/list");
 };
 
 const handleClickBtn2 = () => {
   // 跳转到更多活动/比赛信息列表
-  useStore.navigationStore.setRouteStatus(true);
   router.replace("/homepage/list");
 };
 
@@ -91,12 +89,10 @@ const handleClickBtn4 = () => {
 };
 
 const handleClickList1 = (val) => {
-  useStore.navigationStore.setRouteStatus(true);
   router.replace(`/homepage/list?club_name=${val.club_name}`);
 };
 
 const handleClickList2 = (val) => {
-  useStore.navigationStore.setRouteStatus(true);
   router.replace(`/homepage/detail?announcementId=${val.announcement_id}`);
 };
 

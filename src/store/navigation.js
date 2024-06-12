@@ -72,7 +72,6 @@ export const useNavigationStore = defineStore('navigation', () => {
   }
 
   const clearOptionsList = () => {
-    state.currentIndex = "";
     state.naviOptions = [];
   }
 

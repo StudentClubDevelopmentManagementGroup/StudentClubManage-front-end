@@ -299,21 +299,26 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     document.title = `${to.meta.title}--基地管理系统`
     const userStore = useStore.userStore
-    const tabStore = useStore.tabStore
-    const flag = tabStore.getTabsOption.findIndex(tab => tab.route === to.path) > -1
-    if (!flag && !to.meta.hiddenTab) {
-        tabStore.addTab({ route: to.path, title: to.meta.title, name: to.name })
-    }
-    tabStore.setCurrentIndex(to.path)
+    let Toflag = to.path.includes("/homepage") // 检查是否是首页行为
 
-    if (useStore.navigationStore.getRouteStatus()) {
+    if (!Toflag) {
+        // 内部管理端导航栏行为
+        const tabStore = useStore.tabStore
+        const flag = tabStore.getTabsOption.findIndex(tab => tab.route === to.path) > -1
+        if (!flag && !to.meta.hiddenTab) {
+            tabStore.addTab({ route: to.path, title: to.meta.title, name: to.name })
+        }
+        tabStore.setCurrentIndex(to.path)
+    }
+
+    // 外部首页导航栏行为
+    if (Toflag) {
         const naviStore = useStore.navigationStore
         const naviFlag = naviStore.getNaviOptions().findIndex(tab => tab.route === to.path) > -1
         if (!naviFlag && !to.meta.hiddenTab) {
             naviStore.addNaviOptions({ path: formatUtil.constructUrl(to.path, to.query), meta: to.meta, name: to.name, query: to.query })
         }
         naviStore.setCurrentIndex(formatUtil.constructUrl(to.path, to.query))
-        naviStore.setRouteStatus(false); // 关闭路由行为
     }
 
     const hasGetUserInfo = userStore.getUserInfo

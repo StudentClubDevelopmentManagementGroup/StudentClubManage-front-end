@@ -101,7 +101,7 @@ watch(
         </span>
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">
-            <router-link to="/">
+            <router-link to="/homepage">
               <el-dropdown-item
                 ><IconifyIconOffline
                   :icon="Base"

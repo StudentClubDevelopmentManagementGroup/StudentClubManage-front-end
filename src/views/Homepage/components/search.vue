@@ -33,7 +33,6 @@ const handleInput = (value) => {
 const handleSearch = () => {
   const value = searchParams.content;
   if (!regexTrim.test(value) && !regex.test(value)) {
-    useStore.navigationStore.setRouteStatus(true);
     router.replace(`/homepage/list?search=${searchParams.content}`);
     useStore.homepageStore.setTitleKeyword(searchParams.content);
   }

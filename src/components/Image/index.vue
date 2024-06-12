@@ -54,6 +54,12 @@ const props = defineProps({
   emptyImageStyle: {
     type: Object as () => EmptyImageStyle,
   },
+  /** 控制图片容器的嵌入样式 */
+  containerStyle: {
+    type: String,
+    value: ["block", "inline", "inline-block"],
+    default: "block",
+  },
 });
 
 // // 请求头携带缓存时间
@@ -61,7 +67,7 @@ const props = defineProps({
 // // 浏览器将遵循服务器明确指定的 MIME 类型
 // service.defaults.headers['X-Content-Type-Options'] = 'nosniff'
 
-const { src, preview, skeletonLoading, emptyImageStyle } = props;
+const { src, preview, skeletonLoading, emptyImageStyle, containerStyle } = props;
 
 const ImageRef = ref();
 const url = ref("");
@@ -126,7 +132,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div :style="'display:' + containerStyle">
     <!-- 预加载骨架部分 -->
     <el-skeleton :loading="loading" animated>
       <template #template>

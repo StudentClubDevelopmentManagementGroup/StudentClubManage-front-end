@@ -10,7 +10,9 @@ import {
 
 import { ExtractPropTypes } from 'vue'
 
-/** https://element-plus.org/zh-CN/component/image.html#image-attributes */
+/**'
+ * @deprecated https://element-plus.org/zh-CN/component/image.html#image-attributes
+ */
 export const imageProps = buildProps({
     //** 当启用预览时，用于控制点击背景是否可以退出预览模式。 */
     hideOnClickModal: Boolean,
@@ -85,6 +87,9 @@ export const imageProps = buildProps({
 
 type ImageProps = ExtractPropTypes<typeof imageProps>
 
+/**'
+ * @deprecated
+ */
 export const imageEmits = {
     //** 图片加载完成时触发 */
     load: (evt: Event) => evt instanceof Event,
@@ -98,8 +103,14 @@ export const imageEmits = {
     show: () => true,
 }
 
+/**'
+ * @deprecated
+ */
 type ImageEmits = typeof imageEmits
 
+/**'
+ * @deprecated
+ */
 interface ImageOptions extends ImageProps {
     text: {
         type: String,
@@ -107,4 +118,7 @@ interface ImageOptions extends ImageProps {
     }
 }
 
+/**'
+ * @deprecated
+ */
 export type { ImageProps, ImageEmits, ImageOptions }
