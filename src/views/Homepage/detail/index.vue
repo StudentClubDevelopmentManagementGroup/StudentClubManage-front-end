@@ -70,10 +70,14 @@ const processHTML = (html) => {
     var child = children[i];
     if (isParentContainImages(child)) {
       var imgs = child.querySelectorAll("img");
+
       imgs.forEach((img) => {
+        var span = document.createElement("span");
         var figure = document.createElement("figure");
         figure.classList.add("IMAGE_PLACEHOLDERS");
-
+        figure.style.cssText = "width:fit-content";
+        span.style.cssText = child.style.cssText;
+        span.appendChild(figure);
         images.push({
           src: getFilePathFromUrl(img.src),
           alt: img.alt,
@@ -81,13 +85,12 @@ const processHTML = (html) => {
         });
         img.src = "";
         if (img.nextSibling) {
-          child.insertBefore(figure, img.nextSibling);
+          child.insertBefore(span, img.nextSibling);
         } else {
-          child.appendChild(figure);
+          child.appendChild(span);
         }
         img.remove();
       });
-      console.log(child);
     }
   }
 
@@ -107,9 +110,7 @@ onMounted(async () => {
       containerStyle: "inline-block",
       style: images[index].style,
     };
-    // if (images[index].style.length > 0) {
-    //   props["style"] = images[index].style;
-    // }
+
     createApp(myImage, props)
       // .use([ElImage, ElSkeleton], { zhCn })
       .use(ElSkeleton, { zhCn })
