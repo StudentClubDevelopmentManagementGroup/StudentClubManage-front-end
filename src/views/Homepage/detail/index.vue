@@ -1,14 +1,12 @@
 <script setup>
-import { ref, reactive, onMounted, createApp } from "vue";
+import { ref, reactive, onMounted, shallowRef } from "vue";
 
 import { useRoute } from "vue-router";
 import announcementApi from "@/api/announcement";
 
 import myImage from "@/components/Image";
+import DomTreeRenderer from "./DomTreeRenderer.vue";
 
-// 引入需要的Elment Plus
-import zhCn from "element-plus/dist/locale/zh-cn.mjs";
-import { ElSkeleton, ElImage } from "element-plus";
 
 const route = useRoute();
 const content = reactive({
@@ -20,7 +18,6 @@ const content = reactive({
   author_name: "",
 });
 
-const images = [];
 
 function getFilePathFromUrl(url) {
   // 格式一般为：http://guet-student-club-management-system.oss-cn-guangzhou.aliyuncs.com/upload/club/announcement/file/3454918bed7149de932038432fbf6ef5.jpg?Expires=1718085095&OSSAccessKeyId=LTAI5tFJPBYi4LkSofQyzHvW&Signature=ExC0g6FeMWCxgM94ZUMeRp5MM%2Fo%3D
@@ -30,13 +27,6 @@ function getFilePathFromUrl(url) {
   var startIndex = pathAndQuery.indexOf("/", 8) + 1; // 跳过协议
 
   return "/a" + pathAndQuery.slice(pathAndQuery.indexOf("/", startIndex)); // 排除域名部分与/upload部分
-}
-
-function isParentContainImages(parentElement, selector = "img") {
-  // 使用 querySelectorAll 来查找父元素内所有的 img 元素
-  const images = parentElement.querySelectorAll(selector);
-  // 如果找到了至少一个 img 元素，则返回 true
-  return images.length > 0;
 }
 
 const fetchContent = () => {
@@ -50,7 +40,7 @@ const fetchContent = () => {
         content.department_name = data.department_name;
         content.club_name = data.club_name;
         content.author_name = data.author_name;
-        processHTML(data.content);
+        // processHTML(data.content);
         resolve(data);
       })
       .catch((err) => {
@@ -60,63 +50,59 @@ const fetchContent = () => {
   });
 };
 
-const processHTML = (html) => {
-  // 这里使用 DOMParser 来解析 HTML 字符串为 DOM 节点
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-  const children = doc.body.children;
+const rootElement = ref([]);
 
-  for (let i = 0; i < children.length; i++) {
-    var child = children[i];
-    if (isParentContainImages(child)) {
-      var imgs = child.querySelectorAll("img");
+const traverseDOM = (node) => {
+  let containImg = false;
+  // 创建一个表示当前节点的对象
+  const nodeObject = {
+    element: node,
+    children: [],
+    containImg: false,
+  };
 
-      imgs.forEach((img) => {
-        var span = document.createElement("span");
-        var figure = document.createElement("figure");
-        figure.classList.add("IMAGE_PLACEHOLDERS");
-        figure.style.cssText = "width:fit-content";
-        span.style.cssText = child.style.cssText;
-        span.appendChild(figure);
-        images.push({
-          src: getFilePathFromUrl(img.src),
-          alt: img.alt,
-          style: img.style.cssText,
-        });
-        img.src = "";
-        if (img.nextSibling) {
-          child.insertBefore(span, img.nextSibling);
-        } else {
-          child.appendChild(span);
+  // 如果节点是元素节点
+  if (node.nodeType === Node.ELEMENT_NODE) {
+    // 检查当前节点是否为img元素
+    if (node.tagName === "IMG") {
+      containImg = true;
+      // tagName: shallowRef(myImage), // 获取组件的引用对象
+      nodeObject.element = {
+        tagName: "IMG",
+        style: node.style,
+        src: getFilePathFromUrl(node.src),
+        alt: node.alt,
+        containerStyle: "inline-block",
+        imagePreview: true,
+      };
+    } else {
+      // 递归处理子节点
+      Array.from(node.childNodes).forEach((childNode) => {
+        const childNodeObject = traverseDOM(childNode);
+        nodeObject.children.push(childNodeObject);
+        // 如果子节点包含img，则更新当前节点的containsImg字段
+        if (childNodeObject.containImg) {
+          containImg = true;
         }
-        img.remove();
       });
     }
+  } else if (node.nodeType === Node.TEXT_NODE) {
+    // 文本节点，可以包装在span中或直接保留textContent
+    var span = document.createElement("span");
+    span.innerHTML = node.textContent;
+    nodeObject.element = span;
   }
+  // 设置containsImg字段
+  nodeObject.containImg = containImg;
 
-  // 将修改后的 DOM 结构转换回 HTML 字符串
-  content.html = doc.body.innerHTML;
+  return nodeObject;
 };
 
 onMounted(async () => {
   await fetchContent();
 
-  const mountPoint = document.getElementsByClassName("IMAGE_PLACEHOLDERS");
-  const point = Array.from(mountPoint);
-  point.forEach((imgTag, index) => {
-    var props = {
-      src: images[index].src,
-      alt: images[index].alt,
-      containerStyle: "inline-block",
-      style: images[index].style,
-    };
-
-    createApp(myImage, props)
-      // .use([ElImage, ElSkeleton], { zhCn })
-      .use(ElSkeleton, { zhCn })
-      .use(ElImage, { zhCn })
-      .mount(imgTag);
-  });
+  const body = new DOMParser().parseFromString(content.html, "text/html").body;
+  rootElement.value = traverseDOM(body).children;
 });
 </script>
 
@@ -140,7 +126,7 @@ onMounted(async () => {
             <span class="mr-4">发布时间：{{ content.publish_time }}</span>
           </div>
           <div class="my-4 w-full">
-            <div v-html="content.html" />
+            <dom-tree-renderer v-for="(item, i) in rootElement" :key="i" :node="item" />
           </div>
         </div>
       </div>

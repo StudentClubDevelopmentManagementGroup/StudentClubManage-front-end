@@ -41,7 +41,7 @@ const props = defineProps({
    * @Description 非ElImage的原生属性
    */
   /** 是否允许预览图片 */
-  preview: {
+  imagePreview: {
     type: Boolean,
     default: false,
   },
@@ -67,7 +67,7 @@ const props = defineProps({
 // // 浏览器将遵循服务器明确指定的 MIME 类型
 // service.defaults.headers['X-Content-Type-Options'] = 'nosniff'
 
-const { src, preview, skeletonLoading, emptyImageStyle, containerStyle } = props;
+const { src, imagePreview, skeletonLoading, emptyImageStyle, containerStyle } = props;
 
 const ImageRef = ref();
 const url = ref("");
@@ -80,10 +80,18 @@ const computedEmptyImageStyle = computed(() => {
     // 根据如容器的宽度和高度计算自己的高度和宽度
     const parentWidth = Math.round(ImageRef.value.offsetWidth * 0.5);
     const parentHeight = Math.round(ImageRef.value.offsetHeight * 0.5);
-    return {
-      width: `${parentWidth}px`,
-      height: `${parentHeight}px`,
-    };
+
+    if (parentWidth === 0 || parentHeight === 0) {
+      return {
+        width: `100px`,
+        height: `100px`
+      };
+    } else {
+      return {
+        width: `${parentWidth}px`,
+        height: `${parentHeight}px`,
+      };
+    }
   } else {
     // 自定义参数
     return {
@@ -99,7 +107,7 @@ const getFileUrl = (file_id: String) => {
       .getFlieUrl(file_id)
       .then((data) => {
         url.value = data;
-        if (preview) {
+        if (imagePreview) {
           previewSrcList.value.push(data);
         }
       })
@@ -132,7 +140,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div :style="'display:' + containerStyle">
+  <div :style="`display:${containerStyle}`">
     <!-- 预加载骨架部分 -->
     <el-skeleton :loading="loading" animated>
       <template #template>
