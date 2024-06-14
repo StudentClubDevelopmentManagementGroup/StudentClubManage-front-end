@@ -1,5 +1,4 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import formatUtil from "@/utils/formatter";
 import useStore from "@/store";
 import Layout from "@/layout"
 import homePageLayout from "@/views/HomePage"
@@ -287,6 +286,7 @@ export const homePageRoutes = [
 ]
 
 const MergedRoutes = [...constantRoutes, ...homePageRoutes]
+let HomePageInitFlag = true // 标记是否首次加载界面
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -299,10 +299,10 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     document.title = `${to.meta.title}--基地管理系统`
     const userStore = useStore.userStore
-    let Toflag = to.path.includes("/homepage") // 检查是否是首页行为
+    let ToHomepageflag = to.path.includes("/homepage") // 检查是否是首页行为
 
-    if (!Toflag) {
-        // 内部管理端导航栏行为
+    // 内部管理端导航栏行为
+    if (!ToHomepageflag) {
         const tabStore = useStore.tabStore
         const flag = tabStore.getTabsOption.findIndex(tab => tab.route === to.path) > -1
         if (!flag && !to.meta.hiddenTab) {
@@ -312,13 +312,20 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // 外部首页导航栏行为
-    if (Toflag) {
+    if (ToHomepageflag) {
         const naviStore = useStore.navigationStore
-        const naviFlag = naviStore.getNaviOptions().findIndex(tab => tab.route === to.path) > -1
-        if (!naviFlag && !to.meta.hiddenTab) {
-            naviStore.addNaviOptions({ path: formatUtil.constructUrl(to.path, to.query), meta: to.meta, name: to.name, query: to.query })
+        if (HomePageInitFlag) {
+            naviStore.initOptionList();
+            HomePageInitFlag = false
         }
-        naviStore.setCurrentIndex(formatUtil.constructUrl(to.path, to.query))
+        if (!to.meta.hiddenTab) {
+            // let tabName = naviStore.getTabName()
+            // if (tabName !== "") {
+            //     to.meta.title = tabName;
+            // }
+            naviStore.addNaviOptions({ path: to.fullPath, meta: to.meta, query: to.query })
+        }
+        naviStore.setCurrentIndex(to.fullPath)
     }
 
     const hasGetUserInfo = userStore.getUserInfo

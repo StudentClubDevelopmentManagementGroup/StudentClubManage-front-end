@@ -125,7 +125,7 @@ export function useColumns() {
 
     // 检索
     const handleSearch = () => {
-        useStore.navigationStore.updateNaviOption(route.path, route.fullPath, query.value)
+        useStore.navigationStore.updateNaviOptionPath(route.path, route.fullPath, query.value)
         btnLoading.value = true;
         delay(1000).then(() => {
             btnLoading.value = false;
@@ -137,7 +137,7 @@ export function useColumns() {
     // 重置检索
     const handleReset = () => {
         formRef.value.resetFields()
-        useStore.navigationStore.updateNaviOption(route.path, route.fullPath, query.value)
+        useStore.navigationStore.updateNaviOptionPath(route.path, route.fullPath, query.value)
         btnLoading.value = true;
         delay(1000).then(() => {
             btnLoading.value = false;

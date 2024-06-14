@@ -28,26 +28,38 @@ export const useNavigationStore = defineStore('navigation', () => {
     return state.naviOptions.some(item => item.path === value.path);
   }
 
-  const getRouteStatus = () => {
-    return state.routeStatus
-  }
-
-  const setRouteStatus = (val) => {
-    state.routeStatus = val
-  }
-
   const getCurrentIndex = () => {
     return state.currentIndex;
   }
 
-  const updateNaviOption = (path, fullPath, params) => {
+  const updateNaviOptionTabName = (fullPath, tabName) => {
+    let index = findIndex(fullPath)
+    if (index > -1) {
+      //
+      state.naviOptions[index].meta.title = tabName
+    } else {
+      //
+    }
+  }
+
+  const updateNaviOptionPath = (path, fullPath, params) => {
     // 利用原有的 URL 构造新的带参 URL
     let index = findIndex(fullPath)
     let constructedPath = ""
     if (index > -1) {
+      // 在 Tabs 标签导航中存在标签
       constructedPath = formatUtils.constructUrl(path, params)
-      state.naviOptions[index].path = constructedPath;
-      useStore.navigationStore.setCurrentIndex(constructedPath)
+      if (isOptionExist({ path: constructedPath })) {
+        // 存在现存的标签页，清除掉当前标签页
+        deleteOption(path)
+      } else {
+        // 不存在现存的标签页，将当前标签页的路径导航目标修改
+        state.naviOptions[index].path = constructedPath;
+      }
+      setCurrentIndex(constructedPath)
+    } else {
+      // 在 Tabs 标签导航中不存在标签，未深虑
+      setCurrentIndex(fullPath)
     }
   }
 
@@ -98,10 +110,9 @@ export const useNavigationStore = defineStore('navigation', () => {
 
 
   return {
-    getRouteStatus,
-    setRouteStatus,
     getCurrentIndex,
-    updateNaviOption,
+    updateNaviOptionTabName,
+    updateNaviOptionPath,
     setCurrentIndex,
     addNaviOptions,
     addBottomNaviOptions,
