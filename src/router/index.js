@@ -264,6 +264,15 @@ export const homePageRoutes = [
                 },
             },
             {
+                path: "/homepage/clublist",
+                name: "Clublist",
+                component: () => import('@/views/homepage/clublist/index.vue'),
+                meta: {
+                    hidden: true,
+                    title: "社团列表",
+                }
+            },
+            {
                 path: "/homepage/list",
                 name: "List",
                 component: () => import('@/views/homepage/list/index.vue'),
@@ -319,10 +328,6 @@ router.beforeEach(async (to, from, next) => {
             HomePageInitFlag = false
         }
         if (!to.meta.hiddenTab) {
-            // let tabName = naviStore.getTabName()
-            // if (tabName !== "") {
-            //     to.meta.title = tabName;
-            // }
             naviStore.addNaviOptions({ path: to.fullPath, meta: to.meta, query: to.query })
         }
         naviStore.setCurrentIndex(to.fullPath)
