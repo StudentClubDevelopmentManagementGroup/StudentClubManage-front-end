@@ -26,7 +26,6 @@ const {
   onLoading,
   fetchTableData,
   refreshTabaleData,
-  addTableData,
   onSizeChange,
   onCurrentChange,
   checkOut,
@@ -44,7 +43,7 @@ const handleTimeChange = (val) => {
 
 const handleForce2Checkout = () => {
   // TODO: 无效功能
-  message(`"强制签到"是未完成功能`, { type: "error" });
+  message(`"强制签退"是未完成功能`, { type: "error" });
 };
 
 const handleSelectionChange = (val) => {
@@ -112,10 +111,6 @@ const handleSelectionChange = (val) => {
     <!-- 表格 -->
     <PureTableBar class="shadow" :columns="columns" @refresh="refreshTabaleData">
       <template #left>
-        <el-button v-ripple type="primary" :icon="CirclePlus" @click="addTableData"
-          >新增</el-button
-        >
-
         <div class="pl-4 flex transition-all leading-8 w-fit">
           <div class="w-[120px]">切换当前查询：</div>
           <!-- <div class="font-semibold">{{}}</div> -->
@@ -164,29 +159,33 @@ const handleSelectionChange = (val) => {
           @page-current-change="onCurrentChange"
         >
           <template #operation="{ row }">
-            <el-popconfirm
-              v-if="!row.checkoutTime && !row.isDeleted"
-              title="确认强制签退？"
-              @confirm="handleForce2Checkout"
+            <el-popover
+              placement="bottom"
+              :width="210"
+              v-if="row.isDeleted"
+              :disabled="!isMoreThanNDays(row.checkInTime, 7)"
+              trigger="hover"
+              content="超过7天，请联系管理员补签"
             >
               <template #reference>
-                <el-button class="!text-base reset-margin" type="danger" :size="size" text
-                  >强制签退</el-button
-                >
+                <div>
+                  <el-popconfirm title="是否补签到？" @confirm="reCheckIn(row)">
+                    <template #reference>
+                      <el-button
+                        v-if="row.isDeleted"
+                        :disabled="isMoreThanNDays(row.checkInTime, 7)"
+                        class="!text-base reset-margin"
+                        type="primary"
+                        :size="size"
+                        text
+                      >
+                        补签
+                      </el-button>
+                    </template>
+                  </el-popconfirm>
+                </div>
               </template>
-            </el-popconfirm>
-
-            <el-button
-              v-if="row.isDeleted"
-              :disabled="isMoreThanNDays(row.checkInTime, 7)"
-              class="!text-base reset-margin"
-              type="primary"
-              :size="size"
-              @click="openDialog('补签', row)"
-              text
-            >
-              补签
-            </el-button>
+            </el-popover>
           </template>
         </pure-table>
       </template>

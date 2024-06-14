@@ -81,7 +81,6 @@ onMounted(() => {
           <navbar />
         </div>
         <div class="btn-container flex items-center">
-          <!-- TODO:这里进入管理端：通过role判断是否显示 -->
           <el-button
             class="!pr-2 !pl-2"
             v-if="isShowManagementBtn"
@@ -95,7 +94,6 @@ onMounted(() => {
             border-style="solid"
           />
 
-          <!-- TODO:这里添加用户名 -->
           <el-button
             class="!pr-2 !pl-2"
             :icon="User"

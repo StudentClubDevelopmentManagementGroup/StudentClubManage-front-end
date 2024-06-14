@@ -29,7 +29,6 @@ const {
 
   fetchTableData,
   refreshTabaleData,
-  addTableData,
   onSizeChange,
   onCurrentChange,
   getCheckStatus,
@@ -121,9 +120,6 @@ const handleTimeChange = (val) => {
           </template>
         </el-popover>
 
-        <el-button v-ripple type="primary" :icon="CirclePlus" @click="addTableData"
-          >新增</el-button
-        >
         <el-skeleton class="pl-4 leading-8" animated :loading="tableLoading">
           <template #template>
             <el-skeleton-item variant="text" class="!w-[100px]" />
