@@ -1,11 +1,13 @@
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import useStore from "@/store";
 import avatar from "@/assets/avatar-default.png";
+import noticeApi from "@/api/announcement";
 
+const notice = ref({});
 const userInfo = computed(() => useStore.userStore.getUserInfo);
 const roles = computed(() => useStore.userStore.getRoles);
-
+const club_id = computed(() => useStore.userStore.getClubId);
 const roleArray = computed(() => {
   const roleMap = {
     is_student: "学生",
@@ -19,12 +21,22 @@ const roleArray = computed(() => {
     .filter((role) => roles.value[role])
     .map((role) => roleMap[role]);
 });
+
+const getNowNotice = () => {
+  noticeApi.getNowNotice(club_id.value).then((data) => {
+    notice.value = data;
+  });
+};
+
+onMounted(() => {
+  getNowNotice();
+});
 </script>
 
 <template>
   <el-row v-if="userInfo" :gutter="20">
     <el-col :span="10">
-      <el-card class="user-card" shadow="hover">
+      <el-card class="py-4 ml-4" shadow="hover">
         <div
           style="padding-left: 20px; padding-right: 20px"
           class="user-card-body"
@@ -32,13 +44,7 @@ const roleArray = computed(() => {
           <div style="text-align: center">
             <el-avatar :size="100" :src="avatar" />
           </div>
-          <div
-            style="
-              font-size: 20px;
-              font-weight: bold;
-              text-align: center;
-            "
-          >
+          <div style="font-size: 20px; font-weight: bold; text-align: center">
             <span>{{ userInfo.name }}</span>
           </div>
           <div class="user-info">
@@ -48,15 +54,14 @@ const roleArray = computed(() => {
                   v-for="role in roleArray"
                   :key="role"
                   type="primary"
+                  class="ml-2"
                 >
                   {{ role }}
                 </el-tag></span
               >
             </div>
             <div class="pt-3.5">
-              <span
-                >学号/工号：{{ userInfo.user_id }}</span
-              >
+              <span>学号/工号：{{ userInfo.user_id }}</span>
             </div>
             <div class="pt-3.5">
               <span
@@ -72,70 +77,35 @@ const roleArray = computed(() => {
                 }}</span
               >
             </div>
+            <div class="pt-3.5">
+              <span
+                ><i style="margin-right: 5px" class="el-icon-message"></i
+                >手机号：{{
+                  userInfo.tel === null ? "未填写邮箱" : userInfo.tel
+                }}</span
+              >
+            </div>
           </div>
         </div>
       </el-card>
     </el-col>
     <el-col :span="14">
-      <!-- <el-card shadow="hover">
+      <el-card class="p-4 mr-4" shadow="hover">
+        最新公告：
+        <div class="text-center">
+          <h2>{{ notice.title }}</h2>
+        </div>
+        <br />
         <div>
-          <el-tabs v-model="activeName">
-            <el-tab-pane label="基本信息" name="info">
-              <el-form
-                :model="ruleForm"
-                :rules="rules"
-                ref="ruleForm"
-                label-width="85px"
-              >
-                <el-form-item label="姓名" prop="name">
-                  <el-input v-model="ruleForm.name"></el-input>
-                </el-form-item>
-                <el-form-item label="学号/工号" prop="stuNum">
-                  <el-input v-model="ruleForm.stuNum"></el-input>
-                </el-form-item>
-                <el-form-item label="学院" prop="institute">
-                  <el-select
-                    style="width: 100%"
-                    v-model="ruleForm.institute"
-                    placeholder="请选择所在学院"
-                  >
-                    <el-option
-                      :key="index"
-                      v-for="(item, index) in institutes"
-                      :label="item"
-                      :value="item"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="邮箱" prop="mail">
-                  <el-input v-model="ruleForm.mail"></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button
-                    :loading="btnLoading"
-                    type="primary"
-                    @click="handleUpdateInfo"
-                    >保存</el-button
-                  >
-                </el-form-item>
-              </el-form>
-            </el-tab-pane>
-          </el-tabs>
+          <span class="name">社团：{{  notice.club_name }}</span>
+          &nbsp; &nbsp; &nbsp;
+          <span class="name">发布时间：{{ notice.publish_time }}</span>
+          &nbsp; &nbsp; &nbsp;
+          <span class="name">作者：{{  notice.author_name }}</span>
         </div>
-        <div style="text-align: center; color: #909399; font-size: 12px">
-          <span> 注意：个人信息每24小时只允许修改1次！(*代表必填信息) </span>
-        </div>
-        <div
-          style="
-            text-align: center;
-            color: #909399;
-            font-size: 12px;
-            margin-top: 10px;
-          "
-        >
-          <span> 修改信息后H5端请重新登录同步个人信息！ </span>
-        </div>
-      </el-card> -->
+        <br />
+        <div v-html="notice.content"></div>
+      </el-card>
     </el-col>
   </el-row>
 </template>

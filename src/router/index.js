@@ -1,6 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import formatUtil from "@/utils/formatter";
 import useStore from "@/store";
 import Layout from "@/layout"
+import homePageLayout from "@/views/HomePage"
 
 export const constantRoutes = [
     {
@@ -186,7 +188,7 @@ export const asyncRoutes = [
         children: [{
             path: "/member/signin",
             name: "MemberSignin",
-            component: () => import('@/views/Introduce'),
+            component: () => import('@/views/member-sign-in/index.vue'),
             meta: {
                 title: "打卡记录",
             },
@@ -215,57 +217,108 @@ export const asyncRoutes = [
     }, {
         path: "/teacher",
         component: Layout,
-        redirect: "/teacher/base",
+        redirect: "/teacher/club",
         meta: {
             icon: "ri:file-settings-fill",
             title: "管理模块",
         },
         children: [{
-            path: "/teacher/base",
-            name: "BaseManagement",
-            component: () => import('@/views/admin-management/base'),
+            path: "/teacher/club",
+            name: "ClubManagement",
+            component: () => import('@/views/admin-management/club/index'),
             meta: { title: '基地管理' }
         }, {
             path: "/teacher/department",
             name: "DepartmentManagement",
-            component: () => import('@/views/admin-management/department-management'),
+            component: () => import('@/views/admin-management/department/index'),
             meta: { title: '院系管理' }
         }, {
             path: "/teacher/user",
             name: "UserManagement",
-            component: () => import('@/views/admin-management/user-management'),
-            meta: { title: '人员管理' }
+            component: () => import('@/views/admin-management/user/index'),
+            meta: { title: '用户管理' }
         }, {
-            path: "/teacher/person",
-            name: "PersonInformation",
-            component: () => import('@/views/admin-management/person-information'),
-            meta: { title: '个人信息' }
-        }, {
-            path: "/teacher/operation",
-            name: "OperationLog",
-            component: () => import('@/views/admin-management/operation-log'),
+            path: "/teacher/log",
+            name: "Log",
+            component: () => import('@/views/admin-management/log/index'),
             meta: { title: '操作日志' }
         }]
     }
 ]
+
+export const homePageRoutes = [
+    {
+        path: "/homepage",
+        name: "HomePage",
+        redirect: '/homepage/home',
+        component: homePageLayout,
+        children: [
+            {
+                path: "/homepage/home",
+                name: "Home",
+                component: () => import('@/views/homepage/home/index.vue'),
+                meta: {
+                    fixed: true,
+                    hidden: false,
+                    title: "首页",
+                },
+            },
+            {
+                path: "/homepage/list",
+                name: "List",
+                component: () => import('@/views/homepage/list/index.vue'),
+                meta: {
+                    hidden: true,
+                    title: "资讯页",
+                },
+            },
+            {
+                path: "/homepage/detail",
+                name: "InfoDetail",
+                component: () => import('@/views/homepage/detail/index.vue'),
+                meta: {
+                    hidden: true,
+                    title: "详情页",
+                },
+            },
+        ]
+    },
+]
+
+const MergedRoutes = [...constantRoutes, ...homePageRoutes]
 
 const router = createRouter({
     history: createWebHashHistory(),
     scrollBehavior: () => ({
         top: 0
     }),
-    routes: constantRoutes
+    routes: MergedRoutes
 })
 
 router.beforeEach(async (to, from, next) => {
     document.title = `${to.meta.title}--基地管理系统`
     const userStore = useStore.userStore
-    const tabStore = useStore.tabStore
-    const flag = tabStore.getTabsOption.findIndex(tab => tab.route === to.path) > -1
-    if (!flag && !to.meta.hiddenTab) {
-        tabStore.addTab({ route: to.path, title: to.meta.title, name: to.name })
+    let Toflag = to.path.includes("/homepage") // 检查是否是首页行为
+
+    if (!Toflag) {
+        // 内部管理端导航栏行为
+        const tabStore = useStore.tabStore
+        const flag = tabStore.getTabsOption.findIndex(tab => tab.route === to.path) > -1
+        if (!flag && !to.meta.hiddenTab) {
+            tabStore.addTab({ route: to.path, title: to.meta.title, name: to.name })
+        }
+        tabStore.setCurrentIndex(to.path)
     }
-    tabStore.setCurrentIndex(to.path)
+
+    // 外部首页导航栏行为
+    if (Toflag) {
+        const naviStore = useStore.navigationStore
+        const naviFlag = naviStore.getNaviOptions().findIndex(tab => tab.route === to.path) > -1
+        if (!naviFlag && !to.meta.hiddenTab) {
+            naviStore.addNaviOptions({ path: formatUtil.constructUrl(to.path, to.query), meta: to.meta, name: to.name, query: to.query })
+        }
+        naviStore.setCurrentIndex(formatUtil.constructUrl(to.path, to.query))
+    }
 
     const hasGetUserInfo = userStore.getUserInfo
     if (to.path === '/login') {

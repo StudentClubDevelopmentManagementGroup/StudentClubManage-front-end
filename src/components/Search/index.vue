@@ -98,7 +98,7 @@ watchEffect(() => {
       filterable
       default-first-option
       remote
-      placeholder="请输入关键字搜索"
+      placeholder="请输入关键字搜索功能"
       @change="handleChange"
     >
       <template #prefix>

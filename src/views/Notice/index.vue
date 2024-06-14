@@ -66,10 +66,6 @@ const addDraft = () => {
     });
 };
 
-function tabClick({ index }) {
-  selected.value = index;
-}
-
 const clearText = () => {
   richEditor.value.editorClear();
   notice.value = {

@@ -19,7 +19,6 @@ export const useSettingStore = defineStore("setting", () => {
   const getShowLogo = computed(() => state.value.showLogo);
 
   const changeSetting = ({ key, value }) => {
-    console.log(key);
     if (state.value.hasOwnProperty(key)) {
       if (value === true || value === false) {
         state.value[key] = value;

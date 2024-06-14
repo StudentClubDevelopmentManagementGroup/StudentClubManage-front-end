@@ -55,21 +55,21 @@ export function useRole() {
     //   width: 100
     // },
     {
-      label: "作者学号",
-      prop: "author_id",
-      minWidth: 120
-    },
-    {
       label: "作者姓名",
       prop: "author_name",
       width: 100
+    },
+    {
+      label: "学院",
+      prop: "department_name",
+      width: 180
     },
     {
       label: "发布时间",
       prop: "publish_time",
       minWidth: 160
     },
-    
+
     {
       label: "操作",
       fixed: "right",
