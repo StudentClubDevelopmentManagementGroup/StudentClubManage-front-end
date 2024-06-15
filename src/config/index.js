@@ -38,7 +38,7 @@ const responsiveStorageNameSpace = () => getConfig().ResponsiveStorageNameSpace;
 
 const CONFIG = {
   development: {
-    baseUrl: 'http://10.70.107.20:3333',
+    baseUrl: 'http://localhost:3333',
     serverUrl: 'http://localhost:5173',
     logo: 'http://localhost:5173/icon.jpeg',
     avatar: 'http://localhost:8080/header4.gif',

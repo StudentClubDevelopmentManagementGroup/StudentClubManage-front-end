@@ -1,5 +1,4 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import formatUtil from "@/utils/formatter";
 import useStore from "@/store";
 import Layout from "@/layout"
 import homePageLayout from "@/views/HomePage"
@@ -311,11 +310,7 @@ router.beforeEach(async (to, from, next) => {
     const userStore = useStore.userStore
     let ToHomepageflag = to.path.includes("/homepage") // 检查是否是首页行为
 
-    // 内部管理端导航栏行为
     if (!ToHomepageflag) {
-    let Toflag = to.path.includes("/homepage") // 检查是否是首页行为
-
-    if (!Toflag) {
         // 内部管理端导航栏行为
         const tabStore = useStore.tabStore
         const flag = tabStore.getTabsOption.findIndex(tab => tab.route === to.path) > -1
@@ -336,14 +331,6 @@ router.beforeEach(async (to, from, next) => {
             naviStore.addNaviOptions({ path: to.fullPath, meta: to.meta, query: to.query })
         }
         naviStore.setCurrentIndex(to.fullPath)
-
-    if (Toflag) {
-        const naviStore = useStore.navigationStore
-        const naviFlag = naviStore.getNaviOptions().findIndex(tab => tab.route === to.path) > -1
-        if (!naviFlag && !to.meta.hiddenTab) {
-            naviStore.addNaviOptions({ path: formatUtil.constructUrl(to.path, to.query), meta: to.meta, name: to.name, query: to.query })
-        }
-        naviStore.setCurrentIndex(formatUtil.constructUrl(to.path, to.query))
     }
 
     const hasGetUserInfo = userStore.getUserInfo
