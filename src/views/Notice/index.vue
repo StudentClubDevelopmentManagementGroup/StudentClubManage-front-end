@@ -25,10 +25,8 @@ const notice = ref({
 });
 
 const addNotice = () => {
-  console.log("before:notice", notice.value);
   notice.value.content = richEditor.value.editorText();
   notice.value.summary = textUtil.extractSummary(notice.value.content);
-  console.log("after:notice", notice.value);
   noticeApi
     .addNotice(notice.value)
     .then(() => {
