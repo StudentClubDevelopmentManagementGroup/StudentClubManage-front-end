@@ -2,11 +2,11 @@
 import { ref, reactive, onMounted, shallowRef } from "vue";
 
 import { useRoute } from "vue-router";
+
+import useStore from "@/store";
 import announcementApi from "@/api/announcement";
 
-import myImage from "@/components/Image";
 import DomTreeRenderer from "./DomTreeRenderer.vue";
-
 
 const route = useRoute();
 const content = reactive({
@@ -17,7 +17,6 @@ const content = reactive({
   club_name: "",
   author_name: "",
 });
-
 
 function getFilePathFromUrl(url) {
   // 格式一般为：http://guet-student-club-management-system.oss-cn-guangzhou.aliyuncs.com/upload/club/announcement/file/3454918bed7149de932038432fbf6ef5.jpg?Expires=1718085095&OSSAccessKeyId=LTAI5tFJPBYi4LkSofQyzHvW&Signature=ExC0g6FeMWCxgM94ZUMeRp5MM%2Fo%3D
@@ -34,13 +33,13 @@ const fetchContent = () => {
     announcementApi
       .getNoticeContent(route.query.announcementId)
       .then((data) => {
+        useStore.navigationStore.updateNaviOptionTabName(route.fullPath, data.title);
         content.title = data.title;
         content.html = data.content;
         content.publish_time = data.publish_time;
         content.department_name = data.department_name;
         content.club_name = data.club_name;
         content.author_name = data.author_name;
-        // processHTML(data.content);
         resolve(data);
       })
       .catch((err) => {

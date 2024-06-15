@@ -72,7 +72,7 @@ const fetchDataList4 = () => {
 
 const handleClickBtn1 = () => {
   // 跳转到更多社团信息列表
-  router.replace("/homepage/list");
+  router.replace("/homepage/clublist");
 };
 
 const handleClickBtn2 = () => {

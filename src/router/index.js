@@ -37,6 +37,7 @@ export const constantRoutes = [
         redirect: "/personal/index",
         meta: {
             hidden: true,
+            icon: "",
             title: "个人中心",
         },
         children: [{
@@ -264,6 +265,15 @@ export const homePageRoutes = [
                 },
             },
             {
+                path: "/homepage/clublist",
+                name: "Clublist",
+                component: () => import('@/views/homepage/clublist/index.vue'),
+                meta: {
+                    hidden: true,
+                    title: "社团列表",
+                }
+            },
+            {
                 path: "/homepage/list",
                 name: "List",
                 component: () => import('@/views/homepage/list/index.vue'),
@@ -286,6 +296,7 @@ export const homePageRoutes = [
 ]
 
 const MergedRoutes = [...constantRoutes, ...homePageRoutes]
+let HomePageInitFlag = true // 标记是否首次加载界面
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -298,6 +309,10 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     document.title = `${to.meta.title}--基地管理系统`
     const userStore = useStore.userStore
+    let ToHomepageflag = to.path.includes("/homepage") // 检查是否是首页行为
+
+    // 内部管理端导航栏行为
+    if (!ToHomepageflag) {
     let Toflag = to.path.includes("/homepage") // 检查是否是首页行为
 
     if (!Toflag) {
@@ -311,6 +326,17 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // 外部首页导航栏行为
+    if (ToHomepageflag) {
+        const naviStore = useStore.navigationStore
+        if (HomePageInitFlag) {
+            naviStore.initOptionList();
+            HomePageInitFlag = false
+        }
+        if (!to.meta.hiddenTab) {
+            naviStore.addNaviOptions({ path: to.fullPath, meta: to.meta, query: to.query })
+        }
+        naviStore.setCurrentIndex(to.fullPath)
+
     if (Toflag) {
         const naviStore = useStore.navigationStore
         const naviFlag = naviStore.getNaviOptions().findIndex(tab => tab.route === to.path) > -1

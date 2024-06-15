@@ -10,11 +10,11 @@ export default {
         })
     },
     // 查询基地基础信息
-    getBaseInfo(params) {
+    getBaseInfo({ department_id, club_name, page_num, page_size }) {
         return request({
             url: '/club/select',
-            method: 'get',
-            params
+            method: 'post',
+            data: { department_id, club_name, page_num, page_size }
         })
     },
     // 新增基地
