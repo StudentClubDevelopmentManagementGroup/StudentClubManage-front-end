@@ -15,10 +15,18 @@ export default {
       data: req
     })
   },
-  emailLogin() {
+  emailLogin(req) {
     return request({
       url: '/user/login/email',
-      method: 'post'
+      method: 'post',
+      data: req
+    })
+  },
+  getEmailCode(user_id) {
+    return request({
+      url: '/user/login/email/send_code',
+      method: 'post',
+      params: { user_id }
     })
   },
   logout() {

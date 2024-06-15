@@ -48,6 +48,39 @@ export default {
         var time2 = date2.toTimeString().split(' ')[0];
         return time1 === time2;
     },
+    // 加上X小时
+    plusHours(date, hours) {
+        var dateTime = new Date(date);
+        var nextDateTime = new Date(dateTime.getTime());
+        nextDateTime.setHours(dateTime.getHours() + hours);
+
+        if (nextDateTime.getDate() > dateTime.getDate()) {
+            dateTime.setHours(23, 59, 59);
+            return this.formatDate(dateTime)
+        }
+
+        return this.formatDate(nextDateTime)
+    },
+    // 同一日期条件下，date1 是否大于 date2
+    isPass(date1, date2) {
+        var date1 = new Date(date1)
+        var date2 = new Date(date2)
+
+        date2.setFullYear(date1.getFullYear());
+        date2.setMonth(date1.getMonth());
+        date2.setDate(date1.getDate());
+
+        return date1 > date2;
+    },
+    // 同一日期下，date1 是否等于 date2
+    isSameTime(date1, date2) {
+        var date1 = new Date(date1)
+        var date2 = new Date(date2)
+
+        var time1 = date1.toTimeString().split(' ')[0];
+        var time2 = date2.toTimeString().split(' ')[0];
+        return time1 === time2;
+    },
     getNowDatetime() {
         return new Date().toLocaleString('zh-CN', {
             hour12: false,

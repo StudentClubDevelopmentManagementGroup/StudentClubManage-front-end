@@ -4,13 +4,22 @@ import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import type { TableColumns } from "@pureadmin/table";
 interface TableColumnList extends Array<TableColumns> { }
 import { deviceDetection } from "@pureadmin/utils";
-import editForm from "./form.vue";
+import addForm from "./form.vue";
 import { addDialog } from "@/components/Dialog";
+import dutyApi from "@/api/duty";
+import { GetUserInfo } from '@/utils/auth'
+import { Plus } from '@element-plus/icons-vue'
 
 interface FormItemProps {
-  /** 学号 */
-  userId: string;
+  number: string;
+  area: string;
+  date_time: string;
+  arranger_id: string;
+  cleaner_id: string;
+  club_id: number;
+  is_mixed: boolean;
 }
+
 interface FormProps {
   formInline: FormItemProps;
 }
@@ -51,18 +60,23 @@ export function useRole() {
     },
     {
       label: "值日时间",
-      prop: "duty_time",
+      prop: "date_time",
       minWidth: 180
     },
     {
-      label: "安排人学号",
-      prop: "arranger_id",
-      width: 120
+      label: "安排人",
+      prop: "arranger_name",
+      width: 100
     },
     {
-      label: "值日学号",
+      label: "值日人",
+      prop: "cleaner_name",
+      minWidth: 120
+    },
+    {
+      label: "值日人学号",
       prop: "cleaner_id",
-      minWidth: 160
+      minWidth: 100
     },
     {
       label: "值日图片",
@@ -72,7 +86,7 @@ export function useRole() {
     {
       label: "操作",
       fixed: "right",
-      width: 240,
+      width: 120,
       slot: "operation"
     }
   ];
@@ -127,39 +141,35 @@ export function useRole() {
 
   function openDialog(title = "新增", row?: FormItemProps) {
     addDialog({
-      title: `${title}角色`,
+      title: `${title}值日信息`,
       props: {
         formInline: {
-          userId: row?.userId ?? "",
+          number: row?.number ?? "",
+          area: row?.area ?? "",
+          date_time: row?.date_time ?? "",
+          arranger_id: GetUserInfo().user_id ?? "",
+          cleaner_id: row?.cleaner_id ?? "",
+          club_id: 1,
+          is_mixed: row?.is_mixed ?? 1,
         }
       },
-      width: "32%",
+      width: "40%",
       draggable: true,
       fullscreen: deviceDetection(),
       fullscreenIcon: true,
       closeOnClickModal: false,
-      contentRenderer: () => h(editForm, { ref: formRef }),
+      contentRenderer: () => h(addForm, { ref: formRef }),
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
-        function chores() {
-          message(`您${title}了角色名称为${curData.name}的这条数据`, {
-            type: "success"
-          });
-          done(); // 关闭弹框
-          onSearch(); // 刷新表格数据
-        }
         FormRef.validate(valid => {
           if (valid) {
-            console.log("curData", curData);
-            // 表单规则校验通过
-            if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
-            } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
-            }
+            dutyApi.addMemberDuty(curData)
+              .then(data => {
+                message("添加成功", { type: "success" });
+                done();
+              })
+              .catch(err => { })
           }
         });
       }

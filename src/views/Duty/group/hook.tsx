@@ -1,21 +1,41 @@
 import { message } from "@/utils/message";
-import { reactive, ref, onMounted, toRaw,h } from "vue";
-import type { PaginationProps ,LoadingConfig} from "@pureadmin/table";
+import { reactive, ref, onMounted, h } from "vue";
+import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import type { TableColumns } from "@pureadmin/table";
 interface TableColumnList extends Array<TableColumns> { }
 import { deviceDetection } from "@pureadmin/utils";
-import editForm from "./form.vue";
+import addForm from "../group/form.vue";
+import addGroupForm from "./group-form.vue";
 import { addDialog } from "@/components/Dialog";
+import dutyApi from "@/api/duty";
+import { GetUserInfo } from '@/utils/auth'
 
 interface FormItemProps {
-  /** 学号 */
-  userId: string;
+  group_name: string;
+  member_id: string;
+  club_id: number;
 }
+
+interface GroupFormItemProps {
+  number: string;
+  area: string;
+  date_time: string;
+  arranger_id: string;
+  cleaner_id: string;
+  club_id: number;
+  is_mixed: boolean;
+  group_name: string;
+}
+
 interface FormProps {
   formInline: FormItemProps;
 }
 
-export type { FormItemProps, FormProps };
+interface GroupFormProps {
+  formInline: GroupFormItemProps;
+}
+
+export type { FormItemProps, FormProps, GroupFormProps, GroupFormItemProps };
 
 export function useRole() {
   const form = reactive({
@@ -34,46 +54,28 @@ export function useRole() {
   });
   const columns: TableColumnList = [
     {
-      label: "勾选列", // 如果需要表格多选，此处label必须设置
-      type: "selection",
+      label: "序号",
+      type: "index",
       fixed: "left",
-      reserveSelection: true // 数据刷新后保留选项
-    },
-
-    {
-      label: "学号",
-      prop: "user_id",
-      width: 120
+      reserveSelection: true
     },
     {
-      label: "姓名",
+      label: "社团id",
+      prop: "clubId",
+    },
+    {
+      label: "小组名称",
       prop: "name",
-      width: 100
     },
     {
-      label: "学院",
-      prop: "department.department_name",
+      label: "成员学号",
+      prop: "memberId",
       minWidth: 180
-    },
-    {
-      label: "手机号",
-      prop: "tel",
-      width: 120
-    },
-    {
-      label: "邮箱",
-      prop: "mail",
-      minWidth: 160
-    },
-    {
-      label: "角色",
-      slot: "role",
-      width: 240,
     },
     {
       label: "操作",
       fixed: "right",
-      width: 240,
+      width: 360,
       slot: "operation"
     }
   ];
@@ -92,7 +94,7 @@ export function useRole() {
           L 15 15
         " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
       `
-});
+  });
 
   function handleSizeChange(val: number) {
     console.log(`${val} items per page`);
@@ -126,39 +128,37 @@ export function useRole() {
     onSearch();
   });
 
-  function openDialog(title = "新增", row?: FormItemProps) {
+  function openDialog(title = "新增", group_name) {
     addDialog({
-      title: `${title}角色`,
+      title: `${title}值日信息`,
       props: {
         formInline: {
-          userId: row?.userId ?? "",
+          number: "",
+          area: "",
+          date_time: "",
+          arranger_id: GetUserInfo().user_id ?? "",
+          group_name: group_name ?? "",
+          club_id: 1,
+          is_mixed: true,
         }
       },
-      width: "32%",
+      width: "40%",
       draggable: true,
       fullscreen: deviceDetection(),
       fullscreenIcon: true,
       closeOnClickModal: false,
-      contentRenderer: () => h(editForm, { ref: formRef }),
+      contentRenderer: () => h(addGroupForm, { ref: formRef }),
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
-        function chores() {
-          message(`您${title}了角色名称为${curData.name}的这条数据`, {
-            type: "success"
-          });
-          done(); // 关闭弹框
-          onSearch(); // 刷新表格数据
-        }
         FormRef.validate(valid => {
           if (valid) {
-            if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
-            } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
-            }
+            dutyApi.addMemberDuty(curData)
+              .then(data => {
+                message("添加成功", { type: "success" });
+                done();
+              })
+              .catch(err => { })
           }
         });
       }

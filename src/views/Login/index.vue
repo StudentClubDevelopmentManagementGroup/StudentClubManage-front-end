@@ -1,6 +1,5 @@
 <script setup>
 import { reactive, ref, watch, toRaw, computed } from "vue";
-import { usePermissionStore } from "@/store/permission";
 import { loginRules } from "./utils/rule";
 import { useRouter } from "vue-router";
 import { message } from "@/utils/message";
@@ -18,7 +17,7 @@ import User from "@iconify-icons/ri/user-3-fill";
 import Info from "@iconify-icons/ri/information-line";
 
 const router = useRouter();
-const permissionStore = usePermissionStore();
+
 const loginForm = reactive({
   user_id: "",
   pwd: "",
@@ -41,8 +40,8 @@ const handleLogin = async () => {
         .then(() => {
           disabled.value = true;
           // 获取权限路由和权限信息
-          permissionStore.getPermissionRoutes();
-          permissionStore.getPermissions();
+          useStore.permissionStore.getPermissionRoutes();
+          useStore.permissionStore.getPermissions();
           // 导航到主页
           router.replace({ path: "/" });
           message("登陆成功", { type: "success" });
@@ -54,6 +53,10 @@ const handleLogin = async () => {
     }
   });
 };
+
+watch(checked, bool => {
+  useStore.userStore.setIsRemembered(bool);
+});
 </script>
 
 <template>

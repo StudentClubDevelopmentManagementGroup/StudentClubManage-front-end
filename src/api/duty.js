@@ -17,7 +17,7 @@ export default {
     },
     getAllGroup(req) {
         return request({
-            url: '/duty/group/select',
+            url: '/club/duty/group/select',
             method: 'post',
             data: req
         })

@@ -32,6 +32,13 @@ const {
 
 const initQuery = () => {
   query.value.club_name = route.query?.club_name ? route.query?.club_name : "";
+  query.value.author_name = route.query?.author_name ? route.query?.author_name : "";
+  query.value.department_id = route.query?.department_id
+    ? route.query?.department_id
+    : "";
+  query.value.search = route.query?.search ? route.query?.search : "";
+  query.value.from_date = route.query?.from_date ? route.query?.from_date : "";
+  query.value.to_date = route.query?.to_date ? route.query?.to_date : "";
 };
 
 const onFromDateChange = (value) => {

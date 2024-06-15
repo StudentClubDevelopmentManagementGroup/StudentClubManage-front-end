@@ -29,6 +29,13 @@ export default {
             params: { ...req }
         })
     },
+    getNowNotice(clubId) {
+        return request({
+            url: '/club/announcement/latest',
+            method: 'get',
+            params: { clubId }
+        })
+    },
     getNoticeContent(announcementId) {
         return request({
             url: '/club/announcement/read',
@@ -69,6 +76,13 @@ export default {
             url: '/club/announcement/draft/read',
             method: 'get',
             params: { draftId }
+        })
+    },
+    getFile(file_id) {
+        return request({
+            url: '/club/announcement/file/get',
+            method: 'get',
+            params: { file_id }
         })
     },
 }

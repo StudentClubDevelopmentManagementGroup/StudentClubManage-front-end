@@ -11,7 +11,8 @@ export const useUserStore = defineStore('user', () => {
     token: GetToken(),
     userInfo: GetUserInfo(),
     roles: GetRoles(),
-    clubId: 1
+    clubId: 1,
+    isRemembered: true
   })
 
   const getCurrentPage = computed(() => state.currentPage);
@@ -25,6 +26,8 @@ export const useUserStore = defineStore('user', () => {
   const getName = computed(() => state.userInfo.name);
 
   const getClubId = computed(() => state.clubId);
+
+  const getIsRemembered = computed(() => state.isRemembered);
 
   const setClubId = (value) => {
     state.clubId = value;
@@ -53,6 +56,16 @@ export const useUserStore = defineStore('user', () => {
     SetRoles(roles)
   }
 
+  const setIsRemembered = (isRemembered) => {
+    state.isRemembered = isRemembered
+  }
+
+  const clearFormat = () => {
+    RemoveUserInfo()
+    RemoveToken()
+    RemoveRoles()
+  }
+
   const logout = async () => {
     return new Promise((resolve, reject) => {
       userApi.logout()
@@ -60,9 +73,7 @@ export const useUserStore = defineStore('user', () => {
           state.token = ""
           state.userInfo = ""
           state.roles = []
-          RemoveUserInfo()
-          RemoveToken()
-          RemoveRoles()
+          clearFormat()
           resolve()
         })
         .catch((error) => {
@@ -101,7 +112,30 @@ export const useUserStore = defineStore('user', () => {
     })
   }
 
-
+  const emailLogin = async (req) => {
+    return new Promise((resolve, reject) => {
+      userApi
+        .emailLogin(req).then((data) => {
+          if (data !== null) {
+            state.token = data.token
+            state.userInfo = data.user_info
+            state.roles = data.user_info.role
+            setToken(data.token)
+            setUserInfo(data.user_info)
+            setRoles(data.user_info.role)
+          } else {
+            message('验证码错误',
+              {
+                type: 'error',
+                duration: 2500
+              })
+          }
+          resolve()
+        }).catch(error => {
+          reject(error);
+        });
+    })
+  }
 
   const updateUserInfo = (newUserInfo) => {
     SetUserInfo(newUserInfo)
@@ -111,15 +145,19 @@ export const useUserStore = defineStore('user', () => {
     resetState,
     setCurrentPage,
     setClubId,
+    setIsRemembered,
     logout,
     login,
+    emailLogin,
     updateUserInfo,
     getCurrentPage,
     getToken,
     getUserInfo,
     getRoles,
     getName,
-    getClubId
+    getClubId,
+    getIsRemembered,
+    clearFormat
   }
 }, {
   persistent: true,
