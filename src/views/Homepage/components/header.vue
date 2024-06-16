@@ -4,7 +4,6 @@ import { User, SwitchButton } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { addDialog } from "@/components/Dialog";
 import { deviceDetection } from "@pureadmin/utils";
-import { message } from "@/utils/message";
 import toRouterForm from "./toRouterForm.vue";
 import useStore from "@/store";
 
@@ -54,11 +53,6 @@ function openDialog(title) {
       }
       // 表单规则校验通过
       if (state === 1) {
-        // 实际开发先调用新增接口，再进行下面操作
-        console.log("进入管理端选择界面");
-        message(`当前选择的基地为：${state}，所属学院是：${state}，身份是：${state}`, {
-          type: "success",
-        });
         router.push("/welcome");
       } else {
         console.log("进入了其他");

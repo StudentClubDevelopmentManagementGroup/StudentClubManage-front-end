@@ -11,7 +11,7 @@ const currentIndex = ref(activeIndex.value);
 
 watch(activeIndex, (newValue) => {
   currentIndex.value = newValue;
-  router.replace(activeIndex.value);
+  router.push(activeIndex.value);
 });
 
 const removeOption = (path) => {
@@ -24,13 +24,13 @@ const removeOption = (path) => {
     if (naviOptions?.value?.length) {
       var target = naviOptions.value[naviOptions.value.length - 1];
       useStore.navigationStore.setCurrentIndex(target.path);
-      router.replace(target);
+      router.push(target);
     }
   }
 };
 
 const clickOption = (option) => {
-  router.replace(naviOptions.value[option.index].path);
+  router.push(naviOptions.value[option.index].path);
 };
 </script>
 
