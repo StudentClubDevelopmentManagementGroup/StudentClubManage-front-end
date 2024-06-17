@@ -25,6 +25,7 @@ const club_id = ref(1);
 const lf = ref(null);
 const graphData = ref(null);
 const dataVisible = ref<boolean>(false);
+const editable = ref<boolean>(false);
 const dialogVisible = ref<boolean>(false);
 const clickNode = ref({});
 const config = ref({
@@ -116,8 +117,9 @@ async function onRender() {
           },
         ],
       })
-      .then(() => {
+      .then((res_data) => {
         lf.value.setProperties(id, { arranger: { ...currentUser.value } });
+        lf.value.changeNodeId(id, res_data[0].seat_id);
         message("添加成功", { type: "success" });
       })
       .catch(() => {
@@ -146,6 +148,7 @@ const closeDialog = () => {
 function catData() {
   graphData.value = unref(lf).getGraphData();
   dataVisible.value = true;
+  editable.value = false;
 }
 
 const saveAllSeat = () => {
@@ -160,6 +163,11 @@ const saveAllSeat = () => {
     });
 };
 
+const editSeat = () => {
+  graphData.value = unref(lf).getGraphData();
+  dataVisible.value = true;
+  editable.value = true;
+};
 onMounted(() => {
   initLf();
 });
@@ -171,7 +179,7 @@ onMounted(() => {
       <div class="flex justify-between">
         <div>
           <el-button v-ripple type="primary" :icon="Plus">添加座位</el-button>
-          <el-button v-ripple type="primary" :icon="EditPen"
+          <el-button v-ripple type="primary" :icon="EditPen" @click="editSeat"
             >编辑座位</el-button
           >
         </div>
@@ -222,7 +230,7 @@ onMounted(() => {
         width="50%"
       >
         <el-scrollbar>
-          <DataDialog :graphData="graphData" />
+          <DataDialog :graphData="graphData" :editable="editable"/>
         </el-scrollbar>
       </el-dialog>
     </div>

@@ -195,7 +195,7 @@ export const asyncRoutes = [
         }, {
             path: "/member/duty",
             name: "MemberDuty",
-            component: () => import('@/views/Introduce'),
+            component: () => import('@/views/member-duty'),
             meta: {
                 title: "值日查询",
             },

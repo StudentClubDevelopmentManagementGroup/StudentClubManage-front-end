@@ -124,7 +124,7 @@ const delDuty = (row) => {
       <el-button type="primary" :icon="CirclePlus" @click="openDialog()"
         >新增小组</el-button
       >
-      <el-popconfirm title="是否确认删除?" @confirm="delMember">
+      <el-popconfirm title="是否确认删除?" @confirm="">
         <template #reference>
           <el-button type="danger" :icon="Delete">批量删除</el-button>
         </template>
@@ -153,7 +153,7 @@ const delDuty = (row) => {
         @page-current-change="handleCurrentChange"
       >
         <template #operation="{ row }">
-          <el-button type="primary" :icon="CirclePlus" @click="openDialog('新增',row.name)">新增值日</el-button>
+          <el-button type="primary" :icon="CirclePlus" @click="openDialog('新增',row.group_name)">新增值日</el-button>
           <el-button type="primary" :icon="CirclePlus" @click="openDialog()">添加成员</el-button>
           <el-popconfirm title="是否确认删除?" @confirm="delDuty(row)">
             <template #reference>

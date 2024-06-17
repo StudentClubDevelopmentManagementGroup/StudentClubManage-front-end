@@ -8,6 +8,7 @@ import dutyApi from "@/api/duty";
 import { PureTableBar } from "@/components/PureTableBar";
 import type { PaginationProps } from "@pureadmin/table";
 import { message } from "@/utils/message";
+import { GetToken } from "@/utils/auth";
 
 import axios from "axios";
 import { CirclePlus, Delete, Download, Refresh } from "@element-plus/icons-vue";
@@ -16,7 +17,6 @@ const { columns, loadingConfig, openDialog } = useRole();
 
 const loading = ref(true);
 const dataList = ref([]);
-const imageUrl = ref("");
 const formRef = ref();
 const club_id = computed(() => useStore.userStore.getClubId);
 const query = ref({
@@ -96,21 +96,17 @@ const httpRequest = (image) => {
   const { date_time, member_id, club_id } = file.rowData;
   delete file.rowData;
   const formData = new FormData();
-  // conat arr = [file]
   formData.append("file", file);
-  formData.append("date_time", "2024-06-14 12:00:00");
+  formData.append("date_time", date_time);
   formData.append("member_id", member_id);
   formData.append("club_id", club_id);
-  // console.log(req);
-  // dutyApi.addDutyReport(formData).then((data) => {
-  //   message("上传成功", { type: "success" });
-  // });
   axios({
     method: "POST",
     url: "http://10.70.107.20:3333/club/duty/report_result",
     data: formData,
     headers: {
       "Content-Type": "multipart/form-data",
+      "Guet-S-C-M-S-Token": GetToken(),
     },
   });
 };
@@ -167,7 +163,7 @@ const beforeUpload = (file, row) => {
       <el-button type="primary" :icon="CirclePlus" @click="openDialog()"
         >新增</el-button
       >
-      <el-popconfirm title="是否确认删除?" @confirm="delMember">
+      <el-popconfirm title="是否确认删除?" @confirm="">
         <template #reference>
           <el-button type="danger" :icon="Delete">批量删除</el-button>
         </template>
@@ -200,8 +196,19 @@ const beforeUpload = (file, row) => {
         @page-size-change="handleSizeChange"
         @page-current-change="handleCurrentChange"
       >
-        <template #image_file="{ row }">
+        <template #image_file="{ row, index }">
+          <el-image
+            v-if="row.image_file"
+            preview-teleported
+            loading="lazy"
+            :src="row.image_file"
+            :preview-src-list="row.image_file"
+            :initial-index="index"
+            fit="cover"
+            class="w-[148px] h-[148px]"
+          />
           <el-upload
+            v-else
             :http-request="httpRequest"
             accept="image/*"
             multiple
@@ -209,8 +216,7 @@ const beforeUpload = (file, row) => {
             list-type="picture-card"
             :before-upload="(file) => beforeUpload(file, row)"
           >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+            <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
         </template>
         <template #operation="{ row }">
@@ -246,4 +252,5 @@ const beforeUpload = (file, row) => {
 :deep(.el-tabs__nav-prev.is-disabled) {
   opacity: 0.5;
 }
+
 </style>

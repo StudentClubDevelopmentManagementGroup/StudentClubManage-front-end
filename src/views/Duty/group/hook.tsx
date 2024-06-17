@@ -61,15 +61,20 @@ export function useRole() {
     },
     {
       label: "社团id",
-      prop: "clubId",
+      prop: "club_id",
     },
     {
       label: "小组名称",
-      prop: "name",
+      prop: "group_name",
     },
     {
       label: "成员学号",
-      prop: "memberId",
+      prop: "member_id",
+      minWidth: 180
+    }, 
+    {
+      label: "成员姓名",
+      prop: "user_name",
       minWidth: 180
     },
     {

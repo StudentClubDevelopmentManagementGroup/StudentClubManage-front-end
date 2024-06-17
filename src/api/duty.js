@@ -8,9 +8,16 @@ export default {
             data: req
         })
     },
+    getSelfDuty(req) {
+        return request({
+            url: '/club/duty/selectself',
+            method: 'post',
+            data: req
+        })
+    },
     addDutyReport(req) {
         return request({
-            url: '/club/duty/report_result',
+            url: '/club/duty/report_results',
             method: 'post',
             data: req
         })
