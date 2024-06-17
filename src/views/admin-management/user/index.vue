@@ -1,7 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, computed } from "vue";
 import { PureTableBar } from "@/components/PureTableBar";
 import { useUserColumns } from "./hook";
+import { message } from "@/utils/message";
+import { exportExcel } from "@/utils/export";
 import useStore from "@/store";
 
 import ReCol from "@/components/ReCol";
@@ -12,19 +14,22 @@ const {
   formRef,
   tableRef,
   tableData,
+  searchStatus,
   tableLoading,
   btnLoading,
   pagination,
   query,
   columns,
   loadingConfig,
+  getDataParams,
 
+  fetchTableData,
   refreshTabaleData,
+  onLoading,
   onSizeChange,
   onCurrentChange,
   handleSearch,
   handleReset,
-  handleExport,
   openDialog,
 } = useUserColumns();
 
@@ -32,6 +37,8 @@ const options = computed(() => useStore.departmentStore.getOptions());
 
 onMounted(() => {
   useStore.departmentStore.getOptionsList();
+  onLoading();
+  fetchTableData();
 });
 </script>
 
@@ -90,7 +97,12 @@ onMounted(() => {
       <template #left> </template>
 
       <template #right>
-        <el-button v-ripple type="primary" @click="handleExport" :icon="Download">
+        <el-button
+          v-ripple
+          type="primary"
+          @click="exportExcel(columns, tableData, '用户管理')"
+          :icon="Download"
+        >
           导出
         </el-button>
       </template>
@@ -117,20 +129,11 @@ onMounted(() => {
           @page-size-change="onSizeChange"
           @page-current-change="onCurrentChange"
         >
-          <template #expand="{ row }">
-            <el-row class="pr-8 pl-8">
-              <re-col :value="12" :xs="24" :sm="24">
-                <el-form-item label="学院全称" prop=""> </el-form-item>
-              </re-col>
-
-              <re-col :value="12" :xs="24" :sm="24">
-                <el-form-item label="学院简称" prop=""> </el-form-item>
-              </re-col>
-            </el-row>
-          </template>
           <template #role="{ row }">
             <el-tag v-if="row.role.is_club_manager" type="danger">负责人</el-tag>
-            <el-tag v-else type="primary">普通成员</el-tag>
+            <el-tag v-else-if="row.role.is_club_member" class="ml-4" type="primary">
+              普通成员
+            </el-tag>
             <el-tag v-if="row.role.is_teacher" class="ml-4" type="success">教师</el-tag>
             <el-tag v-else class="ml-4" type="success">学生</el-tag>
           </template>

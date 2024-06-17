@@ -1,13 +1,16 @@
-<script setup>
-import {} from "vue";
+<script setup lang="ts">
+import { onMounted } from "vue";
 import { PureTableBar } from "@/components/PureTableBar";
 import { useDepartmentColumns } from "./hook";
+import { exportExcel } from "@/utils/export";
 
 import { CirclePlus, Search, Refresh, Download, Delete } from "@element-plus/icons-vue";
 
 const {
   formRef,
   tableRef,
+  tableData,
+  searchStatus,
   tableLoading,
   btnLoading,
   pagination,
@@ -15,16 +18,23 @@ const {
   query,
   columns,
   loadingConfig,
+  getDataParams,
 
+  fetchTableData,
   refreshTabaleData,
+  onLoading,
   onSizeChange,
   onCurrentChange,
   handleSearch,
   handleReset,
-  handleExport,
   openDialog,
   openDeleteDialog,
 } = useDepartmentColumns();
+
+onMounted(() => {
+  onLoading();
+  fetchTableData();
+});
 </script>
 
 <template>
@@ -76,7 +86,12 @@ const {
       </template>
 
       <template #right>
-        <el-button v-ripple type="primary" @click="handleExport" :icon="Download">
+        <el-button
+          v-ripple
+          type="primary"
+          @click="exportExcel(columns, tableData, '院系管理')"
+          :icon="Download"
+        >
           导出
         </el-button>
       </template>

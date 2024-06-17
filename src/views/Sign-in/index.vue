@@ -1,7 +1,8 @@
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
 import { PureTableBar } from "@/components/PureTableBar";
 import { message } from "@/utils/message";
+import { exportExcel } from "@/utils/export";
 import useColumns from "./utils/hook";
 
 import { CirclePlus, Search, Refresh, Download } from "@element-plus/icons-vue";
@@ -11,7 +12,6 @@ const {
   tableRef,
   tableData,
   searchStatus,
-  checkStatus,
   tableLoading,
   btnLoading,
   selectValue,
@@ -32,14 +32,9 @@ const {
   handleSearch,
   handleReset,
   handleAdd,
-  handleExport,
   isMoreThanNDays,
   openDialog,
 } = useColumns();
-
-const handleTimeChange = (val) => {
-  // console.log("TimeChange", val);
-};
 
 const handleForce2Checkout = () => {
   // TODO: 无效功能
@@ -50,6 +45,12 @@ const handleSelectionChange = (val) => {
   onLoading();
   fetchTableData();
 };
+
+onMounted(() => {
+  console.log(selectValue.value === '签到详情');
+  onLoading();
+  fetchTableData();
+});
 </script>
 
 <template>
@@ -93,7 +94,6 @@ const handleSelectionChange = (val) => {
           :popper-options="{
             placement: 'bottom-start',
           }"
-          @change="handleTimeChange"
         />
       </el-form-item>
       <el-form-item>
@@ -131,7 +131,18 @@ const handleSelectionChange = (val) => {
       </template>
 
       <template #right>
-        <el-button v-ripple type="primary" @click="handleExport" :icon="Download">
+        <el-button
+          v-ripple
+          type="primary"
+          @click="
+            exportExcel(
+              columns,
+              tableData,
+              selectValue === '签到记录' ? '签到记录' : '打卡时长'
+            )
+          "
+          :icon="Download"
+        >
           导出
         </el-button>
       </template>

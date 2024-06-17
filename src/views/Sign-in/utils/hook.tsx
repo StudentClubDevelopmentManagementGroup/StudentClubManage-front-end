@@ -1,15 +1,15 @@
 import type { PaginationProps, TableColumns, LoadingConfig } from "@pureadmin/table";
 import type { FormItemProps } from "./types"
-import { delay } from "@pureadmin/utils";
-import { ref, reactive, computed, onMounted, h } from "vue";
+import { ref, reactive, computed, h } from "vue";
 import { message } from "@/utils/message";
-import useStore from "@/store";
+import { delay } from "@pureadmin/utils";
+import { deviceDetection } from "@pureadmin/utils";
+import { addDialog } from "@/components/Dialog";
 import registrationApi from "@/api/registration";
+import useStore from "@/store";
 import formatUtil from "@/utils/formatter"
 
 import editForm from "../form.vue";
-import { addDialog } from "@/components/Dialog";
-import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
 
 interface TableColumnList extends Array<TableColumns> { }
 
@@ -222,7 +222,7 @@ export default function useColumns() {
                     })
             })
         } else if (selectValue.value === "打卡时长") {
-            // TODO: 催促后端分页  // 获取打卡时长 
+            // 获取打卡时长 
             return new Promise((resolve, reject) => {
                 registrationApi.getDurationTime(getDataParams.value)
                     .then((data) => {
@@ -322,17 +322,6 @@ export default function useColumns() {
         addTableData()
     }
 
-    // 导出Excel
-    // TODO:导出EXCEL
-    const handleExport = () => {
-        console.log("导出Excel")
-    }
-
-    onMounted(() => {
-        onLoading()
-        fetchTableData();
-    });
-
     function openDialog(title, item, row?: FormItemProps) {
         useStore.registrationStore.setCurrentCheckInTime(item.checkInTime)
         useStore.registrationStore.setCurrentUserId(item.userId)
@@ -411,17 +400,16 @@ export default function useColumns() {
         loadingConfig,
         getDataParams,
 
-        onLoading,
         fetchTableData,
         refreshTabaleData,
         addTableData,
+        onLoading,
         onSizeChange,
         onCurrentChange,
         checkOut,
         handleSearch,
         handleReset,
         handleAdd,
-        handleExport,
         isMoreThanNDays,
         openDialog,
     }
