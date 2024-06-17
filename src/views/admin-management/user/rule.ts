@@ -1,5 +1,6 @@
 import { reactive } from "vue";
 import type { FormRules } from "element-plus";
+import useStore from "@/store"
 
 const REGEXP_PWD = [
     /^.{4,18}$/, // 8-18字符之间

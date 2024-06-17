@@ -290,6 +290,15 @@ export const homePageRoutes = [
                     title: "详情页",
                 },
             },
+            {
+                path: "/homepage/personal",
+                name: "HomepagePersonal",
+                component: () => import('@/views/homepage/personal/index.vue'),
+                meta: {
+                    hidden: true,
+                    title: "个人信息",
+                },
+            }
         ]
     },
 ]

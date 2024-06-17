@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, onMounted, watch, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useColumns } from "./hook.tsx";
 import constants from "@/config";
 import useStore from "@/store";
@@ -129,9 +129,7 @@ onMounted(() => {
                   >
                 </el-text>
                 <el-text class="w-full !text-sm !text-gray-400" line-clamp="1">
-                  <span class="mr-2"
-                    >学院: {{ options[parseInt(row.departmentId) - 1].fullName }}</span
-                  >
+                  <span class="mr-2">学院: {{ row.department_name }}</span>
                 </el-text>
 
                 <el-text class="!text-base" line-clamp="3">

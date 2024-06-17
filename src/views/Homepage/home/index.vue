@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import useStore from "@/store";
 
 import baseApi from "@/api/base.js";
 import announcementApi from "@/api/announcement.js";
@@ -11,8 +10,6 @@ const list1 = ref([]);
 const list2 = ref([]);
 const list3 = ref([]);
 const list4 = ref([]);
-
-const options = computed(() => useStore.departmentStore.getOptions());
 
 const fetchDataList1 = () => {
   const body = {
@@ -69,8 +66,6 @@ const fetchDataList4 = () => {
 };
 
 onMounted(() => {
-  // 获取院系选择数据
-  useStore.departmentStore.getOptionsList();
   fetchDataList1();
   fetchDataList2();
   fetchDataList3();
@@ -108,7 +103,7 @@ onMounted(() => {
                     icon="hugeicons:school"
                     class="w-[20px] h-[20px] mr-1 text-blue-500 group-hover:text-white"
                   />
-                  {{ options[parseInt(item.departmentId) - 1].fullName }}
+                  {{ item.department_name }}
                 </div>
                 <div class="flex flex-1 font-semibold group-hover:text-white">
                   <IconifyIconOnline

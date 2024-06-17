@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, h } from "vue";
 import { User, SwitchButton } from "@element-plus/icons-vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { addDialog } from "@/components/Dialog";
 import { deviceDetection } from "@pureadmin/utils";
 import toRouterForm from "./toRouterForm.vue";
@@ -11,6 +11,7 @@ import navbar from "./navigation.vue";
 import search from "./search.vue";
 
 const router = useRouter();
+const route = useRoute();
 const formRef = ref();
 const userInfo = computed(() => useStore.userStore.getUserInfo);
 const roleSuperAdmin = computed(() => useStore.clubStore.getRoleSuperAdmin());
@@ -28,7 +29,7 @@ const handleSuperAdmin = () => {
 };
 
 const handleClickBtn = () => {
-  router.push("/personal/index");
+  router.push("/homepage/personal");
 };
 
 function openDialog(title) {
@@ -107,7 +108,10 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div class="down-wrapper container__mwidth">
+    <div
+      v-if="!route.fullPath.includes('/homepage/personal')"
+      class="down-wrapper container__mwidth"
+    >
       <div class="container-width flex items-center justify-end m-auto h-[92px]">
         <search class="!w-[636px]" />
       </div>

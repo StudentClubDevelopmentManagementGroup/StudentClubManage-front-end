@@ -199,7 +199,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .wrapper {
-  min-height: 592px;
+  min-height: 638px;
   display: grid;
   grid-template-columns: 2.5fr 1fr;
   grid-template-areas: "left right";
