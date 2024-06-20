@@ -25,6 +25,7 @@ const logout = async () => {
 };
 
 const handleSuperAdmin = () => {
+  useStore.clubStore.setCurrentRole("超级管理员")
   router.push("/welcome");
 };
 
@@ -77,17 +78,30 @@ onMounted(() => {
         </div>
         <div class="btn-container flex items-center">
           <el-button
+            v-if="roleSuperAdmin"
+            class="!pr-2 !pl-2"
+            @click="handleSuperAdmin()"
+            type="primary"
+          >
+            【进入管理端】
+          </el-button>
+
+          <el-divider v-if="roleSuperAdmin" direction="vertical" border-style="solid" />
+
+          <el-button
             class="!pr-2 !pl-2"
             v-if="isShowManagementBtn"
-            @click="roleSuperAdmin ? handleSuperAdmin() : openDialog('进入管理端')"
+            @click="openDialog('进入管理端')"
             type="primary"
-            >【进入管理端】</el-button
           >
+            【进入基地管理端】
+          </el-button>
           <el-divider
             v-if="isShowManagementBtn"
             direction="vertical"
             border-style="solid"
           />
+
           <el-button
             class="!pr-2 !pl-2"
             :icon="User"

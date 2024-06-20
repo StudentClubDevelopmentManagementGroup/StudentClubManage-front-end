@@ -407,6 +407,7 @@ export default function useColumns() {
         onSizeChange,
         onCurrentChange,
         checkOut,
+        reCheckIn,
         handleSearch,
         handleReset,
         handleAdd,

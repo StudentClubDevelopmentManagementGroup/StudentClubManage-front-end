@@ -38,11 +38,12 @@ const router = useRouter();
 const options = computed(() => useStore.departmentStore.getOptions());
 
 const handleClick = (row) => {
+  useStore.clubStore.setCurrentRole("超级管理员")
   useStore.clubStore.setCurrentClub({
     club_name: row.club_name,
     club_id: row.club_id,
     department_name: row.department_name,
-    role: "管理员",
+    role: "超级管理员",
   });
   delay(600).then(() => {
     message("切换基地成功：" + row.club_name, { type: "success" });
@@ -174,9 +175,9 @@ onMounted(() => {
                 text
                 >设置负责人</el-button
               >
-              <el-button type="success" :size="size" @click="handleClick(row)"
-                >进入详情</el-button
-              >
+              <el-button type="success" :size="size" @click="handleClick(row)">
+                进入详情
+              </el-button>
             </div>
           </template>
         </pure-table>

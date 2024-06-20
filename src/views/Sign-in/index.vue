@@ -29,6 +29,7 @@ const {
   onSizeChange,
   onCurrentChange,
   checkOut,
+  reCheckIn,
   handleSearch,
   handleReset,
   handleAdd,

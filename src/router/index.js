@@ -305,7 +305,15 @@ export const homePageRoutes = [
     },
 ]
 
-const MergedRoutes = [...constantRoutes, ...homePageRoutes]
+export const refreshRoutes = [
+    {
+        path: "/refresh",
+        name: "Refresh",
+        component: () => import('@/views/Refresh/index.vue'),
+    }
+]
+
+const MergedRoutes = [...constantRoutes, ...homePageRoutes, ...refreshRoutes]
 let HomePageInitFlag = true // 标记是否首次加载界面
 
 const router = createRouter({

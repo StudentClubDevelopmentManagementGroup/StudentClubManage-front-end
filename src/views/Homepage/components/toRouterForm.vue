@@ -16,7 +16,7 @@ defineExpose({ getRef });
 <template>
   <el-form ref="ruleFormRef">
     <el-row :gutter="32">
-      <re-col>
+      <re-col class="!py-4">
         <ClubSelection :status="false" />
       </re-col>
     </el-row>
