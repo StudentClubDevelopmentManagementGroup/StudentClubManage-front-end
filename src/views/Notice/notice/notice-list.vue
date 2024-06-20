@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, h, toRaw, reactive, onMounted, computed } from "vue";
 import useStore from "@/store";
-import { useRole } from "./hook";
+import { useRole } from "./hook.tsx";
 import noticeApi from "@/api/announcement";
 import { PureTableBar } from "@/components/PureTableBar";
 import { useRenderIcon } from "@/components/Icon/hooks";

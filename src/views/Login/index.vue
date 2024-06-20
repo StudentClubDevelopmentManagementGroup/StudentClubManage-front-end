@@ -87,7 +87,7 @@ watch(checked, bool => {
         </div>
         <el-form
           v-if="currentPage === 0"
-          :rules="loginRules"
+          
           ref="loginFormRef"
           class="login_form"
           :model="loginForm"

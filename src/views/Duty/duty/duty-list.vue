@@ -8,15 +8,16 @@ import dutyApi from "@/api/duty";
 import { PureTableBar } from "@/components/PureTableBar";
 import type { PaginationProps } from "@pureadmin/table";
 import { message } from "@/utils/message";
+import { GetToken } from "@/utils/auth";
 
 import axios from "axios";
 import { CirclePlus, Delete, Download, Refresh } from "@element-plus/icons-vue";
 
 const { columns, loadingConfig, openDialog } = useRole();
 
+const isAutoDuty = ref(false);
 const loading = ref(true);
 const dataList = ref([]);
-const imageUrl = ref("");
 const formRef = ref();
 const club_id = computed(() => useStore.userStore.getClubId);
 const query = ref({
@@ -91,26 +92,34 @@ const delDuty = (row) => {
     });
 };
 
+const getAutoDuty = async () => {
+  await dutyApi
+    .getAutoDuty(club_id.value)
+    .then((data) => {
+      console.log(data);
+      isAutoDuty.value = data.isCirculation;
+    })
+    .catch((e) => {
+      console.error(e.message);
+    });
+};
+
 const httpRequest = (image) => {
   const { file } = image;
   const { date_time, member_id, club_id } = file.rowData;
   delete file.rowData;
   const formData = new FormData();
-  // conat arr = [file]
   formData.append("file", file);
-  formData.append("date_time", "2024-06-14 12:00:00");
+  formData.append("date_time", date_time);
   formData.append("member_id", member_id);
   formData.append("club_id", club_id);
-  // console.log(req);
-  // dutyApi.addDutyReport(formData).then((data) => {
-  //   message("上传成功", { type: "success" });
-  // });
   axios({
     method: "POST",
     url: "http://10.70.107.20:3333/club/duty/report_result",
     data: formData,
     headers: {
       "Content-Type": "multipart/form-data",
+      "Guet-S-C-M-S-Token": GetToken(),
     },
   });
 };
@@ -125,6 +134,24 @@ const beforeUpload = (file, row) => {
   };
   return true;
 };
+
+const delGroupDuty = (row) => {
+  console.log(row);
+
+  const req = {
+    group_name: row.group_name,
+    duty_time: row.date_time,
+    club_id: club_id.value,
+  };
+  dutyApi
+    .delGroupDuty(req)
+    .then((data) => {
+      message("删除成功", { type: "success" });
+    })
+    .catch((e) => {
+      console.error(e.message);
+    });
+};
 </script>
 
 <template>
@@ -137,7 +164,7 @@ const beforeUpload = (file, row) => {
     <el-form-item label="房间号" prop="number">
       <el-input
         v-model="query.number"
-        placeholder="请输入姓名"
+        placeholder="请输入房间号"
         clearable
         class="!w-[180px]"
       />
@@ -145,7 +172,7 @@ const beforeUpload = (file, row) => {
     <el-form-item label="姓名" prop="name">
       <el-input
         v-model="query.name"
-        placeholder="请输入姓名"
+        placeholder="请输入小组成员姓名"
         clearable
         class="!w-[180px]"
       />
@@ -167,13 +194,17 @@ const beforeUpload = (file, row) => {
       <el-button type="primary" :icon="CirclePlus" @click="openDialog()"
         >新增</el-button
       >
-      <el-popconfirm title="是否确认删除?" @confirm="delMember">
+      <el-popconfirm title="是否确认删除?" @confirm="">
         <template #reference>
           <el-button type="danger" :icon="Delete">批量删除</el-button>
         </template>
       </el-popconfirm>
     </template>
     <template #right>
+      <el-button type="primary" plain>{{
+        isAutoDuty ? "自动安排值日" : "非自动安排值日"
+      }}</el-button>
+
       <el-button type="primary" @click="exportFile" :icon="Download">
         导出
       </el-button>
@@ -200,8 +231,19 @@ const beforeUpload = (file, row) => {
         @page-size-change="handleSizeChange"
         @page-current-change="handleCurrentChange"
       >
-        <template #image_file="{ row }">
+        <template #image_file="{ row, index }">
+          <el-image
+            v-if="row.image_file"
+            preview-teleported
+            loading="lazy"
+            :src="row.image_file"
+            :preview-src-list="row.image_file"
+            :initial-index="index"
+            fit="cover"
+            class="w-[148px] h-[148px]"
+          />
           <el-upload
+            v-else
             :http-request="httpRequest"
             accept="image/*"
             multiple
@@ -209,14 +251,26 @@ const beforeUpload = (file, row) => {
             list-type="picture-card"
             :before-upload="(file) => beforeUpload(file, row)"
           >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+            <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
         </template>
         <template #operation="{ row }">
+          <!-- <el-popconfirm
+            title="是否确认清空该小组值日?"
+            @confirm="delGroupDuty(row)"
+          >
+            <template #reference>
+              <el-button type="danger" plain>清空值日</el-button>
+            </template>
+          </el-popconfirm> -->
           <el-popconfirm title="是否确认删除?" @confirm="delDuty(row)">
             <template #reference>
-              <el-button class="reset-margin" type="danger" :size="size">
+              <el-button
+                class="reset-margin"
+                type="danger"
+                :icon="Delete"
+                :size="size"
+              >
                 删除
               </el-button>
             </template>

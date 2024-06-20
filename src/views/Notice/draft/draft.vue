@@ -2,7 +2,7 @@
 import { message } from "@/utils/message";
 import { ref, reactive, onMounted, computed } from "vue";
 import useStore from "@/store";
-import { useRole } from "./hook";
+import { useRole } from "./hook.tsx";
 import noticeApi from "@/api/announcement";
 import { PureTableBar } from "@/components/PureTableBar";
 import { Download, Delete } from "@element-plus/icons-vue";
