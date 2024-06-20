@@ -23,7 +23,6 @@ const fetchDataList1 = () => {
       .getBaseInfo(body)
       .then((data) => {
         list1.value = data.records;
-        console.log(list1.value);
       })
       .catch((err) => {
         console.warn(err);
@@ -96,7 +95,6 @@ onMounted(() => {
           </template>
 
           <template v-if="list1.length !== 0" v-for="item in list1" :key="item">
-            {{ console.log("item", item) }}
             <router-link :to="`/homepage/list?club_name=${item.name}`">
               <div
                 class="cursor-pointer flex group rounded-lg p-2 text-black hover:bg-sky-500 hover:ring-sky-500"
