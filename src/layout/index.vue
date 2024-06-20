@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { h, ref, reactive, computed, defineComponent } from "vue";
+import { h, onMounted, computed, defineComponent } from "vue";
 import Sidebar from "./components/sidebar/index.vue";
 import Horizontal from "./components/sidebar/horizontal.vue";
 import Navbar from "./components/Navbar.vue";
@@ -53,6 +53,10 @@ const layoutHeader = defineComponent({
     );
   },
 });
+
+onMounted(()=>{
+  useStore.departmentStore.getOptionsList();
+})
 </script>
 
 <template>
@@ -126,4 +130,5 @@ const layoutHeader = defineComponent({
 .re-screen {
   margin-top: 12px;
 }
-</style>
+</style>import { onMounted } from "vue";
+

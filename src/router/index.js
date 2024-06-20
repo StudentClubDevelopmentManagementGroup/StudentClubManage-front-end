@@ -72,7 +72,8 @@ export const asyncRoutes = [
         redirect: "/welcome/index",
         meta: {
             icon: "ri:bar-chart-box-fill",
-            title: "管理首页",
+            title: "首页",
+            hiddenTab: true,
         },
         children: [{
             path: "/welcome/index",

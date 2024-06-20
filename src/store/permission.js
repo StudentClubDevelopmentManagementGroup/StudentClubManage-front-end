@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import router, { constantRoutes, asyncRoutes } from '@/router'
+import { useClubStore } from "@/store/club"
+import { useUserStore } from "@/store/user"
+import constants from "@/config";
 
 export const usePermissionStore = defineStore('permission', () => {
     const roles = ref(localStorage.getItem('role') || '')
@@ -31,7 +34,18 @@ export const usePermissionStore = defineStore('permission', () => {
     }
 
     const getPermissionRoutes = async (payload) => {
-        const newAuthedRoutes = ["/welcome", "/run", "/develop", "/user", "/introduce", "/member", "/teacher"]
+        let newAuthedRoutes = []
+        if (useUserStore().getRoles.is_super_admin) {
+            newAuthedRoutes = constants.superAdmin
+        } else if (useClubStore().getCurrentRole() === "基地负责人") {
+            newAuthedRoutes = constants.admin
+        } else if (useClubStore().getCurrentRole() === "成员") {
+            newAuthedRoutes = constants.member
+        } else {
+            newAuthedRoutes = JSON.parse(localStorage.getItem('authedRoutes'))
+        }
+
+        if (!newAuthedRoutes) return
         setAuthedRoutes(newAuthedRoutes)
         const accessedRoutes = []
 
@@ -60,10 +74,18 @@ export const usePermissionStore = defineStore('permission', () => {
         setPermissions(newpermissions)
     }
 
+    const removeRoutes = () => {
+        localStorage.removeItem("authedRoutes")
+    }
+
     const getRoutes = () => {
         const storedAuthedRoutes = localStorage.getItem('authedRoutes')
-        if (storedAuthedRoutes) {
+
+        if (storedAuthedRoutes !== 'undefined') {
             const parsedAuthedRoutes = JSON.parse(storedAuthedRoutes)
+            if (!parsedAuthedRoutes || parsedAuthedRoutes.indexOf('undefined') !== -1) {
+                return
+            }
             const accessedRoutes = parsedAuthedRoutes.map((path) =>
                 asyncRoutes.find((route) => route.path === path)
             ).filter(Boolean)
@@ -79,6 +101,10 @@ export const usePermissionStore = defineStore('permission', () => {
         setRoutes(asyncRoutes)
     }
 
+    const getFirstRoute = computed(() => {
+        return authedRoutes.value[0]
+    })
+
     const getPermissionRoles = (payload) => {
         localStorage.setItem('role', payload.roleName)
         setRoles(payload)
@@ -90,6 +116,7 @@ export const usePermissionStore = defineStore('permission', () => {
         permissions,
         accessRoutes,
         routes,
+        removeRoutes,
         authedRoutes,
         setRoles,
         setAccessRoutes,
@@ -99,7 +126,8 @@ export const usePermissionStore = defineStore('permission', () => {
         getPermissionRoutes,
         getPermissions,
         getRoutes,
-        getPermissionRoles
+        getPermissionRoles,
+        getFirstRoute
     }
 }, {
     persistent: true,

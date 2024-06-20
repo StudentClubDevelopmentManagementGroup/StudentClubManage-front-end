@@ -92,19 +92,22 @@ onMounted(() => {
     <el-col :span="14">
       <el-card class="p-4 mr-4" shadow="hover">
         <el-text type="danger" size="large">最新公告：</el-text>
-        <div class="text-center">
-          <h2>{{ notice.title }}</h2>
+        <div v-if="!notice">
+          <div class="text-center">
+            <h2>{{ notice.title }}</h2>
+          </div>
+          <br />
+          <div>
+            <span class="name">社团：{{ notice.club_name }}</span>
+            &nbsp; &nbsp; &nbsp;
+            <span class="name">发布时间：{{ notice.publish_time }}</span>
+            &nbsp; &nbsp; &nbsp;
+            <span class="name">作者：{{ notice.author_name }}</span>
+          </div>
+          <br />
+          <div v-html="notice.content"></div>
         </div>
-        <br />
-        <div>
-          <span class="name">社团：{{  notice.club_name }}</span>
-          &nbsp; &nbsp; &nbsp;
-          <span class="name">发布时间：{{ notice.publish_time }}</span>
-          &nbsp; &nbsp; &nbsp;
-          <span class="name">作者：{{  notice.author_name }}</span>
-        </div>
-        <br />
-        <div v-html="notice.content"></div>
+        <el-empty v-else description="无最新公告" />
       </el-card>
     </el-col>
   </el-row>

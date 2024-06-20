@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, h, reactive, onMounted, computed } from "vue";
-import Data from "./data.json";
 import { deviceDetection } from "@pureadmin/utils";
 import { message } from "@/utils/message";
 import { exportExcel } from "@/utils/export.ts";
@@ -27,7 +26,7 @@ const { columns, loadingConfig } = useRole();
 
 const loading = ref(true);
 const dataList = ref([]);
-const department = ref(Data.department);
+const department = computed(() => useStore.departmentStore.getOptions());
 const formRef = ref();
 const tableRef = ref();
 const selectedMember = ref([]);

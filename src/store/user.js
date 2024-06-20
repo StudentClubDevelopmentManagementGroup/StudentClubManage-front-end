@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 import userApi from '@/api/user'
 import { GetToken, SetToken, RemoveToken, GetUserInfo, RemoveUserInfo, SetUserInfo, RemoveRoles, SetRoles, GetRoles } from '@/utils/auth'
 import { message } from "@/utils/message";
+import { usePermissionStore } from "@/store/permission"
+import { useTabStore } from "@/store/tab"
 
 export const useUserStore = defineStore('user', () => {
 
@@ -74,6 +76,8 @@ export const useUserStore = defineStore('user', () => {
           state.userInfo = ""
           state.roles = []
           clearFormat()
+          usePermissionStore().removeRoutes()
+          useTabStore().clearTab()
           resolve()
         })
         .catch((error) => {
