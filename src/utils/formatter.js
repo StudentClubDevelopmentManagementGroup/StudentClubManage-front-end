@@ -1,20 +1,52 @@
 // 本文件用于格式化特定的时间字符串
 export default {
     formatDate(val) {
-        if (typeof val !== 'undefined') {
-            let dateStr = val.toLocaleString('zh-CN', {
-                hour12: false,
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-            });
-            //替换日期分隔符
-            dateStr = dateStr.replace(/\//g, '-');
+        let dateStr = val.toLocaleString('zh-CN', {
+            hour12: false,
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
+        //替换日期分隔符
+        dateStr = dateStr.replace(/\//g, '-');
 
-            return dateStr + " "
-        } else {
-            return ""
+        return dateStr
+    },
+    // 加上X小时
+    plusHours(date, hours) {
+        var dateTime = new Date(date);
+        var nextDateTime = new Date(dateTime.getTime());
+        nextDateTime.setHours(dateTime.getHours() + hours);
+
+        if (nextDateTime.getDate() > dateTime.getDate()) {
+            dateTime.setHours(23, 59, 59);
+            return this.formatDate(dateTime)
         }
+
+        return this.formatDate(nextDateTime)
+    },
+    // 同一日期条件下，date1 是否大于 date2
+    isPass(date1, date2) {
+        var date1 = new Date(date1)
+        var date2 = new Date(date2)
+
+        date2.setFullYear(date1.getFullYear());
+        date2.setMonth(date1.getMonth());
+        date2.setDate(date1.getDate());
+
+        return date1 > date2;
+    },
+    // 同一日期下，date1 是否等于 date2
+    isSameTime(date1, date2) {
+        var date1 = new Date(date1)
+        var date2 = new Date(date2)
+
+        var time1 = date1.toTimeString().split(' ')[0];
+        var time2 = date2.toTimeString().split(' ')[0];
+        return time1 === time2;
     },
     // 加上X小时
     plusHours(date, hours) {
@@ -68,6 +100,7 @@ export default {
             second: '2-digit',
         }) + " "
     },
+    // 将秒转化为`${}小时${}分钟${}秒`
     formatTime(val) {
         const hours = Math.floor(val / 3600);
         const minutes = Math.floor((val % 3600) / 60);
@@ -82,7 +115,7 @@ export default {
         return `${hours}:${minutes}:${seconds}`
     },
     formatDate2(val) {
-        const date = new Date(val)
+        const date = val ? new Date(val) : new Date;
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');

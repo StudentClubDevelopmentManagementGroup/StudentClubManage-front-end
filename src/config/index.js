@@ -38,13 +38,15 @@ const responsiveStorageNameSpace = () => getConfig().ResponsiveStorageNameSpace;
 
 const CONFIG = {
   development: {
-    baseUrl: 'http://10.70.107.20:3333',
+    baseUrl: 'http://localhost:3333',
+    serverUrl: 'http://localhost:5173',
     logo: 'http://localhost:5173/icon.jpeg',
     avatar: 'http://localhost:8080/header4.gif',
     emptyImg: 'http://localhost:8080/empty.png',
     qrCodeUrlPrefix: 'http://localhost:8080?target=',
   },
   production: {
+    serverUrl: '//TODO:待确定的生产环境域名或url',
     baseUrl: 'http://121.37.9.218:3333',
     logo: 'http://121.37.9.218/logo.png',
     avatar: 'http://121.37.9.218/header4.gif',

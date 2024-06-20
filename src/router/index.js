@@ -1,5 +1,4 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import formatUtil from "@/utils/formatter";
 import useStore from "@/store";
 import Layout from "@/layout"
 import homePageLayout from "@/views/HomePage"
@@ -37,6 +36,7 @@ export const constantRoutes = [
         redirect: "/personal/index",
         meta: {
             hidden: true,
+            icon: "",
             title: "个人中心",
         },
         children: [{
@@ -264,6 +264,15 @@ export const homePageRoutes = [
                 },
             },
             {
+                path: "/homepage/clublist",
+                name: "Clublist",
+                component: () => import('@/views/homepage/clublist/index.vue'),
+                meta: {
+                    hidden: true,
+                    title: "社团列表",
+                }
+            },
+            {
                 path: "/homepage/list",
                 name: "List",
                 component: () => import('@/views/homepage/list/index.vue'),
@@ -281,11 +290,21 @@ export const homePageRoutes = [
                     title: "详情页",
                 },
             },
+            {
+                path: "/homepage/personal",
+                name: "HomepagePersonal",
+                component: () => import('@/views/homepage/personal/index.vue'),
+                meta: {
+                    hidden: true,
+                    title: "个人信息",
+                },
+            }
         ]
     },
 ]
 
 const MergedRoutes = [...constantRoutes, ...homePageRoutes]
+let HomePageInitFlag = true // 标记是否首次加载界面
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -298,9 +317,9 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     document.title = `${to.meta.title}--基地管理系统`
     const userStore = useStore.userStore
-    let Toflag = to.path.includes("/homepage") // 检查是否是首页行为
+    let ToHomepageflag = to.path.includes("/homepage") // 检查是否是首页行为
 
-    if (!Toflag) {
+    if (!ToHomepageflag) {
         // 内部管理端导航栏行为
         const tabStore = useStore.tabStore
         const flag = tabStore.getTabsOption.findIndex(tab => tab.route === to.path) > -1
@@ -311,13 +330,16 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // 外部首页导航栏行为
-    if (Toflag) {
+    if (ToHomepageflag) {
         const naviStore = useStore.navigationStore
-        const naviFlag = naviStore.getNaviOptions().findIndex(tab => tab.route === to.path) > -1
-        if (!naviFlag && !to.meta.hiddenTab) {
-            naviStore.addNaviOptions({ path: formatUtil.constructUrl(to.path, to.query), meta: to.meta, name: to.name, query: to.query })
+        if (HomePageInitFlag) {
+            naviStore.initOptionList();
+            HomePageInitFlag = false
         }
-        naviStore.setCurrentIndex(formatUtil.constructUrl(to.path, to.query))
+        if (!to.meta.hiddenTab) {
+            naviStore.addNaviOptions({ path: to.fullPath, meta: to.meta, query: to.query })
+        }
+        naviStore.setCurrentIndex(to.fullPath)
     }
 
     const hasGetUserInfo = userStore.getUserInfo

@@ -5,6 +5,7 @@ import { delay } from "@pureadmin/utils";
 import { message } from "@/utils/message";
 import { useRouter } from "vue-router";
 import { useClubColumns } from "./hook";
+import { exportExcel } from "@/utils/export";
 import useStore from "@/store";
 
 import { CirclePlus, Search, Refresh, Download, Delete } from "@element-plus/icons-vue";
@@ -28,7 +29,6 @@ const {
   handleSearch,
   handleReset,
   handleUnDelete,
-  handleExport,
   openDialog,
   openDeleteDialog,
 } = useClubColumns();
@@ -112,7 +112,12 @@ onMounted(() => {
       </template>
 
       <template #right>
-        <el-button v-ripple type="primary" @click="handleExport" :icon="Download">
+        <el-button
+          v-ripple
+          type="primary"
+          @click="exportExcel(columns, tableData, '基地管理')"
+          :icon="Download"
+        >
           导出
         </el-button>
       </template>

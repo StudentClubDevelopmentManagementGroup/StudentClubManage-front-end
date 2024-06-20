@@ -79,14 +79,14 @@ const clearText = () => {
 
 const updateDraft = (draftId) => {
   noticeApi
-      .getDraftContent(draftId)
-      .then((data) => {
-        notice.value.draft_id = data.draft_id
-        notice.value.content = data.content
-        notice.value.title = data.title
-        richEditor.value.setEditorText(data.content);
-      })
-      .catch((error) => { });
+    .getDraftContent(draftId)
+    .then((data) => {
+      notice.value.draft_id = data.draft_id;
+      notice.value.content = data.content;
+      notice.value.title = data.title;
+      richEditor.value.setEditorText(data.content);
+    })
+    .catch((error) => {});
   selected.value = "0";
 };
 </script>
@@ -112,10 +112,7 @@ const updateDraft = (draftId) => {
         </el-tab-pane>
       </el-tabs>
       <div v-if="selected == '0'">
-        <el-form
-          :inline="true"
-          class="search-form bg-bg_color w-[99/100] overflow-auto"
-        >
+        <el-form :inline="true" class="search-form bg-bg_color w-[99/100] overflow-auto">
           <el-form-item>
             <el-input
               v-model="notice.title"
@@ -126,12 +123,7 @@ const updateDraft = (draftId) => {
               type="text"
               class="!w-[690px] !h-[55px] !text-xl"
             />
-            <el-button
-              type="danger"
-              :icon="Delete"
-              class="ml-16"
-              @click="clearText"
-            >
+            <el-button type="danger" :icon="Delete" class="ml-16" @click="clearText">
               一键清空
             </el-button></el-form-item
           ><RichEditor

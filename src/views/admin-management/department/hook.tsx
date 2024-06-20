@@ -1,9 +1,11 @@
 import type { PaginationProps, TableColumns, LoadingConfig } from "@pureadmin/table";
 import type { departmentItemProps } from "./types"
-import { delay } from "@pureadmin/utils";
+
 import { ref, reactive, computed, onMounted, h } from "vue";
 import { message } from "@/utils/message";
-
+import { delay } from "@pureadmin/utils";
+import { deviceDetection } from "@pureadmin/utils";
+import { addDialog, closeDialog } from "@/components/Dialog";
 import departmentApi from "@/api/department"
 import useStore from "@/store";
 
@@ -11,12 +13,8 @@ import departmentAddForm from "./departmentAddForm.vue"
 import departmentUpdateForm from "./departmentUpdateForm.vue"
 import departmentDeleteForm from "./departmentDeleteForm.vue"
 
-import { addDialog, closeDialog } from "@/components/Dialog";
-import { deviceDetection } from "@pureadmin/utils";
 
 interface TableColumnList extends Array<TableColumns> { }
-
-
 
 export function useDepartmentColumns() {
     const tableData = ref([]) // 原始数据
@@ -28,8 +26,6 @@ export function useDepartmentColumns() {
     const btnLoading = ref(false)
     const btnDeleteStatus = computed(() => useStore.departmentStore.getCheckboxStatus())
     const deleteState = computed(() => useStore.departmentStore.getDeleteState())
-
-
 
     // 搜索框输入内容
     const query = ref({
@@ -236,17 +232,6 @@ export function useDepartmentColumns() {
         fetchTableData()
     }
 
-    // 导出Excel
-    // TODO:导出EXCEL
-    const handleExport = () => {
-        console.log("导出Excel")
-    }
-
-    onMounted(() => {
-        onLoading()
-        fetchTableData();
-    });
-
     function openDialog(title, item, row?: departmentItemProps) {
         var state = 0
         if (title === "新增学院") {
@@ -347,6 +332,7 @@ export function useDepartmentColumns() {
     return {
         formRef,
         tableRef,
+        tableData,
         searchStatus,
         tableLoading,
         btnLoading,
@@ -359,11 +345,11 @@ export function useDepartmentColumns() {
 
         fetchTableData,
         refreshTabaleData,
+        onLoading,
         onSizeChange,
         onCurrentChange,
         handleSearch,
         handleReset,
-        handleExport,
         openDialog,
         openDeleteDialog
     }

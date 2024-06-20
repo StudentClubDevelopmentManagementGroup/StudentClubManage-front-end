@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, h } from "vue";
 import { User, SwitchButton } from "@element-plus/icons-vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { addDialog } from "@/components/Dialog";
 import { deviceDetection } from "@pureadmin/utils";
-import { message } from "@/utils/message";
 import toRouterForm from "./toRouterForm.vue";
 import useStore from "@/store";
 
@@ -12,6 +11,7 @@ import navbar from "./navigation.vue";
 import search from "./search.vue";
 
 const router = useRouter();
+const route = useRoute();
 const formRef = ref();
 const userInfo = computed(() => useStore.userStore.getUserInfo);
 const roleSuperAdmin = computed(() => useStore.clubStore.getRoleSuperAdmin());
@@ -29,7 +29,7 @@ const handleSuperAdmin = () => {
 };
 
 const handleClickBtn = () => {
-  router.push("/personal/index");
+  router.push("/homepage/personal");
 };
 
 function openDialog(title) {
@@ -54,11 +54,6 @@ function openDialog(title) {
       }
       // 表单规则校验通过
       if (state === 1) {
-        // 实际开发先调用新增接口，再进行下面操作
-        console.log("进入管理端选择界面");
-        message(`当前选择的基地为：${state}，所属学院是：${state}，身份是：${state}`, {
-          type: "success",
-        });
         router.push("/welcome");
       } else {
         console.log("进入了其他");
@@ -81,7 +76,6 @@ onMounted(() => {
           <navbar />
         </div>
         <div class="btn-container flex items-center">
-          <!-- TODO:这里进入管理端：通过role判断是否显示 -->
           <el-button
             class="!pr-2 !pl-2"
             v-if="isShowManagementBtn"
@@ -94,8 +88,6 @@ onMounted(() => {
             direction="vertical"
             border-style="solid"
           />
-
-          <!-- TODO:这里添加用户名 -->
           <el-button
             class="!pr-2 !pl-2"
             :icon="User"
@@ -116,7 +108,10 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div class="down-wrapper container__mwidth">
+    <div
+      v-if="!route.fullPath.includes('/homepage/personal')"
+      class="down-wrapper container__mwidth"
+    >
       <div class="container-width flex items-center justify-end m-auto h-[92px]">
         <search class="!w-[636px]" />
       </div>

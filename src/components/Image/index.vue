@@ -1,4 +1,10 @@
 <script setup lang="ts">
+/**
+ * @name Image
+ * @description 图片组件
+ * @deprecated 该图片组件由于使用了测试用的文件读取接口而废弃
+ */
+
 import { ref, onMounted, computed } from "vue";
 import fileApi from "@/api/file";
 
@@ -84,7 +90,7 @@ const computedEmptyImageStyle = computed(() => {
     if (parentWidth === 0 || parentHeight === 0) {
       return {
         width: `100px`,
-        height: `100px`
+        height: `100px`,
       };
     } else {
       return {
@@ -154,7 +160,6 @@ onMounted(() => {
         v-bind="$props"
         :src="url"
         :key="url"
-        :alt="alt"
         :preview-src-list="previewSrcList"
         @error="handleError"
         @load="handleSuccess"

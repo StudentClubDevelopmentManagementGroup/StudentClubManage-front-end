@@ -1,8 +1,11 @@
 import type { PaginationProps, TableColumns, LoadingConfig } from "@pureadmin/table";
 import type { clubFormItemProps } from "./types"
-import { delay } from "@pureadmin/utils";
-import { ref, reactive, computed, onMounted, h } from "vue";
+
+import { ref, reactive, computed, h } from "vue";
 import { message } from "@/utils/message";
+import { delay } from "@pureadmin/utils";
+import { deviceDetection } from "@pureadmin/utils";
+import { addDialog, closeDialog } from "@/components/Dialog";
 import baseApi from "@/api/base";
 import memberApi from "@/api/member";
 import useStore from "@/store";
@@ -10,10 +13,6 @@ import useStore from "@/store";
 import clubAddForm from "./clubAddForm.vue";
 import clubSetForm from "./clubSetForm.vue";
 import clubDeleteForm from "./clubDeleteForm.vue"
-
-
-import { addDialog, closeDialog } from "@/components/Dialog";
-import { deviceDetection } from "@pureadmin/utils";
 
 interface TableColumnList extends Array<TableColumns> { }
 
@@ -278,12 +277,6 @@ export function useClubColumns() {
         fetchTableData()
     }
 
-    // 导出Excel
-    // TODO:导出EXCEL
-    const handleExport = () => {
-        console.log("导出Excel")
-    }
-
     function openDialog(title, item, row?: clubFormItemProps) {
         var state = 0
         if (title === "新增基地/社团") {
@@ -408,7 +401,6 @@ export function useClubColumns() {
         handleSearch,
         handleReset,
         handleUnDelete,
-        handleExport,
         openDialog,
         openDeleteDialog
     }

@@ -4,7 +4,7 @@ import { delay } from "@pureadmin/utils";
 import { message } from "@/utils/message";
 import useStore from '@/store';
 
-import announcementApi from "@/api/announcement.js";
+import baseApi from "@/api/base.js";
 
 import type { PaginationProps, TableColumns, LoadingConfig } from "@pureadmin/table";
 
@@ -21,12 +21,8 @@ export function useColumns() {
 
     // 检索区域框输入内容 -- 搜索框逻辑独立于该参数
     const query = ref({
-        search: "",
         club_name: "",
         department_id: "",
-        author_name: "",
-        from_date: "",
-        to_date: "",
     })
 
     /** 分页器配置 */
@@ -65,11 +61,8 @@ export function useColumns() {
 
     const getDataParams = computed(() => ({
         club_name: query.value.club_name,
-        author_name: query.value.author_name,
-        department_id: query.value.department_id,
+        department_id: query.value.department_id ? query.value.department_id : 0,
         title_keyword: useStore.homepageStore.getTitleKeyword() ? useStore.homepageStore.getTitleKeyword() : null,
-        from_date: query.value.from_date,
-        to_date: query.value.to_date,
         page_num: pagination.currentPage,
         page_size: pagination.pageSize
     }))
@@ -106,8 +99,8 @@ export function useColumns() {
     // 获取数据
     const fetchTableData = () => {
         return new Promise((resolve, reject) => {
-            announcementApi
-                .getAllNotice(getDataParams.value)
+            baseApi
+                .getBaseInfo(getDataParams.value)
                 .then((data) => {
                     tableData.value = data.records;
                     pagination.total = parseInt(data.total_item);

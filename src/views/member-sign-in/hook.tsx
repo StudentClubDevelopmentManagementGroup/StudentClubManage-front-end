@@ -1,10 +1,11 @@
 import type { PaginationProps, TableColumns, LoadingConfig } from "@pureadmin/table";
-import { delay } from "@pureadmin/utils";
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed } from "vue";
 import { message } from "@/utils/message";
+import { delay } from "@pureadmin/utils";
 import useStore from "@/store";
 import registrationApi from "@/api/registration";
 import formatUtil from "@/utils/formatter"
+
 interface TableColumnList extends Array<TableColumns> { }
 
 export default function useColumns() {
@@ -350,19 +351,6 @@ export default function useColumns() {
         }
     }
 
-    // 导出Excel
-    // TODO:导出EXCEL
-    const handleExport = () => {
-        console.log("导出Excel")
-    }
-
-    onMounted(() => {
-        onLoading()
-        getAvailableDurationTime()
-        getCheckStatus();
-        fetchTableData();
-    });
-
     const isMoreThanNDays = (date1, n) => {
         // 将日期转换为时间戳（毫秒）
         var timestamp1 = new Date(date1).getTime();
@@ -397,8 +385,10 @@ export default function useColumns() {
         fetchTableData,
         refreshTabaleData,
         addTableData,
+        onLoading,
         onSizeChange,
         onCurrentChange,
+        getAvailableDurationTime,
         getCheckStatus,
         checkIn,
         checkOut,
@@ -406,7 +396,6 @@ export default function useColumns() {
         handleSearch,
         handleReset,
         handleAdd,
-        handleExport,
         handleCheck,
         isMoreThanNDays,
     }

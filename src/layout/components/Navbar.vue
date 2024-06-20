@@ -74,12 +74,7 @@ watch(
 
       <el-dropdown class="nitoce">
         <div class="dropdown-badge">
-          <el-badge
-            :value="messageNum"
-            :max="99"
-            class="message-badge"
-            type="danger"
-          >
+          <el-badge :value="messageNum" :max="99" class="message-badge" type="danger">
             <span class="header-notice-icon">
               <IconifyIconOffline :icon="Bell" />
             </span>
@@ -96,11 +91,7 @@ watch(
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <span
-        id="fullScreen"
-        class="fullscreen-icon navbar-bg-hover"
-        @click="toggle"
-      >
+      <span id="fullScreen" class="fullscreen-icon navbar-bg-hover" @click="toggle">
         <IconifyIconOffline :icon="screenIcon" />
       </span>
       <el-dropdown trigger="click">
@@ -110,7 +101,7 @@ watch(
         </span>
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">
-            <router-link to="/">
+            <router-link to="/homepage">
               <el-dropdown-item
                 ><IconifyIconOffline
                   :icon="Base"
@@ -147,7 +138,7 @@ watch(
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    min-width: 280px;
+    min-width: 565px;
     height: 48px;
     color: #000000d9;
 

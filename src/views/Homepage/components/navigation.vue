@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import useStore from "@/store";
 
@@ -11,7 +11,7 @@ const currentIndex = ref(activeIndex.value);
 
 watch(activeIndex, (newValue) => {
   currentIndex.value = newValue;
-  router.replace(activeIndex.value);
+  router.push(activeIndex.value);
 });
 
 const removeOption = (path) => {
@@ -20,22 +20,18 @@ const removeOption = (path) => {
     useStore.navigationStore.deleteOption(path);
   }
   if (currentIndex.value === path) {
+    // 关闭的事当前的标签
     if (naviOptions?.value?.length) {
       var target = naviOptions.value[naviOptions.value.length - 1];
       useStore.navigationStore.setCurrentIndex(target.path);
-      router.replace(target);
+      router.push(target);
     }
   }
 };
 
 const clickOption = (option) => {
-  useStore.navigationStore.setCurrentIndex(option.paneName);
-  router.replace(naviOptions.value[option.index].path);
+  router.push(naviOptions.value[option.index].path);
 };
-
-onMounted(() => {
-  useStore.navigationStore.initOptionList();
-});
 </script>
 
 <template>

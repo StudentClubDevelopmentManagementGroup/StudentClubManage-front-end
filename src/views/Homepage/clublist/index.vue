@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, onMounted, watch, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useColumns } from "./hook.tsx";
 import constants from "@/config";
 import useStore from "@/store";
@@ -32,21 +32,9 @@ const {
 
 const initQuery = () => {
   query.value.club_name = route.query?.club_name ? route.query?.club_name : "";
-  query.value.author_name = route.query?.author_name ? route.query?.author_name : "";
   query.value.department_id = route.query?.department_id
     ? route.query?.department_id
     : "";
-  query.value.search = route.query?.search ? route.query?.search : "";
-  query.value.from_date = route.query?.from_date ? route.query?.from_date : "";
-  query.value.to_date = route.query?.to_date ? route.query?.to_date : "";
-};
-
-const onFromDateChange = (value) => {
-  query.value.from_date = value ? value : "";
-};
-
-const onToDateChange = (value) => {
-  query.value.to_date = value ? value : "";
 };
 
 onMounted(() => {
@@ -75,14 +63,6 @@ onMounted(() => {
                 />
               </el-form-item>
 
-              <el-form-item label="作者" prop="author_name">
-                <el-input
-                  v-model="query.author_name"
-                  placeholder="请输入文章作者"
-                  clearable
-                />
-              </el-form-item>
-
               <el-form-item label="学院" prop="department_id">
                 <el-select
                   v-model="query.department_id"
@@ -96,30 +76,6 @@ onMounted(() => {
                     :value="item.id"
                   ></el-option>
                 </el-select>
-              </el-form-item>
-
-              <el-form-item label="开始时间" prop="from_date">
-                <el-date-picker
-                  class="!w-full"
-                  format="YYYY-MM-DD"
-                  value-format="YYYY-MM-DD"
-                  v-model="query.from_date"
-                  type="date"
-                  placeholder="请选择开始时间"
-                  @change="onFromDateChange"
-                />
-              </el-form-item>
-
-              <el-form-item label="结束时间" prop="to_date">
-                <el-date-picker
-                  class="!w-full"
-                  format="YYYY-MM-DD"
-                  value-format="YYYY-MM-DD"
-                  v-model="query.to_date"
-                  type="date"
-                  placeholder="请选择结束时间"
-                  @change="onToDateChange"
-                />
               </el-form-item>
 
               <el-form-item>
@@ -162,31 +118,23 @@ onMounted(() => {
             @page-current-change="onCurrentChange"
           >
             <template #myRow="{ row }">
-              <div class="flex-col text-left">
+              <div v-if="!row.isDeleted" class="flex-col text-left">
                 <el-text
                   class="w-full !text-black !font-semibold !text-lg"
                   line-clamp="1"
                 >
                   <a
-                    :href="
-                      constants.serverUrl +
-                      '#/homepage/detail?announcementId=' +
-                      row.announcement_id
-                    "
-                    >{{ row.title }}</a
+                    :href="constants.serverUrl + '#/homepage/list?club_name=' + row.name"
+                    >{{ row.name }}</a
                   >
                 </el-text>
                 <el-text class="w-full !text-sm !text-gray-400" line-clamp="1">
-                  <span class="mr-2">发布时间：{{ row.publish_time }}</span>
                   <span class="mr-2">学院: {{ row.department_name }}</span>
-                </el-text>
-                <el-text class="w-full !text-sm !text-gray-400" line-clamp="1">
-                  <span class="mr-2">社团: {{ row.club_name }}</span>
-                  <span class="mr-2">作者：{{ row.author_name }}</span>
                 </el-text>
 
                 <el-text class="!text-base" line-clamp="3">
-                  {{ row.summary }}
+                  <!-- {{ row.summary }} -->
+                  这是一段描述文字
                 </el-text>
               </div>
             </template>
@@ -199,7 +147,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .wrapper {
-  min-height: 638px;
+  min-height: 592px;
   display: grid;
   grid-template-columns: 2.5fr 1fr;
   grid-template-areas: "left right";

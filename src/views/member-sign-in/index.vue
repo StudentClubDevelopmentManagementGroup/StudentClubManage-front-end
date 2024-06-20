@@ -1,6 +1,7 @@
-<script setup>
-import {} from "vue";
+<script setup lang="ts">
+import { onMounted } from "vue";
 import { PureTableBar } from "@/components/PureTableBar";
+import { exportExcel } from "@/utils/export";
 import useColumns from "./hook";
 
 import {
@@ -29,9 +30,10 @@ const {
 
   fetchTableData,
   refreshTabaleData,
-  addTableData,
+  onLoading,
   onSizeChange,
   onCurrentChange,
+  getAvailableDurationTime,
   getCheckStatus,
   checkIn,
   checkOut,
@@ -44,9 +46,12 @@ const {
   isMoreThanNDays,
 } = useColumns();
 
-const handleTimeChange = (val) => {
-  // console.log("TimeChange", val);
-};
+onMounted(() => {
+  onLoading();
+  getAvailableDurationTime();
+  getCheckStatus();
+  fetchTableData();
+});
 </script>
 
 <template>
@@ -121,9 +126,6 @@ const handleTimeChange = (val) => {
           </template>
         </el-popover>
 
-        <el-button v-ripple type="primary" :icon="CirclePlus" @click="addTableData"
-          >新增</el-button
-        >
         <el-skeleton class="pl-4 leading-8" animated :loading="tableLoading">
           <template #template>
             <el-skeleton-item variant="text" class="!w-[100px]" />
@@ -138,7 +140,12 @@ const handleTimeChange = (val) => {
       </template>
 
       <template #right>
-        <el-button v-ripple type="primary" @click="handleExport" :icon="Download">
+        <el-button
+          v-ripple
+          type="primary"
+          @click="exportExcel(columns, tableData, '打卡记录')"
+          :icon="Download"
+        >
           导出
         </el-button>
       </template>
