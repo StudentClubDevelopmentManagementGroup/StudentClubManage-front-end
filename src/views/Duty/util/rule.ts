@@ -8,3 +8,8 @@ export const formRules = reactive(<FormRules>{
   date_time: [{ required: true, message: "打扫时间为必填项", trigger: "blur" }],
   cleaner_id: [{ required: true, message: "成员学号为必填项", trigger: "blur" }],
 });
+
+export const addFormRules = reactive(<FormRules>{
+  member_id: [{ required: true, message: "成员学号为必填项", trigger: "blur" }],
+  group_name: [{ required: true, message: "组名为必填项", trigger: "blur" }],
+});

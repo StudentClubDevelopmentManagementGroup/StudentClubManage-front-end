@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, PropType } from "vue";
+import { computed, PropType, ref } from "vue";
 import calendarIcon from "@/assets/svg/calendar.svg?component";
 import { message } from "@/utils/message";
 import { GetToken } from "@/utils/auth";
@@ -22,6 +22,8 @@ interface CardProductType {
   image_file: any;
   is_mixed: boolean;
 }
+
+const fileList = ref([]);
 
 const props = defineProps({
   duty: {
@@ -47,14 +49,17 @@ const cardLogoClass = computed(() => [
   { "list-card-item_detail--logo__disabled": props.duty.image_file },
 ]);
 
-const httpRequest = (image) => {
-  const { file } = image;
+const httpRequest = () => {
   const { date_time, cleaner_id, club_id } = props.duty;
   const formData = new FormData();
-  formData.append("file", file);
   formData.append("date_time", date_time);
   formData.append("member_id", cleaner_id);
   formData.append("club_id", club_id);
+
+  fileList.value.forEach((item) => {
+    formData.append("file", item.raw);
+  });
+
   axios({
     method: "POST",
     url: constants.baseUrl + "/club/duty/report_results",
@@ -65,11 +70,10 @@ const httpRequest = (image) => {
     },
   }).then((res) => {
     const data = res.data;
-    console.log(data);
 
     if (data.status_code / 100 === 2) {
       props.duty.image_file = data.data;
-      message("上传成功", { type: "success" });
+      // message("上传成功", { type: "success" });
     } else {
       message("上传失败", { type: "error" });
     }
@@ -86,7 +90,7 @@ const httpRequest = (image) => {
         </div>
         <div class="list-card-item_detail--operation">
           <el-tag
-            :color="duty.image_file ? '#eee' : isNow ? '#00a870':'#F89898'"
+            :color="duty.image_file ? '#eee' : isNow ? '#00a870' : '#F89898'"
             effect="dark"
             class="mx-1 list-card-item_detail--operation--tag"
           >
@@ -139,13 +143,14 @@ const httpRequest = (image) => {
       </el-descriptions>
       <el-upload
         v-if="!duty.image_file"
+        v-model:file-list="fileList"
         :http-request="httpRequest"
         accept="image/*"
         multiple
         :show-file-list="false"
         class="float-right"
       >
-        <el-button type="primary">上传图片</el-button></el-upload
+        <el-button type="primary" v-ripple>上传图片</el-button></el-upload
       >
     </div>
   </div>

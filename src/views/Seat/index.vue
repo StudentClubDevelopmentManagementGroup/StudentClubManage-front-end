@@ -4,6 +4,7 @@ import "@logicflow/extension/lib/style/index.css";
 import { ref, unref, onMounted, computed } from "vue";
 import { toNodeData, toSeatData } from "@/components/FlowChart/src/adpter";
 import LogicFlow from "@logicflow/core";
+import { exportExcel } from "@/utils/export.ts";
 import { Snapshot, Menu, MiniMap } from "@logicflow/extension";
 import {
   nodeList,
@@ -21,7 +22,7 @@ import useStore from "@/store";
 import seatApi from "@/api/seat";
 import { EditPen, Plus, Download, Star } from "@element-plus/icons-vue";
 
-const club_id = ref(1);
+const club_id = computed(() => useStore.userStore.getClubId);
 const lf = ref(null);
 const graphData = ref(null);
 const dataVisible = ref<boolean>(false);
@@ -168,9 +169,14 @@ const editSeat = () => {
   dataVisible.value = true;
   editable.value = true;
 };
+
 onMounted(() => {
   initLf();
 });
+
+const exportFile = () => {
+  lf.value.getSnapshot()
+};
 </script>
 
 <template>
@@ -178,7 +184,6 @@ onMounted(() => {
     <template #header>
       <div class="flex justify-between">
         <div>
-          <el-button v-ripple type="primary" :icon="Plus">添加座位</el-button>
           <el-button v-ripple type="primary" :icon="EditPen" @click="editSeat"
             >编辑座位</el-button
           >
@@ -187,7 +192,7 @@ onMounted(() => {
           <el-button v-ripple type="primary" :icon="Star" @click="saveAllSeat"
             >保存座位表</el-button
           >
-          <el-button v-ripple type="primary" :icon="Download" plain>
+          <el-button v-ripple type="primary" :icon="Download"  @click="exportFile" plain> 
             导出
           </el-button>
         </div>

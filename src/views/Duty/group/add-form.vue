@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { formRules } from "../util/rule";
+import { addFormRules } from "../util/rule";
 import { FormProps } from "./hook.tsx";
 
 const props = withDefaults(defineProps<FormProps>(), {
@@ -26,7 +26,7 @@ defineExpose({ getRef });
   <el-form
     ref="ruleFormRef"
     :model="newFormInline"
-    :rules="formRules"
+    :rules="addFormRules"
     label-width="82px"
   >
     <el-form-item label="组名" prop="group_name">

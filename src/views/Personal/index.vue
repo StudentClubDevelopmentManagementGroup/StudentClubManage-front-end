@@ -36,7 +36,7 @@ onMounted(() => {
 <template>
   <el-row v-if="userInfo" :gutter="20">
     <el-col :span="10">
-      <el-card class="py-4 ml-4" shadow="hover">
+      <el-card class="p-4 ml-4" shadow="hover">
         <div
           style="padding-left: 20px; padding-right: 20px"
           class="user-card-body"
@@ -91,7 +91,7 @@ onMounted(() => {
     </el-col>
     <el-col :span="14">
       <el-card class="p-4 mr-4" shadow="hover">
-        最新公告：
+        <el-text type="danger" size="large">最新公告：</el-text>
         <div class="text-center">
           <h2>{{ notice.title }}</h2>
         </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, h, toRaw, reactive, onMounted, computed } from "vue";
+import { ref, h, reactive, onMounted, computed } from "vue";
 import Data from "./data.json";
 import { deviceDetection } from "@pureadmin/utils";
 import { message } from "@/utils/message";
@@ -23,7 +23,7 @@ import {
   Refresh,
 } from "@element-plus/icons-vue";
 
-const { columns,loadingConfig } = useRole();
+const { columns, loadingConfig } = useRole();
 
 const loading = ref(true);
 const dataList = ref([]);
@@ -47,7 +47,7 @@ const pagination = reactive<PaginationProps>({
 });
 
 const exportFile = () => {
-  exportExcel(columns, dataList, "member-list");
+  exportExcel(columns, dataList.value, "member-list");
 };
 
 const resetForm = (formEl) => {
@@ -165,8 +165,6 @@ function openDialog(title = "新增", row?: FormItemProps) {
     },
   });
 }
-
-
 </script>
 
 <template>
@@ -202,6 +200,7 @@ function openDialog(title = "新增", row?: FormItemProps) {
       </el-form-item>
       <el-form-item>
         <el-button
+        v-ripple
           type="primary"
           :icon="useRenderIcon('ri:search-line')"
           :loading="loading"
@@ -209,25 +208,20 @@ function openDialog(title = "新增", row?: FormItemProps) {
         >
           搜索
         </el-button>
-        <el-button :icon="Refresh" @click="resetForm(formRef)">
+        <el-button v-ripple :icon="Refresh" @click="resetForm(formRef)">
           重置
         </el-button>
       </el-form-item>
     </el-form>
     <PureTableBar :columns="columns" @refresh="getMemberData">
       <template #left>
-        <el-button type="primary" :icon="CirclePlus" @click="openDialog()"
+        <el-button type="primary" :icon="CirclePlus" @click="openDialog()" v-ripple
           >新增</el-button
         >
-        <el-button type="primary" :icon="Upload" plain>导入</el-button>
-        <el-popconfirm title="是否确认删除?" @confirm="delMember">
-          <template #reference>
-            <el-button type="danger" :icon="Delete">批量删除</el-button>
-          </template>
-        </el-popconfirm>
+        <el-button type="primary" :icon="Upload" plain v-ripple>导入</el-button>
       </template>
       <template #right>
-        <el-button type="primary" @click="exportFile" :icon="Download">
+        <el-button type="primary" @click="exportFile" :icon="Download" v-ripple>
           导出
         </el-button>
       </template>
@@ -275,6 +269,7 @@ function openDialog(title = "新增", row?: FormItemProps) {
               class="reset-margin"
               type="danger"
               :size="size"
+              v-ripple
               @click="revokeManager(row.user_id)"
             >
               撤销负责人
@@ -284,6 +279,7 @@ function openDialog(title = "新增", row?: FormItemProps) {
               class="reset-margin"
               type="primary"
               :size="size"
+              v-ripple
               @click="setManager(row.user_id)"
             >
               设置负责人
@@ -298,6 +294,7 @@ function openDialog(title = "新增", row?: FormItemProps) {
                   type="danger"
                   :size="size"
                   plain
+                  v-ripple
                 >
                   删除
                 </el-button>
@@ -309,5 +306,3 @@ function openDialog(title = "新增", row?: FormItemProps) {
     </PureTableBar>
   </div>
 </template>
-
-

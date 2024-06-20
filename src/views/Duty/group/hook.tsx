@@ -39,20 +39,7 @@ interface GroupFormProps {
 export type { FormItemProps, FormProps, GroupFormProps, GroupFormItemProps };
 
 export function useRole() {
-  const form = reactive({
-    name: "",
-    department_id: "",
-  });
-  const dataList = ref([]);
-  const loading = ref(true);
   const formRef = ref();
-  const pagination = reactive<PaginationProps>({
-    total: 0,
-    pageSize: 10,
-    currentPage: 1,
-    background: true,
-    align: "center",
-  });
   const columns: TableColumnList = [
     {
       label: "序号",
@@ -102,38 +89,6 @@ export function useRole() {
       `
   });
 
-  function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
-  }
-
-  function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
-  }
-
-  function handleOffline(row) {
-    message(`${row.username}已被强制下线`, { type: "success" });
-    onSearch();
-  }
-
-  /** 取消选择 */
-  async function onSearch() {
-    loading.value = true;
-
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
-  }
-
-  const resetForm = formEl => {
-    if (!formEl) return;
-    formEl.resetFields();
-    onSearch();
-  };
-
-  onMounted(() => {
-    onSearch();
-  });
-
   function openDialog(title = "新增", group_name) {
     addDialog({
       title: `${title}小组值日信息`,
@@ -145,7 +100,7 @@ export function useRole() {
           arranger_id: GetUserInfo().user_id ?? "",
           group_name: group_name ?? "",
           club_id: 1,
-          is_mixed: true,
+          is_mixed: false,
         }
       },
       width: "40%",
@@ -173,7 +128,7 @@ export function useRole() {
 
   function openAddDialog(group_name = "", isNowGroup = false) {
     addDialog({
-      title: '新建分组',
+      title: isNowGroup?'新增成员':'新建分组',
       props: {
         formInline: {
           group_name: group_name ?? "",
@@ -206,20 +161,9 @@ export function useRole() {
   }
 
   return {
-    form,
-    loading,
     columns,
-    dataList,
-    pagination,
-    onSearch,
-    resetForm,
     loadingConfig,
-    handleOffline,
-    handleSizeChange,
-    handleCurrentChange,
     openDialog,
     openAddDialog
   };
 }
-
-

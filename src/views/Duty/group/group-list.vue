@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, h, toRaw, reactive, onMounted, computed } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import useStore from "@/store";
 import { useRenderIcon } from "@/components/Icon/hooks";
 import { useRole } from "./hook.tsx";
@@ -7,11 +7,13 @@ import dutyApi from "@/api/duty";
 import { PureTableBar } from "@/components/PureTableBar";
 import type { PaginationProps } from "@pureadmin/table";
 import { message } from "@/utils/message";
+import { exportExcel } from "@/utils/export.ts";
 
-import { CirclePlus, Delete, Plus, Refresh } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, Download, Refresh } from "@element-plus/icons-vue";
 
 const { columns, loadingConfig, openDialog, openAddDialog } = useRole();
 
+const isAutoDuty = ref(false);
 const loading = ref(true);
 const dataList = ref([]);
 const formRef = ref();
@@ -31,6 +33,10 @@ const pagination = reactive<PaginationProps>({
   background: true,
 });
 
+const exportFile = () => {
+  exportExcel(columns, dataList.value, "group-list");
+};
+
 const getGroupData = async () => {
   loading.value = true;
   await dutyApi
@@ -47,9 +53,38 @@ const getGroupData = async () => {
     .finally(() => (loading.value = false));
 };
 
+const getAutoDuty = async () => {
+  await dutyApi
+    .getAutoDuty(club_id.value)
+    .then((data) => {
+      console.log(data);
+      isAutoDuty.value = data.isCirculation;
+    })
+    .catch((e) => {
+      console.error(e.message);
+    });
+};
+
+const setAutoDuty = async () => {
+  const req = {
+    club_id: club_id.value,
+    circulation: isAutoDuty.value ? 0 : 1,
+  };
+  await dutyApi
+    .setAutoDuty(req)
+    .then((data) => {
+      message("修改成功", { type: "success" });
+      isAutoDuty.value = !isAutoDuty.value;
+    })
+    .catch((e) => {
+      console.error(e.message);
+    });
+};
+
 function handleSizeChange(val: number) {
   query.value.page_size = val;
   getGroupData();
+  
 }
 
 function handleCurrentChange(val: number) {
@@ -59,6 +94,7 @@ function handleCurrentChange(val: number) {
 
 onMounted(() => {
   getGroupData();
+  getAutoDuty();
 });
 
 const resetForm = (formEl) => {
@@ -67,7 +103,7 @@ const resetForm = (formEl) => {
   getGroupData();
 };
 
-const delMember = (row) => {
+const delMember = (row, index) => {
   const req = {
     group_name: row.group_name,
     member_id: row.member_id,
@@ -76,6 +112,7 @@ const delMember = (row) => {
   dutyApi
     .delMember(req)
     .then((data) => {
+      getGroupData()
       message("删除成功", { type: "success" });
     })
     .catch((e) => {
@@ -83,7 +120,21 @@ const delMember = (row) => {
     });
 };
 
-
+const delGroupDuty = (row) => {
+  const req = {
+    group_name: row.group_name,
+    duty_time: row.date_time,
+    club_id: club_id.value,
+  };
+  dutyApi
+    .delGroupDuty(req)
+    .then((data) => {
+      message("删除成功", { type: "success" });
+    })
+    .catch((e) => {
+      console.error(e.message);
+    });
+};
 </script>
 
 <template>
@@ -123,14 +174,21 @@ const delMember = (row) => {
   </el-form>
   <PureTableBar :columns="columns" @refresh="getGroupData">
     <template #left>
-      <el-button type="primary" :icon="CirclePlus" @click="openAddDialog()"
+      <el-button type="primary" :icon="CirclePlus" @click="openAddDialog()" v-ripple
         >新增小组</el-button
       >
-      <el-popconfirm title="是否确认删除?" @confirm="">
+    </template>
+    <template #right>
+      <el-popconfirm title="是否确认修改自动值日?" @confirm="setAutoDuty()">
         <template #reference>
-          <el-button type="danger" :icon="Delete">批量删除</el-button>
-        </template>
+          <el-button type="primary" plain v-ripple>{{
+            isAutoDuty ? "自动安排值日" : "非自动安排值日"
+          }}</el-button></template
+        >
       </el-popconfirm>
+      <el-button type="primary" @click="exportFile" :icon="Download" v-ripple>
+        导出
+      </el-button>
     </template>
     <template v-slot="{ size, dynamicColumns }">
       <pure-table
@@ -154,11 +212,12 @@ const delMember = (row) => {
         @page-size-change="handleSizeChange"
         @page-current-change="handleCurrentChange"
       >
-        <template #operation="{ row }">
+        <template #operation="{ row, index }">
           <el-button
             type="primary"
             :icon="CirclePlus"
             @click="openDialog('新增', row.group_name)"
+            v-ripple
             >小组值日</el-button
           >
           <el-button
@@ -166,12 +225,26 @@ const delMember = (row) => {
             :icon="CirclePlus"
             @click="openAddDialog(row.group_name, true)"
             plain
+            v-ripple
             >添加成员</el-button
           >
-
-          <el-popconfirm title="是否确认删除?" @confirm="delMember(row)">
+          <el-popconfirm
+            title="是否确认清空该小组值日?"
+            @confirm="delGroupDuty(row)"
+          >
             <template #reference>
-              <el-button class="reset-margin" type="danger" :icon="Delete" :size="size">
+              <el-button type="danger" plain v-ripple>清空值日</el-button>
+            </template>
+          </el-popconfirm>
+          <el-popconfirm title="是否确认删除?" @confirm="delMember(row, index)" >
+            <template #reference>
+              <el-button
+                class="reset-margin"
+                type="danger"
+                :icon="Delete"
+                :size="size"
+                v-ripple
+              >
                 删除
               </el-button>
             </template>

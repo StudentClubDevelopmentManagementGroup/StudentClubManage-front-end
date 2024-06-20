@@ -1,6 +1,5 @@
-import { message } from "@/utils/message";
-import { reactive, ref, onMounted, h } from "vue";
-import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
+import { reactive, ref, h } from "vue";
+import type {  LoadingConfig } from "@pureadmin/table";
 import type { TableColumns } from "@pureadmin/table";
 interface TableColumnList extends Array<TableColumns> { }
 import { deviceDetection } from "@pureadmin/utils";
@@ -25,7 +24,6 @@ interface FormProps {
 export type { FormItemProps, FormProps };
 
 export function useRole() {
-  const loading = ref(true);
   const formRef = ref();
   const noticeColumns: TableColumnList = [
     {
@@ -99,7 +97,7 @@ export function useRole() {
       .getNoticeContent(announcementId)
       .then((data) => {
         addDialog({
-          title: "查看公告详情",
+          title: title,
           props: {
             formInline: {
               announcement_id: data.announcement_id ?? "",
@@ -122,7 +120,6 @@ export function useRole() {
   }
 
   return {
-    loading,
     noticeColumns,
     loadingConfig,
     openDialog

@@ -9,7 +9,6 @@ import NoticeList from "./notice/notice-list.vue";
 import { Delete } from "@element-plus/icons-vue";
 import { message } from "@/utils/message";
 import textUtil from "@/utils/text.ts";
-import formatUtil from "@/utils/formatter";
 
 const club_id = computed(() => useStore.userStore.getClubId);
 
@@ -116,20 +115,20 @@ const updateDraft = (draftId) => {
           <el-form-item>
             <el-input
               v-model="notice.title"
-              placeholder="请输入标题"
+              placeholder="请输入公告标题"
               clearable
               show-word-limit
               maxlength="30"
               type="text"
               class="!w-[690px] !h-[55px] !text-xl"
             />
-            <el-button type="danger" :icon="Delete" class="ml-16" @click="clearText">
+            <el-button type="danger" :icon="Delete" class="ml-16" @click="clearText" v-ripple>
               一键清空
             </el-button></el-form-item
           ><RichEditor
             ref="richEditor"
             :model-value="notice.content"
-            placeholder="请输入正文..."
+            placeholder="请输入公告正文..."
           ></RichEditor>
           <div class="mt-4 flex justify-center">
             <el-button

@@ -1,6 +1,6 @@
 import { message } from "@/utils/message";
-import { reactive, ref, onMounted, h } from "vue";
-import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
+import { reactive, ref, h } from "vue";
+import type {  LoadingConfig } from "@pureadmin/table";
 import type { TableColumns } from "@pureadmin/table";
 interface TableColumnList extends Array<TableColumns> { }
 import { deviceDetection } from "@pureadmin/utils";
@@ -8,7 +8,6 @@ import addForm from "./form.vue";
 import { addDialog } from "@/components/Dialog";
 import dutyApi from "@/api/duty";
 import { GetUserInfo } from '@/utils/auth'
-import { Plus } from '@element-plus/icons-vue'
 
 interface FormItemProps {
   number: string;
@@ -27,20 +26,7 @@ interface FormProps {
 export type { FormItemProps, FormProps };
 
 export function useRole() {
-  const form = reactive({
-    name: "",
-    department_id: "",
-  });
-  const dataList = ref([]);
-  const loading = ref(true);
   const formRef = ref();
-  const pagination = reactive<PaginationProps>({
-    total: 0,
-    pageSize: 10,
-    currentPage: 1,
-    background: true,
-    align: "center",
-  });
   const columns: TableColumnList = [
     {
       label: "序号",
@@ -107,37 +93,10 @@ export function useRole() {
       `
   });
 
-  function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
-  }
-
-  function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
-  }
-
-  function handleOffline(row) {
-    message(`${row.username}已被强制下线`, { type: "success" });
-    onSearch();
-  }
-
-  /** 取消选择 */
-  async function onSearch() {
-    loading.value = true;
-
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
-  }
-
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
-    onSearch();
   };
-
-  onMounted(() => {
-    onSearch();
-  });
 
   function openDialog(title = "新增", row?: FormItemProps) {
     addDialog({
@@ -177,17 +136,9 @@ export function useRole() {
   }
 
   return {
-    form,
-    loading,
     columns,
-    dataList,
-    pagination,
-    onSearch,
     resetForm,
     loadingConfig,
-    handleOffline,
-    handleSizeChange,
-    handleCurrentChange,
     openDialog
   };
 }

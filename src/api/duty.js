@@ -79,4 +79,11 @@ export default {
             params: { clubId }
         })
     },
+    setAutoDuty(req) {
+        return request({
+            url: '/club/duty/auto_duty/set',
+            method: 'post',
+            data: req
+        })
+    },
 }
