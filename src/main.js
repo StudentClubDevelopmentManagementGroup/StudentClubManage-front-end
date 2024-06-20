@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import ElementPlus from 'element-plus'
+import { useEcharts } from "../plugins/echarts";
 
 import 'dayjs/locale/zh-cn'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
@@ -53,4 +54,4 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 import axios from 'axios'
 app.config.globalProperties.$axios = axios
 
-app.use(router).use(Table).use(ElementPlus, { zhCn }).mount('#app')
+app.use(router).use(Table).use(useEcharts).use(ElementPlus, { zhCn }).mount('#app')

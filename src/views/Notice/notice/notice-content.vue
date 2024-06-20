@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { FormProps } from "./hook.tsx"
+import { FormProps } from "./hook.tsx";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<FormProps>(), {
     title: "",
   }),
 });
-const contentRef = ref()
+const contentRef = ref();
 const newFormInline = ref(props.formInline);
 
 function getRef() {

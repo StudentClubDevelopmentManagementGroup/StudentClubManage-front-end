@@ -8,7 +8,7 @@ import memberApi from "@/api/member";
 import useStore from "@/store";
 
 import type { PaginationProps } from "@pureadmin/table";
-import { useRole, FormItemProps } from "./hook";
+import { useRole, FormItemProps } from "./hook.tsx";
 
 import { PureTableBar } from "@/components/PureTableBar";
 import { useRenderIcon } from "@/components/Icon/hooks";

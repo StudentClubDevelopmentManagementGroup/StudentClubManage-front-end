@@ -4,7 +4,7 @@ import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import type { TableColumns } from "@pureadmin/table";
 interface TableColumnList extends Array<TableColumns> { }
 import { deviceDetection } from "@pureadmin/utils";
-import addForm from "../group/form.vue";
+import addForm from "./add-form.vue";
 import addGroupForm from "./group-form.vue";
 import { addDialog } from "@/components/Dialog";
 import dutyApi from "@/api/duty";
@@ -29,6 +29,7 @@ interface GroupFormItemProps {
 
 interface FormProps {
   formInline: FormItemProps;
+  isNowGroup: boolean
 }
 
 interface GroupFormProps {
@@ -71,7 +72,7 @@ export function useRole() {
       label: "成员学号",
       prop: "member_id",
       minWidth: 180
-    }, 
+    },
     {
       label: "成员姓名",
       prop: "user_name",
@@ -80,7 +81,7 @@ export function useRole() {
     {
       label: "操作",
       fixed: "right",
-      width: 360,
+      width: 480,
       slot: "operation"
     }
   ];
@@ -135,7 +136,7 @@ export function useRole() {
 
   function openDialog(title = "新增", group_name) {
     addDialog({
-      title: `${title}值日信息`,
+      title: `${title}小组值日信息`,
       props: {
         formInline: {
           number: "",
@@ -158,7 +159,41 @@ export function useRole() {
         const curData = options.props.formInline as FormItemProps;
         FormRef.validate(valid => {
           if (valid) {
-            dutyApi.addMemberDuty(curData)
+            dutyApi.addGroupDuty(curData)
+              .then(data => {
+                message("添加成功", { type: "success" });
+                done();
+              })
+              .catch(err => { })
+          }
+        });
+      }
+    });
+  }
+
+  function openAddDialog(group_name = "", isNowGroup = false) {
+    addDialog({
+      title: '新建分组',
+      props: {
+        formInline: {
+          group_name: group_name ?? "",
+          member_id: "",
+          club_id: 1,
+        },
+        isNowGroup: isNowGroup
+      },
+      width: "30%",
+      draggable: true,
+      fullscreen: deviceDetection(),
+      fullscreenIcon: true,
+      closeOnClickModal: false,
+      contentRenderer: () => h(addForm, { ref: formRef }),
+      beforeSure: (done, { options }) => {
+        const FormRef = formRef.value.getRef();
+        const curData = options.props.formInline as FormItemProps;
+        FormRef.validate(valid => {
+          if (valid) {
+            dutyApi.addMember(curData)
               .then(data => {
                 message("添加成功", { type: "success" });
                 done();
@@ -182,7 +217,8 @@ export function useRole() {
     handleOffline,
     handleSizeChange,
     handleCurrentChange,
-    openDialog
+    openDialog,
+    openAddDialog
   };
 }
 

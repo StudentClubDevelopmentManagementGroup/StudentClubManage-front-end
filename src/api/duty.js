@@ -29,7 +29,7 @@ export default {
             data: req
         })
     },
-    
+
     addMember(req) {
         return request({
             url: '/club/duty/group/add',
@@ -72,11 +72,11 @@ export default {
             data: req
         })
     },
-    getAutoDuty(req) {
+    getAutoDuty(clubId) {
         return request({
             url: '/club/duty/auto_duty',
             method: 'post',
-            data: req
+            params: { clubId }
         })
     },
 }

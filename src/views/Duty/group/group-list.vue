@@ -2,7 +2,7 @@
 import { ref, h, toRaw, reactive, onMounted, computed } from "vue";
 import useStore from "@/store";
 import { useRenderIcon } from "@/components/Icon/hooks";
-import { useRole } from "./hook";
+import { useRole } from "./hook.tsx";
 import dutyApi from "@/api/duty";
 import { PureTableBar } from "@/components/PureTableBar";
 import type { PaginationProps } from "@pureadmin/table";
@@ -10,7 +10,7 @@ import { message } from "@/utils/message";
 
 import { CirclePlus, Delete, Plus, Refresh } from "@element-plus/icons-vue";
 
-const { columns, loadingConfig, openDialog } = useRole();
+const { columns, loadingConfig, openDialog, openAddDialog } = useRole();
 
 const loading = ref(true);
 const dataList = ref([]);
@@ -67,14 +67,14 @@ const resetForm = (formEl) => {
   getGroupData();
 };
 
-const delDuty = (row) => {
+const delMember = (row) => {
   const req = {
-    date_time: row.date_time,
-    cleaner_id: row.cleaner_id,
+    group_name: row.group_name,
+    member_id: row.member_id,
     club_id: club_id.value,
   };
   dutyApi
-    .delDuty(req)
+    .delMember(req)
     .then((data) => {
       message("删除成功", { type: "success" });
     })
@@ -82,6 +82,8 @@ const delDuty = (row) => {
       console.error(e.message);
     });
 };
+
+
 </script>
 
 <template>
@@ -102,7 +104,7 @@ const delDuty = (row) => {
     <el-form-item label="姓名" prop="name">
       <el-input
         v-model="query.name"
-        placeholder="请输入成员姓名"
+        placeholder="请输入值日生姓名"
         clearable
         class="!w-[180px]"
       />
@@ -121,7 +123,7 @@ const delDuty = (row) => {
   </el-form>
   <PureTableBar :columns="columns" @refresh="getGroupData">
     <template #left>
-      <el-button type="primary" :icon="CirclePlus" @click="openDialog()"
+      <el-button type="primary" :icon="CirclePlus" @click="openAddDialog()"
         >新增小组</el-button
       >
       <el-popconfirm title="是否确认删除?" @confirm="">
@@ -153,11 +155,23 @@ const delDuty = (row) => {
         @page-current-change="handleCurrentChange"
       >
         <template #operation="{ row }">
-          <el-button type="primary" :icon="CirclePlus" @click="openDialog('新增',row.group_name)">新增值日</el-button>
-          <el-button type="primary" :icon="CirclePlus" @click="openDialog()">添加成员</el-button>
-          <el-popconfirm title="是否确认删除?" @confirm="delDuty(row)">
+          <el-button
+            type="primary"
+            :icon="CirclePlus"
+            @click="openDialog('新增', row.group_name)"
+            >小组值日</el-button
+          >
+          <el-button
+            type="primary"
+            :icon="CirclePlus"
+            @click="openAddDialog(row.group_name, true)"
+            plain
+            >添加成员</el-button
+          >
+
+          <el-popconfirm title="是否确认删除?" @confirm="delMember(row)">
             <template #reference>
-              <el-button class="reset-margin" type="danger" :size="size">
+              <el-button class="reset-margin" type="danger" :icon="Delete" :size="size">
                 删除
               </el-button>
             </template>

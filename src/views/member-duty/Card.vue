@@ -64,16 +64,14 @@ const httpRequest = (image) => {
       "Guet-S-C-M-S-Token": GetToken(),
     },
   }).then((res) => {
-    const data = res.data
+    const data = res.data;
     console.log(data);
-    
+
     if (data.status_code / 100 === 2) {
       props.duty.image_file = data.data;
       message("上传成功", { type: "success" });
-    }
-    else{
+    } else {
       message("上传失败", { type: "error" });
-
     }
   });
 };
@@ -88,7 +86,7 @@ const httpRequest = (image) => {
         </div>
         <div class="list-card-item_detail--operation">
           <el-tag
-            :color="duty.image_file ? '#eee' : isNow ? '#F89898' : '#00a870'"
+            :color="duty.image_file ? '#eee' : isNow ? '#00a870':'#F89898'"
             effect="dark"
             class="mx-1 list-card-item_detail--operation--tag"
           >

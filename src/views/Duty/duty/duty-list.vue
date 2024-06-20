@@ -15,6 +15,7 @@ import { CirclePlus, Delete, Download, Refresh } from "@element-plus/icons-vue";
 
 const { columns, loadingConfig, openDialog } = useRole();
 
+const isAutoDuty = ref(false);
 const loading = ref(true);
 const dataList = ref([]);
 const formRef = ref();
@@ -91,6 +92,18 @@ const delDuty = (row) => {
     });
 };
 
+const getAutoDuty = async () => {
+  await dutyApi
+    .getAutoDuty(club_id.value)
+    .then((data) => {
+      console.log(data);
+      isAutoDuty.value = data.isCirculation;
+    })
+    .catch((e) => {
+      console.error(e.message);
+    });
+};
+
 const httpRequest = (image) => {
   const { file } = image;
   const { date_time, member_id, club_id } = file.rowData;
@@ -121,6 +134,24 @@ const beforeUpload = (file, row) => {
   };
   return true;
 };
+
+const delGroupDuty = (row) => {
+  console.log(row);
+
+  const req = {
+    group_name: row.group_name,
+    duty_time: row.date_time,
+    club_id: club_id.value,
+  };
+  dutyApi
+    .delGroupDuty(req)
+    .then((data) => {
+      message("删除成功", { type: "success" });
+    })
+    .catch((e) => {
+      console.error(e.message);
+    });
+};
 </script>
 
 <template>
@@ -133,7 +164,7 @@ const beforeUpload = (file, row) => {
     <el-form-item label="房间号" prop="number">
       <el-input
         v-model="query.number"
-        placeholder="请输入姓名"
+        placeholder="请输入房间号"
         clearable
         class="!w-[180px]"
       />
@@ -141,7 +172,7 @@ const beforeUpload = (file, row) => {
     <el-form-item label="姓名" prop="name">
       <el-input
         v-model="query.name"
-        placeholder="请输入姓名"
+        placeholder="请输入小组成员姓名"
         clearable
         class="!w-[180px]"
       />
@@ -170,6 +201,10 @@ const beforeUpload = (file, row) => {
       </el-popconfirm>
     </template>
     <template #right>
+      <el-button type="primary" plain>{{
+        isAutoDuty ? "自动安排值日" : "非自动安排值日"
+      }}</el-button>
+
       <el-button type="primary" @click="exportFile" :icon="Download">
         导出
       </el-button>
@@ -220,9 +255,22 @@ const beforeUpload = (file, row) => {
           </el-upload>
         </template>
         <template #operation="{ row }">
+          <!-- <el-popconfirm
+            title="是否确认清空该小组值日?"
+            @confirm="delGroupDuty(row)"
+          >
+            <template #reference>
+              <el-button type="danger" plain>清空值日</el-button>
+            </template>
+          </el-popconfirm> -->
           <el-popconfirm title="是否确认删除?" @confirm="delDuty(row)">
             <template #reference>
-              <el-button class="reset-margin" type="danger" :size="size">
+              <el-button
+                class="reset-margin"
+                type="danger"
+                :icon="Delete"
+                :size="size"
+              >
                 删除
               </el-button>
             </template>
@@ -252,5 +300,4 @@ const beforeUpload = (file, row) => {
 :deep(.el-tabs__nav-prev.is-disabled) {
   opacity: 0.5;
 }
-
 </style>
