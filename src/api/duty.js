@@ -8,9 +8,16 @@ export default {
             data: req
         })
     },
+    getSelfDuty(req) {
+        return request({
+            url: '/club/duty/selectself',
+            method: 'post',
+            data: req
+        })
+    },
     addDutyReport(req) {
         return request({
-            url: '/club/duty/report_result',
+            url: '/club/duty/report_results',
             method: 'post',
             data: req
         })
@@ -22,7 +29,7 @@ export default {
             data: req
         })
     },
-    
+
     addMember(req) {
         return request({
             url: '/club/duty/group/add',
@@ -65,11 +72,11 @@ export default {
             data: req
         })
     },
-    getAutoDuty(req) {
+    getAutoDuty(clubId) {
         return request({
             url: '/club/duty/auto_duty',
             method: 'post',
-            data: req
+            params: { clubId }
         })
     },
 }

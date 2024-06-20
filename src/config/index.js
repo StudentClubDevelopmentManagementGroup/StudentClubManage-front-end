@@ -46,8 +46,8 @@ const CONFIG = {
     qrCodeUrlPrefix: 'http://localhost:8080?target=',
   },
   production: {
-    baseUrl: 'http://10.34.70.184:3333',
     serverUrl: '//TODO:待确定的生产环境域名或url',
+    baseUrl: 'http://121.37.9.218:3333',
     logo: 'http://121.37.9.218/logo.png',
     avatar: 'http://121.37.9.218/header4.gif',
     emptyImg: 'http://121.37.9.218/empty.png',

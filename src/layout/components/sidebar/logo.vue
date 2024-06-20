@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.ico";
 import useStore from "@/store";
 const props = defineProps({
   collapse: Boolean,

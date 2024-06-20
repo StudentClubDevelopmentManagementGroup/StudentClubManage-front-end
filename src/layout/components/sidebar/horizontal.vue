@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SidebarItem from "./sidebarItem.vue";
 import { ref, nextTick, computed, onMounted, watch } from "vue";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.ico";
 import Search from "@/components/Search/index.vue";
 import ClubSelection from "@/components/ClubSelection/index.vue";
 import { useRouter, useRoute } from "vue-router";
