@@ -14,7 +14,6 @@ const router = useRouter();
     <noExist />
     <div class="ml-12">
       <p
-        v-motion
         class="font-medium text-4xl mb-4 dark:text-white"
         :initial="{
           opacity: 0,

@@ -13,24 +13,8 @@ export const constantRoutes = [
             hiddenTab: true,
             title: "登录",
         }
-    }, {
-        path: "/",
-        component: Layout,
-        redirect: "/welcome",
-        meta: {
-            icon: "ri:bar-chart-box-fill",
-            title: "首页",
-        },
-        children: [{
-            path: "/welcome",
-            name: "Welcome",
-            component: () => import('@/views/welcome'),
-            meta: {
-                icon: "ri:bar-chart-box-fill",
-                title: "首页",
-            },
-        }]
-    }, {
+    },
+    {
         path: "/personal",
         component: Layout,
         redirect: "/personal/index",
@@ -82,6 +66,24 @@ export const constantRoutes = [
 ]
 
 export const asyncRoutes = [
+    {
+        path: "/welcome",
+        component: Layout,
+        redirect: "/welcome/index",
+        meta: {
+            icon: "ri:bar-chart-box-fill",
+            title: "管理首页",
+        },
+        children: [{
+            path: "/welcome/index",
+            name: "Welcome",
+            component: () => import('@/views/welcome'),
+            meta: {
+                icon: "ri:bar-chart-box-fill",
+                title: "首页",
+            },
+        }]
+    },
     {
         path: "/run",
         component: Layout,
@@ -248,7 +250,7 @@ export const asyncRoutes = [
 
 export const homePageRoutes = [
     {
-        path: "/homepage",
+        path: "/",
         name: "HomePage",
         redirect: '/homepage/home',
         component: homePageLayout,
