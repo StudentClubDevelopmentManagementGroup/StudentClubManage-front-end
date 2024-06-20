@@ -193,14 +193,15 @@ export default function useColumns() {
                 .then((data) => {
                     tableData.value = data.records;
                     pagination.total = parseInt(data.total_item);
-                    tableLoading.value = false; // 如果提前加载完成，则解除加载状态，否则等待请求超时
                     resolve(data)
                 })
                 .catch((error) => {
                     tableData.value = [];
                     pagination.total = 0;
-                    tableLoading.value = false;
                     reject(error)
+                })
+                .finally(() => {
+                    tableLoading.value = false;
                 })
         })
     }

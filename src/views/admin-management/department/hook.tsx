@@ -145,14 +145,15 @@ export function useDepartmentColumns() {
                         tmpData.value = tableData.value;
                     }
                     pagination.total = tmpData.value.length;
-                    tableLoading.value = false; // 如果提前加载完成，则解除加载状态，否则等待请求超时
                     resolve(data)
                 })
                 .catch((error) => {
                     tableData.value = [];
                     pagination.total = 0;
-                    tableLoading.value = false;
                     reject(error)
+                })
+                .finally(() => {
+                    tableLoading.value = false;
                 })
         })
     }
