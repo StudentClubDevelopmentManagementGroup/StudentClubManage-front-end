@@ -5,7 +5,7 @@ import useStore from "@/store";
 import { useRenderIcon } from "@/components/Icon/hooks";
 import { Delete } from "@element-plus/icons-vue";
 
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 
 const selected = ref("0");
 const richEditor = ref();
@@ -73,7 +73,8 @@ const clearText = () => {
               @click="clearText"
             >
               一键清空
-            </el-button></el-form-item
+            </el-button>
+            </el-form-item
           ><RichEditor
             ref="richEditor"
             :model-value="notice.content"

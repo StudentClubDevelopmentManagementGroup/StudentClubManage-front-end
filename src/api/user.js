@@ -15,6 +15,13 @@ export default {
       data: req
     })
   },
+  registCode(email) {
+    return request({
+      url: '/user/register/email/send_code',
+      method: 'post',
+      params: { email }
+    })
+  },
   emailLogin(req) {
     return request({
       url: '/user/login/email',

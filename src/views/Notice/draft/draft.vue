@@ -11,7 +11,7 @@ import { exportExcel } from "@/utils/export.ts";
 const { loadingConfig, openDialog, draftColumns } = useRole();
 const emit = defineEmits(["updateDraft"]);
 
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 const loading = ref(true);
 const dataList = ref([]);
 

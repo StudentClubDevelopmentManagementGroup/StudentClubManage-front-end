@@ -1,6 +1,6 @@
 import { message } from "@/utils/message";
-import { reactive, ref, h } from "vue";
-import type {  LoadingConfig } from "@pureadmin/table";
+import { reactive, ref, h, computed } from "vue";
+import type { LoadingConfig } from "@pureadmin/table";
 import type { TableColumns } from "@pureadmin/table";
 interface TableColumnList extends Array<TableColumns> { }
 import { deviceDetection } from "@pureadmin/utils";
@@ -8,6 +8,7 @@ import addForm from "./form.vue";
 import { addDialog } from "@/components/Dialog";
 import dutyApi from "@/api/duty";
 import { GetUserInfo } from '@/utils/auth'
+import useStore from "@/store";
 
 interface FormItemProps {
   number: string;
@@ -77,6 +78,7 @@ export function useRole() {
     }
   ];
 
+  const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
   /** 加载动画配置 */
   const loadingConfig = reactive<LoadingConfig>({
     text: "正在加载",
@@ -108,7 +110,7 @@ export function useRole() {
           date_time: row?.date_time ?? "",
           arranger_id: GetUserInfo().user_id ?? "",
           cleaner_id: row?.cleaner_id ?? "",
-          club_id: 1,
+          club_id: club_id.value,
           is_mixed: row?.is_mixed ?? 1,
         }
       },

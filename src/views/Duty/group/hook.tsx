@@ -1,5 +1,5 @@
 import { message } from "@/utils/message";
-import { reactive, ref, onMounted, h } from "vue";
+import { reactive, ref, computed, h } from "vue";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import type { TableColumns } from "@pureadmin/table";
 interface TableColumnList extends Array<TableColumns> { }
@@ -9,6 +9,7 @@ import addGroupForm from "./group-form.vue";
 import { addDialog } from "@/components/Dialog";
 import dutyApi from "@/api/duty";
 import { GetUserInfo } from '@/utils/auth'
+import useStore from "@/store";
 
 interface FormItemProps {
   group_name: string;
@@ -40,6 +41,7 @@ export type { FormItemProps, FormProps, GroupFormProps, GroupFormItemProps };
 
 export function useRole() {
   const formRef = ref();
+  const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
   const columns: TableColumnList = [
     {
       label: "序号",
@@ -99,7 +101,7 @@ export function useRole() {
           date_time: "",
           arranger_id: GetUserInfo().user_id ?? "",
           group_name: group_name ?? "",
-          club_id: 1,
+          club_id: club_id.value,
           is_mixed: false,
         }
       },
@@ -128,12 +130,12 @@ export function useRole() {
 
   function openAddDialog(group_name = "", isNowGroup = false) {
     addDialog({
-      title: isNowGroup?'新增成员':'新建分组',
+      title: isNowGroup ? '新增成员' : '新建分组',
       props: {
         formInline: {
           group_name: group_name ?? "",
           member_id: "",
-          club_id: 1,
+          club_id:  club_id.value,
         },
         isNowGroup: isNowGroup
       },

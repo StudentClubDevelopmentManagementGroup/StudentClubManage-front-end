@@ -18,7 +18,7 @@ const svg = `
 const total = ref(0)
 const loading = ref(true);
 const dataList = ref([]);
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 const query = ref({
   club_id: club_id.value,
   page_num: 1,

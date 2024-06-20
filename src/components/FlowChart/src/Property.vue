@@ -63,10 +63,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref,computed } from "vue";
 import Pagination from "@/components/Pagination";
 import seatApi from "@/api/seat";
 import { message } from "@/utils/message";
+import useStore from "@/store";
 
 const props = defineProps({
   nodeData: Object,
@@ -78,7 +79,7 @@ const props = defineProps({
 const page = ref(1);
 const size = ref(7);
 const total = ref(0);
-const club_id = ref(1);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 const memberData = ref([]);
 
 const getMemberNoSeatData = () => {

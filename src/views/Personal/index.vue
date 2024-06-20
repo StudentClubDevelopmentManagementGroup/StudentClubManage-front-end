@@ -7,7 +7,7 @@ import noticeApi from "@/api/announcement";
 const notice = ref({});
 const userInfo = computed(() => useStore.userStore.getUserInfo);
 const roles = computed(() => useStore.userStore.getRoles);
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 const roleArray = computed(() => {
   const roleMap = {
     is_student: "学生",

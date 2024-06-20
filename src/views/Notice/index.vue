@@ -10,7 +10,7 @@ import { Delete } from "@element-plus/icons-vue";
 import { message } from "@/utils/message";
 import textUtil from "@/utils/text.ts";
 
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 
 const selected = ref("0");
 const richEditor = ref();

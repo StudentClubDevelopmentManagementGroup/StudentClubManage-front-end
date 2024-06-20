@@ -12,7 +12,7 @@ import formatUtil from "@/utils/formatter";
 
 const { noticeColumns, loadingConfig, openDialog } = useRole();
 
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 
 const selectedTime = ref([
   formatUtil.formatDate3(new Date().getTime() - 30 * 24 * 60 * 60 * 1000),

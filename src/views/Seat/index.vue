@@ -22,7 +22,7 @@ import useStore from "@/store";
 import seatApi from "@/api/seat";
 import { EditPen, Plus, Download, Star } from "@element-plus/icons-vue";
 
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 const lf = ref(null);
 const graphData = ref(null);
 const dataVisible = ref<boolean>(false);

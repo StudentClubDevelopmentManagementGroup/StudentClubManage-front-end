@@ -67,7 +67,17 @@ const validateCode = (rule, value, callback) => {
   if (!value) {
     callback(new Error("验证码不能为空"));
   } else if (value.length !== 7) {
-    callback(new Error("验证码长度为4个字符"));
+    callback(new Error("验证码长度为7个字符"));
+  } else {
+    callback();
+  }
+};
+
+const validateCode2 = (rule, value, callback) => {
+  if (!value) {
+    callback(new Error("验证码不能为空"));
+  } else if (value.length !== 6) {
+    callback(new Error("验证码长度为6个字符"));
   } else {
     callback();
   }
@@ -90,8 +100,8 @@ const registRules = {
     { required: true, message: '邮箱不能为空', trigger: 'blur' },
     { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
   ],
-  code: [
-    { validator: validateCode, trigger: "blur" },
+  register_code: [
+    { validator: validateCode2, trigger: "blur" },
   ],
   pwd: [
     { validator: validatePassword, trigger: "blur" },

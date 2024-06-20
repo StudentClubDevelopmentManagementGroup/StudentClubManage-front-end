@@ -30,7 +30,7 @@ const department = computed(() => useStore.departmentStore.getOptions());
 const formRef = ref();
 const tableRef = ref();
 const selectedMember = ref([]);
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 const query = ref({
   pagenum: 1,
   size: 10,
