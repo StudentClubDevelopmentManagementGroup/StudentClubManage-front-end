@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia';
 import { reactive } from 'vue'
 import { getClub, setClub, removeClub } from '../utils/auth';
-import { message } from "@/utils/message";
-import { useRouter } from 'vue-router';
 import memberApi from "@/api/member"
+import baseApi from "@/api/base"
 import useStore from '@/store';
 
 export const useClubStore = defineStore('club', () => {
@@ -15,7 +14,12 @@ export const useClubStore = defineStore('club', () => {
         memberInfo: { user_id: "" },
         roleSuperAdmin: false,
         roleClubMember: false,
+        currentRole: "", // 当前角色分为 超级管理员、成员、负责人、一般用户
     })
+
+    function findOptionRole(option) {
+        return state.clubOptions.findIndex(item => item.club_id === option?.club_id);
+    }
 
     function isAvailable() {
         const roles = useStore.userStore.getRoles;
@@ -25,11 +29,19 @@ export const useClubStore = defineStore('club', () => {
     }
 
     function isOptionsExist(obj) {
-        return state.clubOptions.some(item => item.club_id === obj.club_id)
+        return state.clubOptions.some(item => item.club_id === obj?.club_id)
     }
 
     function isOptionsListEmpty() {
         return state.clubOptions.length === 0 || state.clubOptions.length === null;
+    }
+
+    const getCurrentRole = () => {
+        return state.currentRole
+    }
+
+    const setCurrentRole = (val) => {
+        state.currentRole = val;
     }
 
     const getRoleClubMember = () => {
@@ -57,26 +69,41 @@ export const useClubStore = defineStore('club', () => {
     }
 
     const getClubOptionsList = () => {
-        const router = useRouter()
-        state.memberInfo.user_id = useStore.userStore.getUserInfo.user_id
-        // 获取当前社团成员所属的所有社团列表
         return new Promise((resolve, reject) => {
-            memberApi.getClubList(state.memberInfo)
+            baseApi.getBaseInfo({
+                department_id: 0,
+                club_name: "",
+                page_num: 1,
+                page_size: 9999
+            })
                 .then((data) => {
-                    if (data === "" || data === "查无对象") {
-                        clearOptionsList();
-                        removeClub()
-                        if (!state.roleSuperAdmin) {
-                            message("用户未加入任何社团，如有疑问请联系管理员处理！", { type: "warning" });
-                        }
-                    } else {
-                        state.clubOptions = data;
-                    }
-
-                }).catch((error) => {
-                    console.warn(error.message)
+                    data.records.forEach(item => {
+                        if (item.is_deleted) return; // 社团已删除
+                        state.clubOptions.push({
+                            club_name: item.name,
+                            club_id: item.id,
+                            department_name: item.department_name,
+                            role: "超级管理员"
+                        })
+                        resolve(data)
+                    });
                 })
-        });
+                .catch((err) => { reject(err) })
+                .finally((data) => { reject(data) })
+        })
+    }
+
+    const getMyClubOptionList = () => {
+        // 获取自己所有所在社团的身份
+        return new Promise((resolve, reject) => {
+            memberApi.getMyClubList()
+                .then((data) => {
+                    state.clubOptions = data;
+                    resolve(data)
+                })
+                .catch((err) => { reject(err) })
+                .finally((data) => { reject(data) })
+        })
     }
 
     const getCurrentClub = () => {
@@ -108,9 +135,12 @@ export const useClubStore = defineStore('club', () => {
     }
 
     return {
+        findOptionRole,
         isAvailable,
         isOptionsExist,
         isOptionsListEmpty,
+        getCurrentRole,
+        setCurrentRole,
         getRoleClubMember,
         setRoleClubMember,
         getRoleSuperAdmin,
@@ -124,6 +154,7 @@ export const useClubStore = defineStore('club', () => {
         clearOptionsList,
         getClubOptions,
         getClubOptionsList,
+        getMyClubOptionList,
     }
 }, {
     persistent: true,

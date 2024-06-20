@@ -50,5 +50,13 @@ export default {
             method: 'post',
             params: req
         })
+    },
+    // 查询自己在所有社团的身份
+    getMyClubList(req) {
+        return request({
+            url: '/club/member/select_Myself_all_club_info',
+            method: 'post',
+            params: req
+        })
     }
 }
