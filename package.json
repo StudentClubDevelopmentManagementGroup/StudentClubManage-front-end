@@ -1,7 +1,7 @@
 {
-  "name": "clubs_manage",
+  "name": "基地管理系统",
   "private": true,
-  "version": "5.1.0",
+  "version": "2.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

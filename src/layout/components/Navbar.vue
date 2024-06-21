@@ -45,7 +45,7 @@ const logout = async () => {
     .logout()
     .then(() => {
       message("退出登陆成功", { type: "success" });
-      router.replace("/login");
+      router.replace("/homepage/home");
     })
     .catch((error) => {
       console.error(error.message);

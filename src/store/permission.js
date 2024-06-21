@@ -105,6 +105,10 @@ export const usePermissionStore = defineStore('permission', () => {
         return authedRoutes.value[0]
     })
 
+    const getAuthedRoutes = computed(() => {
+        return authedRoutes.value
+    })
+
     const getPermissionRoles = (payload) => {
         localStorage.setItem('role', payload.roleName)
         setRoles(payload)
@@ -117,6 +121,7 @@ export const usePermissionStore = defineStore('permission', () => {
         accessRoutes,
         routes,
         removeRoutes,
+        getAuthedRoutes,
         authedRoutes,
         setRoles,
         setAccessRoutes,

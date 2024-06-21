@@ -124,7 +124,7 @@ onMounted(() => {
                   line-clamp="1"
                 >
                   <a
-                    :href="constants.serverUrl + '#/homepage/list?club_name=' + row.name"
+                    :href="'#/homepage/list?club_name=' + row.name"
                     >{{ row.name }}</a
                   >
                 </el-text>

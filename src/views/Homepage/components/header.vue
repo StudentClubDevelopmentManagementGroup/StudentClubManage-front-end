@@ -23,7 +23,7 @@ const isShowManagementBtn = computed(
 
 const logout = async () => {
   await useStore.userStore.logout();
-  router.replace("/login");
+  router.replace("/homepage/home");
 };
 
 const handleSuperAdmin = () => {
@@ -34,7 +34,9 @@ const handleSuperAdmin = () => {
 };
 
 const handleClickBtn = () => {
-  router.push("/homepage/personal");
+  if (!useStore.userStore.getUserInfo) {
+    router.push("/login");
+  }
 };
 
 function openDialog(title) {
@@ -122,13 +124,14 @@ onMounted(() => {
 
           <el-divider direction="vertical" border-style="solid" />
 
-          <el-button
+          <!-- <el-button
+            v-if="userInfo.name"
             class="!pr-2 !pl-2"
             :icon="SwitchButton"
             type="primary"
             @click="logout"
             >注销</el-button
-          >
+          > -->
         </div>
       </div>
     </div>

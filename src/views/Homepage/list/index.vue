@@ -169,7 +169,6 @@ onMounted(() => {
                 >
                   <a
                     :href="
-                      constants.serverUrl +
                       '#/homepage/detail?announcementId=' +
                       row.announcement_id
                     "

@@ -354,18 +354,14 @@ router.beforeEach(async (to, from, next) => {
     }
 
     const hasGetUserInfo = userStore.getUserInfo
-    if (to.path === '/login') {
+    if (to.path === '/' || to.path === "/homepage/home") {
         next()
         return
     }
-    if (!hasGetUserInfo) {
+    else if (useStore.permissionStore.getAuthedRoutes.includes(to.path) && !hasGetUserInfo) {
         next('/login')
     } else {
         next()
-        // next({
-        //     path: '/login',
-        //     query: { redirect: to.fullPath }
-        // })
     }
 })
 
