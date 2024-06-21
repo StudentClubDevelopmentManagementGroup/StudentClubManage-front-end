@@ -89,7 +89,7 @@ watch(
       ],
       series: [
         {
-          name: "需求人数",
+          name: "用户人数",
           type: "bar",
           barWidth: 20,
           itemStyle: {
@@ -99,7 +99,7 @@ watch(
           data: props.requireData,
         },
         {
-          name: "提问数量",
+          name: "签到数量",
           type: "bar",
           barWidth: 20,
           itemStyle: {

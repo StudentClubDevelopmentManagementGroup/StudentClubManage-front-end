@@ -320,7 +320,6 @@ export default function useColumns() {
     // 添加数据
     // TODO: 预留添加数据
     const handleAdd = () => {
-        console.log("点击新增按钮")
         addTableData()
     }
 

@@ -39,13 +39,12 @@ defineExpose({ getRef });
         placeholder="请输入房间号"
       />
     </el-form-item>
-    <el-form-item label="打扫面积" prop="area">
+    <el-form-item label="打扫区域" prop="area">
       <el-input
         v-model="newFormInline.area"
         clearable
-        placeholder="请输入打扫面积"
-      >
-        <template #append> m² </template></el-input
+        placeholder="请输入打扫区域描述"
+      ></el-input
       >
     </el-form-item>
     <el-form-item label="打扫时间" prop="date_time">

@@ -41,9 +41,9 @@ export function useRole() {
       width: 120
     },
     {
-      label: "面积",
+      label: "打扫区域描述",
       prop: "area",
-      width: 100
+      width: 200
     },
     {
       label: "值日时间",

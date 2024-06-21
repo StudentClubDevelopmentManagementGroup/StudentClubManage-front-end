@@ -37,10 +37,9 @@ const getDepartment = async () => {
     .getAllDepartment()
     .then((data) => {
       department.value = data;
-      console.log(data);
     })
     .catch((e) => {
-      console.log(e.message);
+      console.error(e.message);
     });
 };
 const handleRegist = async () => {
@@ -64,7 +63,6 @@ const handleRegist = async () => {
 const repeatPasswordRule = [
   {
     validator: (rule, value, callback) => {
-      console.log(value);
       if (value === "") {
         callback(new Error("确认密码不能为空"));
       } else if (registForm.pwd !== value) {

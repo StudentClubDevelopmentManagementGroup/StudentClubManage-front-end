@@ -145,7 +145,6 @@ const onSubmit = () => {
       if (!formData.value.user_id) {
         formData.value.user_id = null;
       }
-      console.log(formData.value);
       props.lf.setProperties(id, { ...formData.value });
       props.lf.updateText(id, formData.value.name);
       emit("onClose");

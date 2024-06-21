@@ -65,7 +65,6 @@ export function useDialogForm() {
                 function chores() {
                     done(); // 关闭弹框
                 }
-                console.log("curData", curData)
                 FormRef.validate((valid: any) => {
                     if (valid) {
                         if (state === 1) {

@@ -100,7 +100,6 @@ const getAutoDuty = async () => {
   await dutyApi
     .getAutoDuty(club_id.value)
     .then((data) => {
-      console.log(data);
       isAutoDuty.value = data.isCirculation;
     })
     .catch((e) => {
@@ -139,8 +138,6 @@ const httpRequest = (image) => {
 };
 
 const beforeUpload = (file, row, index) => {
-  console.log(file);
-
   file.rowData = {
     club_id: row.club_id,
     date_time: row.date_time,

@@ -96,7 +96,6 @@ async function onRender() {
 
   //监听点击事件
   lf.value.on("node:click", ({ data }) => {
-    console.log("node:click", data);
     clickNode.value = data;
     dialogVisible.value = true;
   });

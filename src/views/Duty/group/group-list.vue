@@ -57,7 +57,6 @@ const getAutoDuty = async () => {
   await dutyApi
     .getAutoDuty(club_id.value)
     .then((data) => {
-      console.log(data);
       isAutoDuty.value = data.isCirculation;
     })
     .catch((e) => {

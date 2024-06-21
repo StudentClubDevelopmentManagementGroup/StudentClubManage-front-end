@@ -61,8 +61,6 @@ function openDialog(title) {
       if (state === 1) {
         useStore.permissionStore.getPermissionRoutes();
         useStore.permissionStore.getRoutes();
-        console.log(useStore.permissionStore.getFirstRoute);
-        
         router.push(useStore.permissionStore.getFirstRoute);
       } else {
         console.log("进入了其他");
