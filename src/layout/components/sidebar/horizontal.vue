@@ -7,7 +7,7 @@ import ClubSelection from "@/components/ClubSelection/index.vue";
 import { useRouter, useRoute } from "vue-router";
 import useStore from "@/store";
 import { useFullscreen } from "@vueuse/core";
-import avatar from "@/assets/avatar-default.png";
+import avatar from "@/assets/avatar-default.jpg";
 import Full from "@iconify-icons/ri/fullscreen-fill";
 import ExitFull from "@iconify-icons/ri/fullscreen-exit-fill";
 import Bell from "@iconify-icons/ep/bell";

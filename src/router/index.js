@@ -212,7 +212,7 @@ export const asyncRoutes = [
         }, {
             path: "/member/report",
             name: "MemberReport",
-            component: () => import('@/views/Introduce'),
+            component: () => import('@/views/member-report'),
             meta: {
                 title: "成果汇报",
             },

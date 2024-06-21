@@ -15,8 +15,8 @@ const route = useRoute();
       <el-backtop
         target=".cter .el-scrollbar__wrap"
         :visibility-height="100"
-        :right="300"
-        :bottom="350"
+        :right="150"
+        :bottom="150"
       >
         <backTop />
       </el-backtop>

@@ -5,7 +5,7 @@ import { useFullscreen } from "@vueuse/core";
 import Breadcrumb from "@/components/Breadcrumb/index.vue";
 import Search from "@/components/Search/index.vue";
 import ClubSelection from "@/components/ClubSelection/index.vue";
-import avatar from "@/assets/avatar-default.png";
+import avatar from "@/assets/avatar-default.jpg";
 import { message } from "@/utils/message";
 import useStore from "@/store";
 import Full from "@iconify-icons/ri/fullscreen-fill";

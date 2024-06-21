@@ -1,14 +1,14 @@
 import dayjs from "dayjs";
 import { readdir, stat } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, resolve } from "node:path";
+import path from "path-browserify";
 import { sum, formatBytes } from "@pureadmin/utils";
 import {
   name,
   version,
   engines,
   dependencies,
-  devDependencies
+  devDependencies,
 } from "../package.json";
 
 /** 启动`node`进程时所在工作目录的绝对路径 */
@@ -21,11 +21,11 @@ const root: string = process.cwd();
  */
 const pathResolve = (dir = ".", metaUrl = import.meta.url) => {
   // 当前文件目录的绝对路径
-  const currentFileDir = dirname(fileURLToPath(metaUrl));
+  const currentFileDir = path.dirname(fileURLToPath(metaUrl));
   // build 目录的绝对路径
-  const buildDir = resolve(currentFileDir, "build");
+  const buildDir = path.resolve(currentFileDir, "build");
   // 解析的绝对路径
-  const resolvedPath = resolve(currentFileDir, dir);
+  const resolvedPath = path.resolve(currentFileDir, dir);
   // 检查解析的绝对路径是否在 build 目录内
   if (resolvedPath.startsWith(buildDir)) {
     // 在 build 目录内，返回当前文件路径
@@ -38,13 +38,13 @@ const pathResolve = (dir = ".", metaUrl = import.meta.url) => {
 /** 设置别名 */
 const alias: Record<string, string> = {
   "@": pathResolve("../src"),
-  "@build": pathResolve()
+  "@build": pathResolve(),
 };
 
 /** 平台的名称、版本、运行所需的`node`和`pnpm`版本、依赖、最后构建时间的类型提示 */
 const __APP_INFO__ = {
   pkg: { name, version, engines, dependencies, devDependencies },
-  lastBuildTime: dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")
+  lastBuildTime: dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss"),
 };
 
 /** 处理环境变量 */
@@ -56,7 +56,7 @@ const warpperEnv = (envConf: Recordable): ViteEnv => {
     VITE_ROUTER_HISTORY: "",
     VITE_CDN: false,
     VITE_HIDE_HOME: "false",
-    VITE_COMPRESSION: "none"
+    VITE_COMPRESSION: "none",
   };
 
   for (const envName of Object.keys(envConf)) {
@@ -80,7 +80,7 @@ const warpperEnv = (envConf: Recordable): ViteEnv => {
 const fileListTotal: number[] = [];
 
 /** 获取指定文件夹中所有文件的总大小 */
-const getPackageSize = options => {
+const getPackageSize = (options) => {
   const { folder = "dist", callback, format = true } = options;
   readdir(folder, (err, files: string[]) => {
     if (err) throw err;
@@ -98,7 +98,7 @@ const getPackageSize = options => {
         } else if (stats.isDirectory()) {
           getPackageSize({
             folder: `${folder}/${item}/`,
-            callback: checkEnd
+            callback: checkEnd,
           });
         }
       });

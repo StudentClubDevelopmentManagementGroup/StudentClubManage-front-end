@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import useStore from "@/store";
-import avatar from "@/assets/avatar-default.png";
+import avatar from "@/assets/avatar-default.jpg";
 import noticeApi from "@/api/announcement";
 
 const notice = ref({});

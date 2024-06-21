@@ -154,7 +154,7 @@ const delGroupDuty = (row) => {
     <el-form-item label="姓名" prop="name">
       <el-input
         v-model="query.name"
-        placeholder="请输入值日生姓名"
+        placeholder="请输入小组成员姓名"
         clearable
         class="!w-[180px]"
       />
