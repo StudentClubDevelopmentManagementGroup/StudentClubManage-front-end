@@ -5,7 +5,6 @@ import baseApi from "@/api/base.js";
 import announcementApi from "@/api/announcement.js";
 
 import { IconifyIconOnline } from "@/components/Icon";
-import { list } from "postcss";
 
 const list1 = ref([]);
 const list2 = ref([]);
