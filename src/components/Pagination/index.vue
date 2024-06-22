@@ -54,7 +54,6 @@ const pageSize = computed({
     return props.limit;
   },
   set(val) {
-    console.log(2);
     emit("update:limit", val);
   },
 });

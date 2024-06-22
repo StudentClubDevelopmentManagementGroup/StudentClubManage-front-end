@@ -13,24 +13,8 @@ export const constantRoutes = [
             hiddenTab: true,
             title: "登录",
         }
-    }, {
-        path: "/",
-        component: Layout,
-        redirect: "/welcome",
-        meta: {
-            icon: "ri:bar-chart-box-fill",
-            title: "首页",
-        },
-        children: [{
-            path: "/welcome",
-            name: "Welcome",
-            component: () => import('@/views/welcome'),
-            meta: {
-                icon: "ri:bar-chart-box-fill",
-                title: "首页",
-            },
-        }]
-    }, {
+    },
+    {
         path: "/personal",
         component: Layout,
         redirect: "/personal/index",
@@ -82,6 +66,25 @@ export const constantRoutes = [
 ]
 
 export const asyncRoutes = [
+    {
+        path: "/welcome",
+        component: Layout,
+        redirect: "/welcome/index",
+        meta: {
+            icon: "ri:bar-chart-box-fill",
+            title: "首页",
+            hiddenTab: true,
+        },
+        children: [{
+            path: "/welcome/index",
+            name: "Welcome",
+            component: () => import('@/views/welcome'),
+            meta: {
+                icon: "ri:bar-chart-box-fill",
+                title: "首页",
+            },
+        }]
+    },
     {
         path: "/run",
         component: Layout,
@@ -209,7 +212,7 @@ export const asyncRoutes = [
         }, {
             path: "/member/report",
             name: "MemberReport",
-            component: () => import('@/views/Introduce'),
+            component: () => import('@/views/member-report'),
             meta: {
                 title: "成果汇报",
             },
@@ -248,7 +251,7 @@ export const asyncRoutes = [
 
 export const homePageRoutes = [
     {
-        path: "/homepage",
+        path: "/",
         name: "HomePage",
         redirect: '/homepage/home',
         component: homePageLayout,
@@ -351,18 +354,14 @@ router.beforeEach(async (to, from, next) => {
     }
 
     const hasGetUserInfo = userStore.getUserInfo
-    if (to.path === '/login') {
+    if (to.path === '/' || to.path === "/homepage/home") {
         next()
         return
     }
-    if (!hasGetUserInfo) {
+    else if (useStore.permissionStore.getAuthedRoutes.includes(to.path) && !hasGetUserInfo) {
         next('/login')
     } else {
         next()
-        // next({
-        //     path: '/login',
-        //     query: { redirect: to.fullPath }
-        // })
     }
 })
 

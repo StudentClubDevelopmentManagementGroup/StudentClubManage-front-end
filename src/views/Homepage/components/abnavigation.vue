@@ -11,7 +11,6 @@ const activeIndex = computed(() => useStore.navigationStore.getCurrentIndex());
 
 const removeOption = (val) => {
   useStore.navigationStore.deleteOption(val);
-  console.log("activeIndex", activeIndex.value);
   // if (currentIndex.value === tabName) {
   //   if (tabsOption.value && tabsOption.value.length) {
   //     useStore.tabStore.setCurrentIndex(

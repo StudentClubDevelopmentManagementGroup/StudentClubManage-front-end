@@ -3,15 +3,15 @@ import "@logicflow/core/dist/style/index.css";
 import "@logicflow/extension/lib/style/index.css";
 import { toMemberNodeData } from "@/components/FlowChart/src/adpter";
 import LogicFlow from "@logicflow/core";
-import { ref, unref, onMounted } from "vue";
+import { ref, unref, onMounted, computed } from "vue";
 import { MemberModel, MemberView } from "@/components/FlowChart/src/config";
 import { Snapshot, MiniMap, Menu } from "@logicflow/extension";
 import seatApi from "@/api/seat";
 import { Control, DataDialog } from "@/components/FlowChart";
 import SeatDescriptions from "./components/seat-descriptions";
-import { exportExcel } from "@/utils/export";
+import useStore from "@/store";
 
-const club_id = ref(1);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 const lf = ref(null);
 const graphData = ref(null);
 const dataVisible = ref<boolean>(false);
@@ -64,8 +64,8 @@ function catData() {
   dataVisible.value = true;
 }
 
-const exportData = () => {
-  exportExcel();
+const exportFile = () => {
+  lf.value.getSnapshot()
 };
 
 const closeDialog = () => {

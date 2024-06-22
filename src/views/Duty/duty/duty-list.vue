@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, h, toRaw, reactive, onMounted, computed } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import useStore from "@/store";
 import { useRenderIcon } from "@/components/Icon/hooks";
 import { useRole } from "./hook";
@@ -10,16 +10,18 @@ import type { PaginationProps } from "@pureadmin/table";
 import { message } from "@/utils/message";
 import { GetToken } from "@/utils/auth";
 
+import constants from "@/config";
 import axios from "axios";
 import { CirclePlus, Delete, Download, Refresh } from "@element-plus/icons-vue";
 
 const { columns, loadingConfig, openDialog } = useRole();
 
+const fileList = ref([]);
 const isAutoDuty = ref(false);
 const loading = ref(true);
 const dataList = ref([]);
 const formRef = ref();
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 const query = ref({
   club_id: club_id.value,
   number: "",
@@ -36,7 +38,7 @@ const pagination = reactive<PaginationProps>({
 });
 
 const exportFile = () => {
-  exportExcel(columns, dataList, "duty-list");
+  exportExcel(columns, dataList.value, "duty-list");
 };
 
 const getDutyData = async () => {
@@ -67,6 +69,7 @@ function handleCurrentChange(val: number) {
 
 onMounted(() => {
   getDutyData();
+  getAutoDuty();
 });
 
 const resetForm = (formEl) => {
@@ -75,7 +78,7 @@ const resetForm = (formEl) => {
   getDutyData();
 };
 
-const delDuty = (row) => {
+const delDuty = (row, index) => {
   const req = {
     date_time: row.date_time,
     cleaner_id: row.cleaner_id,
@@ -84,7 +87,8 @@ const delDuty = (row) => {
   dutyApi
     .delDuty(req)
     .then((data) => {
-      getDutyData();
+      dataList.value.splice(index, 1);
+      pagination.total = pagination.total - 1;
       message("删除成功", { type: "success" });
     })
     .catch((e) => {
@@ -96,7 +100,6 @@ const getAutoDuty = async () => {
   await dutyApi
     .getAutoDuty(club_id.value)
     .then((data) => {
-      console.log(data);
       isAutoDuty.value = data.isCirculation;
     })
     .catch((e) => {
@@ -106,47 +109,54 @@ const getAutoDuty = async () => {
 
 const httpRequest = (image) => {
   const { file } = image;
-  const { date_time, member_id, club_id } = file.rowData;
+  const { date_time, member_id, club_id ,index} = file.rowData;
   delete file.rowData;
   const formData = new FormData();
-  formData.append("file", file);
   formData.append("date_time", date_time);
   formData.append("member_id", member_id);
   formData.append("club_id", club_id);
+  fileList.value.forEach((item) => {
+    formData.append("file", item.raw);
+  });
   axios({
     method: "POST",
-    url: "http://10.70.107.20:3333/club/duty/report_result",
+    url: constants.baseUrl + "/club/duty/report_results",
     data: formData,
     headers: {
       "Content-Type": "multipart/form-data",
       "Guet-S-C-M-S-Token": GetToken(),
     },
+  }).then((res) => {
+    const data = res.data;
+    if (data.status_code / 100 === 2) {
+      dataList.value[index].image_file = data.data
+      // message("上传成功", { type: "success" });
+    } else {
+      message("上传失败", { type: "error" });
+    }
   });
 };
 
-const beforeUpload = (file, row) => {
-  console.log(file);
-
+const beforeUpload = (file, row, index) => {
   file.rowData = {
     club_id: row.club_id,
     date_time: row.date_time,
     member_id: row.cleaner_id,
+    index: index,
   };
   return true;
 };
 
-const delGroupDuty = (row) => {
-  console.log(row);
-
+const setAutoDuty = async () => {
   const req = {
-    group_name: row.group_name,
-    duty_time: row.date_time,
     club_id: club_id.value,
+    circulation: isAutoDuty.value ? 0 : 1,
   };
-  dutyApi
-    .delGroupDuty(req)
+  await dutyApi
+    .setAutoDuty(req)
     .then((data) => {
-      message("删除成功", { type: "success" });
+      message("修改成功", { type: "success" });
+      isAutoDuty.value = !isAutoDuty.value;
     })
     .catch((e) => {
       console.error(e.message);
@@ -172,13 +182,14 @@ const delGroupDuty = (row) => {
     <el-form-item label="姓名" prop="name">
       <el-input
         v-model="query.name"
-        placeholder="请输入小组成员姓名"
+        placeholder="请输入值日生姓名"
         clearable
         class="!w-[180px]"
       />
     </el-form-item>
     <el-form-item>
       <el-button
+      v-ripple
         type="primary"
         :icon="useRenderIcon('ri:search-line')"
         :loading="loading"
@@ -186,26 +197,24 @@ const delGroupDuty = (row) => {
       >
         搜索
       </el-button>
-      <el-button :icon="Refresh" @click="resetForm(formRef)"> 重置 </el-button>
+      <el-button :icon="Refresh" @click="resetForm(formRef)" v-ripple> 重置 </el-button>
     </el-form-item>
   </el-form>
   <PureTableBar :columns="columns" @refresh="getDutyData">
     <template #left>
-      <el-button type="primary" :icon="CirclePlus" @click="openDialog()"
+      <el-button type="primary" :icon="CirclePlus" @click="openDialog()" v-ripple
         >新增</el-button
       >
-      <el-popconfirm title="是否确认删除?" @confirm="">
-        <template #reference>
-          <el-button type="danger" :icon="Delete">批量删除</el-button>
-        </template>
-      </el-popconfirm>
     </template>
     <template #right>
-      <el-button type="primary" plain>{{
-        isAutoDuty ? "自动安排值日" : "非自动安排值日"
-      }}</el-button>
-
-      <el-button type="primary" @click="exportFile" :icon="Download">
+      <el-popconfirm title="是否确认修改自动值日?" @confirm="setAutoDuty()">
+        <template #reference>
+          <el-button type="primary" plain v-ripple>{{
+            isAutoDuty ? "自动安排值日" : "非自动安排值日"
+          }}</el-button></template
+        >
+      </el-popconfirm>
+      <el-button type="primary" @click="exportFile" :icon="Download" v-ripple>
         导出
       </el-button>
     </template>
@@ -244,28 +253,22 @@ const delGroupDuty = (row) => {
           />
           <el-upload
             v-else
+            v-model:file-list="fileList"
             :http-request="httpRequest"
             accept="image/*"
             multiple
             :show-file-list="false"
             list-type="picture-card"
-            :before-upload="(file) => beforeUpload(file, row)"
+            :before-upload="(file) => beforeUpload(file, row, index)"
           >
             <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
         </template>
-        <template #operation="{ row }">
-          <!-- <el-popconfirm
-            title="是否确认清空该小组值日?"
-            @confirm="delGroupDuty(row)"
-          >
-            <template #reference>
-              <el-button type="danger" plain>清空值日</el-button>
-            </template>
-          </el-popconfirm> -->
-          <el-popconfirm title="是否确认删除?" @confirm="delDuty(row)">
+        <template #operation="{ row, index }">
+          <el-popconfirm title="是否确认删除?" @confirm="delDuty(row, index)">
             <template #reference>
               <el-button
+              v-ripple
                 class="reset-margin"
                 type="danger"
                 :icon="Delete"

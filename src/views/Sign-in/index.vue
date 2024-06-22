@@ -48,7 +48,6 @@ const handleSelectionChange = (val) => {
 };
 
 onMounted(() => {
-  console.log(selectValue.value === '签到详情');
   onLoading();
   fetchTableData();
 });

@@ -16,21 +16,27 @@ const formRef = ref();
 const userInfo = computed(() => useStore.userStore.getUserInfo);
 const roleSuperAdmin = computed(() => useStore.clubStore.getRoleSuperAdmin());
 const isShowManagementBtn = computed(
-  () => useStore.clubStore.getRoleSuperAdmin() || useStore.clubStore.getRoleClubMember()
+  () =>
+    useStore.clubStore.getRoleSuperAdmin() ||
+    useStore.clubStore.getRoleClubMember()
 );
 
 const logout = async () => {
   await useStore.userStore.logout();
-  router.replace("/login");
+  router.replace("/homepage/home");
 };
 
 const handleSuperAdmin = () => {
-  useStore.clubStore.setCurrentRole("超级管理员")
-  router.push("/welcome");
+  useStore.clubStore.setCurrentRole("超级管理员");
+  useStore.permissionStore.getPermissionRoutes();
+  useStore.permissionStore.getRoutes();
+  router.push(useStore.permissionStore.getFirstRoute);
 };
 
 const handleClickBtn = () => {
-  router.push("/homepage/personal");
+  if (!useStore.userStore.getUserInfo) {
+    router.push("/login");
+  }
 };
 
 function openDialog(title) {
@@ -55,7 +61,9 @@ function openDialog(title) {
       }
       // 表单规则校验通过
       if (state === 1) {
-        router.push("/welcome");
+        useStore.permissionStore.getPermissionRoutes();
+        useStore.permissionStore.getRoutes();
+        router.push(useStore.permissionStore.getFirstRoute);
       } else {
         console.log("进入了其他");
       }
@@ -86,7 +94,11 @@ onMounted(() => {
             【进入管理端】
           </el-button>
 
-          <el-divider v-if="roleSuperAdmin" direction="vertical" border-style="solid" />
+          <el-divider
+            v-if="roleSuperAdmin"
+            direction="vertical"
+            border-style="solid"
+          />
 
           <el-button
             class="!pr-2 !pl-2"
@@ -112,13 +124,14 @@ onMounted(() => {
 
           <el-divider direction="vertical" border-style="solid" />
 
-          <el-button
+          <!-- <el-button
+            v-if="userInfo.name"
             class="!pr-2 !pl-2"
             :icon="SwitchButton"
             type="primary"
             @click="logout"
             >注销</el-button
-          >
+          > -->
         </div>
       </div>
     </div>
@@ -126,7 +139,9 @@ onMounted(() => {
       v-if="!route.fullPath.includes('/homepage/personal')"
       class="down-wrapper container__mwidth"
     >
-      <div class="container-width flex items-center justify-end m-auto h-[92px]">
+      <div
+        class="container-width flex items-center justify-end m-auto h-[92px]"
+      >
         <search class="!w-[636px]" />
       </div>
     </div>

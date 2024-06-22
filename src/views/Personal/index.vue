@@ -1,13 +1,13 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import useStore from "@/store";
-import avatar from "@/assets/avatar-default.png";
+import avatar from "@/assets/avatar-default.jpg";
 import noticeApi from "@/api/announcement";
 
 const notice = ref({});
 const userInfo = computed(() => useStore.userStore.getUserInfo);
 const roles = computed(() => useStore.userStore.getRoles);
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 const roleArray = computed(() => {
   const roleMap = {
     is_student: "学生",
@@ -36,7 +36,7 @@ onMounted(() => {
 <template>
   <el-row v-if="userInfo" :gutter="20">
     <el-col :span="10">
-      <el-card class="py-4 ml-4" shadow="hover">
+      <el-card class="p-4 ml-4" shadow="hover">
         <div
           style="padding-left: 20px; padding-right: 20px"
           class="user-card-body"
@@ -91,20 +91,23 @@ onMounted(() => {
     </el-col>
     <el-col :span="14">
       <el-card class="p-4 mr-4" shadow="hover">
-        最新公告：
-        <div class="text-center">
-          <h2>{{ notice.title }}</h2>
+        <el-text type="danger" size="large">最新公告：</el-text>
+        <div v-if="!notice">
+          <div class="text-center">
+            <h2>{{ notice.title }}</h2>
+          </div>
+          <br />
+          <div>
+            <span class="name">社团：{{ notice.club_name }}</span>
+            &nbsp; &nbsp; &nbsp;
+            <span class="name">发布时间：{{ notice.publish_time }}</span>
+            &nbsp; &nbsp; &nbsp;
+            <span class="name">作者：{{ notice.author_name }}</span>
+          </div>
+          <br />
+          <div v-html="notice.content"></div>
         </div>
-        <br />
-        <div>
-          <span class="name">社团：{{  notice.club_name }}</span>
-          &nbsp; &nbsp; &nbsp;
-          <span class="name">发布时间：{{ notice.publish_time }}</span>
-          &nbsp; &nbsp; &nbsp;
-          <span class="name">作者：{{  notice.author_name }}</span>
-        </div>
-        <br />
-        <div v-html="notice.content"></div>
+        <el-empty v-else description="无最新公告" />
       </el-card>
     </el-col>
   </el-row>

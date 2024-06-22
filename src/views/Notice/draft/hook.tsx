@@ -80,7 +80,7 @@ export function useRole() {
       .getDraftContent(draftId)
       .then((data) => {
         addDialog({
-          title: "查看草稿公告详情",
+          title: title,
           props: {
             formInline: {
               draft_id: data.draft_id ?? "",

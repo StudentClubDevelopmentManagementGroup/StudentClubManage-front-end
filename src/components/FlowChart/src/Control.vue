@@ -70,8 +70,6 @@ const onControl = (item, key) => {
         domControl.zoom(true);
       }
       if (key === i) {
-        console.log(v);
-        
         domControl[v]();
       }
     });

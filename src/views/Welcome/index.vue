@@ -1,9 +1,9 @@
 <script setup>
 import { chartData, barChartData } from "./data";
 import ReCol from "@/components/ReCol";
-import lineChart from "./line.vue";
-import barChart from "./bar.vue";
-import roundChart from "./round.vue";
+import lineChart from "./components/line.vue";
+import barChart from "./components/bar.vue";
+import roundChart from "./components/round.vue";
 </script>
 
 <template>

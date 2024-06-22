@@ -54,7 +54,6 @@ const handleClick = (row) => {
 onMounted(() => {
   onLoading();
   fetchTableData();
-  useStore.departmentStore.getOptionsList();
 });
 </script>
 

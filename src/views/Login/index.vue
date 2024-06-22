@@ -128,7 +128,7 @@ watch(checked, bool => {
 
           <el-form-item>
             <div class="w-full h-[20px] flex justify-between items-center">
-              <el-checkbox v-model="checked">
+              <!-- <el-checkbox v-model="checked">
                 <span class="flex">
                   7天免登录
                   <el-tooltip
@@ -139,7 +139,7 @@ watch(checked, bool => {
                     <IconifyIconOffline :icon="Info" width="14" />
                   </el-tooltip>
                 </span>
-              </el-checkbox>
+              </el-checkbox> -->
               <el-button link @click="useStore.userStore.setCurrentPage(1)">
                 免费注册
               </el-button>
@@ -173,7 +173,7 @@ watch(checked, bool => {
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
                 />
               </span>
-              <span>
+              <!-- <span>
                 <IconifyIconOnline
                   icon="ri:wechat-fill"
                   width="20"
@@ -185,7 +185,7 @@ watch(checked, bool => {
                   width="20"
                   class="cursor-pointer text-gray-500 hover:text-blue-400"
                 />
-              </span>
+              </span> -->
             </div>
           </el-form-item>
         </el-form>

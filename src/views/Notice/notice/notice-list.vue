@@ -12,7 +12,7 @@ import formatUtil from "@/utils/formatter";
 
 const { noticeColumns, loadingConfig, openDialog } = useRole();
 
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 
 const selectedTime = ref([
   formatUtil.formatDate3(new Date().getTime() - 30 * 24 * 60 * 60 * 1000),
@@ -39,7 +39,7 @@ const pagination = reactive<PaginationProps>({
 });
 
 const exportFile = () => {
-  exportExcel(noticeColumns, dataList, "notice-list");
+  exportExcel(noticeColumns, dataList.value, "notice-list");
 };
 
 const getNoticeData = async () => {
@@ -148,10 +148,11 @@ const resetForm = (formEl) => {
         :icon="useRenderIcon('ri:search-line')"
         :loading="loading"
         @click="getNoticeData"
+        v-ripple
       >
         搜索
       </el-button>
-      <el-button :icon="Refresh" @click="resetForm(formRef)"> 重置 </el-button>
+      <el-button :icon="Refresh" @click="resetForm(formRef)" v-ripple> 重置 </el-button>
     </el-form-item>
   </el-form>
   <PureTableBar
@@ -160,7 +161,7 @@ const resetForm = (formEl) => {
     title="公告表"
   >
     <template #right>
-      <el-button type="primary" @click="exportFile" :icon="Download">
+      <el-button type="primary" @click="exportFile" :icon="Download" v-ripple>
         导出
       </el-button>
     </template>
@@ -191,7 +192,8 @@ const resetForm = (formEl) => {
             class="reset-margin"
             type="primary"
             :size="size"
-            @click="openDialog('查看详情', row.announcement_id)"
+            @click="openDialog('查看公告详情', row.announcement_id)"
+            v-ripple
           >
             查看详情
           </el-button>
@@ -207,6 +209,7 @@ const resetForm = (formEl) => {
               placement: 'top',
             }"
             @click="noticeToDraft(row.announcement_id)"
+            v-ripple
           >
             移入草稿箱
           </el-button>
@@ -215,7 +218,7 @@ const resetForm = (formEl) => {
             @confirm="delNotice(row.announcement_id)"
           >
             <template #reference>
-              <el-button class="reset-margin" type="danger" :size="size">
+              <el-button class="reset-margin" type="danger" :size="size" v-ripple>
                 删除
               </el-button>
             </template>

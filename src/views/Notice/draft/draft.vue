@@ -11,7 +11,7 @@ import { exportExcel } from "@/utils/export.ts";
 const { loadingConfig, openDialog, draftColumns } = useRole();
 const emit = defineEmits(["updateDraft"]);
 
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 const loading = ref(true);
 const dataList = ref([]);
 
@@ -23,7 +23,7 @@ const pagination = reactive<PaginationProps>({
 });
 
 const exportFile = () => {
-  exportExcel(draftColumns, dataList, "notice-list");
+  exportExcel(draftColumns, dataList.value, "draft-list");
 };
 
 const getAllDraft = async () => {
@@ -45,15 +45,6 @@ const getAllDraft = async () => {
 onMounted(() => {
   getAllDraft();
 });
-
-const noticeToDraft = (announcementId) => {
-  noticeApi
-    .noticeToDraft(announcementId)
-    .then(() => {})
-    .catch((e) => {
-      console.error(e.message);
-    });
-};
 
 const delDraft = (draftId) => {
   noticeApi
@@ -89,12 +80,12 @@ const updateDraft = (draftId) => {
     <template #right>
       <el-popconfirm title="是否确认清空草稿箱?" @confirm="delAllDraft()">
         <template #reference>
-          <el-button class="reset-margin" type="danger" :icon="Delete">
+          <el-button class="reset-margin" type="danger" :icon="Delete" v-ripple>
             一键清空
           </el-button>
         </template>
       </el-popconfirm>
-      <el-button type="primary" @click="exportFile" :icon="Download">
+      <el-button type="primary" @click="exportFile" :icon="Download" v-ripple>
         导出
       </el-button>
     </template>
@@ -125,11 +116,13 @@ const updateDraft = (draftId) => {
             class="reset-margin"
             type="primary"
             :size="size"
-            @click="openDialog('查看详情', row.draft_id)"
+            @click="openDialog('查看草稿公告详情', row.draft_id)"
+            v-ripple
           >
             查看详情
           </el-button>
           <el-button
+          v-ripple
             class="reset-margin"
             type="primary"
             plain
@@ -143,7 +136,7 @@ const updateDraft = (draftId) => {
             @confirm="delDraft(row.draft_id)"
           >
             <template #reference>
-              <el-button class="reset-margin" type="danger" :size="size">
+              <el-button class="reset-margin" type="danger" :size="size" v-ripple>
                 删除
               </el-button>
             </template>

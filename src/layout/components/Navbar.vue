@@ -5,7 +5,7 @@ import { useFullscreen } from "@vueuse/core";
 import Breadcrumb from "@/components/Breadcrumb/index.vue";
 import Search from "@/components/Search/index.vue";
 import ClubSelection from "@/components/ClubSelection/index.vue";
-import avatar from "@/assets/avatar-default.png";
+import avatar from "@/assets/avatar-default.jpg";
 import { message } from "@/utils/message";
 import useStore from "@/store";
 import Full from "@iconify-icons/ri/fullscreen-fill";
@@ -45,7 +45,7 @@ const logout = async () => {
     .logout()
     .then(() => {
       message("退出登陆成功", { type: "success" });
-      router.replace("/login");
+      router.replace("/homepage/home");
     })
     .catch((error) => {
       console.error(error.message);
@@ -101,7 +101,7 @@ watch(
         </span>
         <template #dropdown>
           <el-dropdown-menu class="user-dropdown">
-            <router-link to="/homepage">
+            <router-link to="/">
               <el-dropdown-item
                 ><IconifyIconOffline
                   :icon="Base"

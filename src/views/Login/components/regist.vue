@@ -5,6 +5,7 @@ import useStore from "@/store";
 import departmentApi from "@/api/department";
 import userApi from "@/api/user";
 import { message } from "@/utils/message";
+import { useVerifyCode } from "../utils/verifyCode";
 
 import Lock from "@iconify-icons/ri/lock-fill";
 import User from "@iconify-icons/ri/user-3-fill";
@@ -13,6 +14,7 @@ import School from "@iconify-icons/ri/school-fill";
 import Mail from "@iconify-icons/ri/mail-fill";
 import Code from "@iconify-icons/ri/shield-keyhole-line";
 import Phone from "@iconify-icons/ri/phone-fill";
+const { isDisabled, text } = useVerifyCode();
 
 const registFormRef = ref();
 const loading = ref(false);
@@ -24,6 +26,7 @@ const registForm = reactive({
   tel: "",
   pwd: "",
   newPwd: "",
+  register_code: "",
   role: "student",
 });
 
@@ -34,10 +37,9 @@ const getDepartment = async () => {
     .getAllDepartment()
     .then((data) => {
       department.value = data;
-      console.log(data);
     })
     .catch((e) => {
-      console.log(e.message);
+      console.error(e.message);
     });
 };
 const handleRegist = async () => {
@@ -61,7 +63,6 @@ const handleRegist = async () => {
 const repeatPasswordRule = [
   {
     validator: (rule, value, callback) => {
-      console.log(value);
       if (value === "") {
         callback(new Error("确认密码不能为空"));
       } else if (registForm.pwd !== value) {
@@ -78,12 +79,16 @@ const onBack = () => {
   useStore.userStore.setCurrentPage(0);
 };
 getDepartment();
+
+const getCode = () => {
+  useVerifyCode().start(registFormRef.value, "mail");
+  userApi.registCode(registForm.mail).then(() => {
+    message("验证码获取成功", { type: "success" });
+  });
+};
 </script>
 
 <template>
-  <el-divider class="!mb-6">
-    <p class="text-gray-500 text-lg">注册</p>
-  </el-divider>
   <el-form
     :rules="registRules"
     ref="registFormRef"
@@ -145,6 +150,18 @@ getDepartment();
       </el-select>
     </el-form-item>
 
+    <el-form-item prop="tel">
+      <el-input placeholder="请输入电话号码" v-model="registForm.tel" clearable>
+        <template #prefix>
+          <IconifyIconOffline
+            :icon="Phone"
+            width="14"
+            class="cursor-pointer text-gray-500 hover:text-blue-400"
+          />
+        </template>
+      </el-input>
+    </el-form-item>
+
     <el-form-item prop="mail">
       <el-input placeholder="请输入邮箱" v-model="registForm.mail" clearable>
         <template #prefix>
@@ -157,13 +174,9 @@ getDepartment();
       </el-input>
     </el-form-item>
 
-    <el-form-item prop="tel">
-      <!-- <div class="w-full flex justify-between">
-        <el-input
-          placeholder="请输入验证码"
-          v-model="registForm.code"
-          clearable
-        >
+    <el-form-item prop="register_code">
+      <div class="w-full flex justify-between">
+        <el-input placeholder="请输入验证码" v-model="registForm.register_code" clearable>
           <template #prefix>
             <IconifyIconOffline
               :icon="Code"
@@ -172,17 +185,10 @@ getDepartment();
             />
           </template>
         </el-input>
-        <el-button disabled="" class="ml-2" @click=""> 获取验证码 </el-button>
-      </div> -->
-      <el-input placeholder="请输入电话号码" v-model="registForm.tel" clearable>
-        <template #prefix>
-          <IconifyIconOffline
-            :icon="Phone"
-            width="14"
-            class="cursor-pointer text-gray-500 hover:text-blue-400"
-          />
-        </template>
-      </el-input>
+        <el-button :disabled="isDisabled" class="ml-2" @click="getCode()"
+          >{{ text.length > 0 ? text : "获取验证码" }}
+        </el-button>
+      </div>
     </el-form-item>
 
     <el-form-item prop="pwd">

@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 import userApi from '@/api/user'
 import { GetToken, SetToken, RemoveToken, GetUserInfo, RemoveUserInfo, SetUserInfo, RemoveRoles, SetRoles, GetRoles } from '@/utils/auth'
 import { message } from "@/utils/message";
+import { usePermissionStore } from "@/store/permission"
+import { useTabStore } from "@/store/tab"
 
 export const useUserStore = defineStore('user', () => {
 
@@ -11,7 +13,6 @@ export const useUserStore = defineStore('user', () => {
     token: GetToken(),
     userInfo: GetUserInfo(),
     roles: GetRoles(),
-    clubId: 1,
     isRemembered: true
   })
 
@@ -25,13 +26,8 @@ export const useUserStore = defineStore('user', () => {
 
   const getName = computed(() => state.userInfo.name);
 
-  const getClubId = computed(() => state.clubId);
-
   const getIsRemembered = computed(() => state.isRemembered);
 
-  const setClubId = (value) => {
-    state.clubId = value;
-  }
 
   const setCurrentPage = (value) => {
     state.currentPage = value;
@@ -74,6 +70,8 @@ export const useUserStore = defineStore('user', () => {
           state.userInfo = ""
           state.roles = []
           clearFormat()
+          usePermissionStore().removeRoutes()
+          useTabStore().clearTab()
           resolve()
         })
         .catch((error) => {
@@ -144,7 +142,6 @@ export const useUserStore = defineStore('user', () => {
   return {
     resetState,
     setCurrentPage,
-    setClubId,
     setIsRemembered,
     logout,
     login,
@@ -155,7 +152,6 @@ export const useUserStore = defineStore('user', () => {
     getUserInfo,
     getRoles,
     getName,
-    getClubId,
     getIsRemembered,
     clearFormat
   }

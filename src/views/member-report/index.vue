@@ -37,12 +37,12 @@ const clearText = () => {
       <el-tabs v-model="selected">
         <el-tab-pane name="0">
           <template #label>
-            <span>编辑年终汇报</span>
+            <span>编辑成果汇报</span>
           </template>
         </el-tab-pane>
         <el-tab-pane name="1">
           <template #label>
-            <span>所有年终汇报</span>
+            <span>所有成果汇报</span>
           </template>
         </el-tab-pane>
       </el-tabs>
@@ -54,7 +54,7 @@ const clearText = () => {
           <el-form-item>
             <el-input
               v-model="notice.title"
-              placeholder="请输入年终汇报标题"
+              placeholder="请输入成果汇报标题"
               clearable
               show-word-limit
               maxlength="30"
@@ -72,14 +72,14 @@ const clearText = () => {
           ><RichEditor
             ref="richEditor"
             :model-value="notice.content"
-            placeholder="请输入年终汇报正文..."
+            placeholder="请输入成果汇报正文..."
           ></RichEditor>
           <div class="mt-4 flex justify-center">
             <el-button
               type="primary"
               :icon="useRenderIcon('mingcute:horn-fill')"
             >
-              发布年终汇报
+              发布成果汇报
             </el-button>
           </div>
         </el-form>

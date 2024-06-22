@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { ref, h, toRaw, reactive, onMounted, computed } from "vue";
+import { ref, computed } from "vue";
 import RichEditor from "@/components/Editor/richEditor.vue";
 import useStore from "@/store";
-import noticeApi from "@/api/announcement";
 import { useRenderIcon } from "@/components/Icon/hooks";
 import { Delete } from "@element-plus/icons-vue";
-import { message } from "@/utils/message";
-import textUtil from "@/utils/text.ts";
-import formatUtil from "@/utils/formatter";
 
-const club_id = computed(() => useStore.userStore.getClubId);
+const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
 
 const selected = ref("0");
 const richEditor = ref();
@@ -77,7 +73,8 @@ const clearText = () => {
               @click="clearText"
             >
               一键清空
-            </el-button></el-form-item
+            </el-button>
+            </el-form-item
           ><RichEditor
             ref="richEditor"
             :model-value="notice.content"
@@ -96,5 +93,3 @@ const clearText = () => {
     </el-card>
   </div>
 </template>
-
-<style lang="scss" scoped></style>

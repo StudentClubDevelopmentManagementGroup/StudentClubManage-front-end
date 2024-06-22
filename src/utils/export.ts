@@ -3,7 +3,6 @@ import { message } from "@/utils/message";
 import formatUtil from "@/utils/formatter";
 
 const exportExcel = (columns, dataList, name: String) => {
-  console.log(name)
   const res = dataList.map((item) => {
     const arr = [];
     columns.forEach((column) => {

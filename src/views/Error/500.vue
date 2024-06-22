@@ -14,7 +14,6 @@ const router = useRouter();
     <noServer />
     <div class="ml-12">
       <p
-        v-motion
         class="font-medium text-4xl mb-4 dark:text-white"
         :initial="{
           opacity: 0,
@@ -31,7 +30,6 @@ const router = useRouter();
         500
       </p>
       <p
-        v-motion
         class="mb-4 text-gray-500"
         :initial="{
           opacity: 0,
@@ -48,7 +46,6 @@ const router = useRouter();
         抱歉，服务器出错了
       </p>
       <el-button
-        v-motion
         type="primary"
         :initial="{
           opacity: 0,

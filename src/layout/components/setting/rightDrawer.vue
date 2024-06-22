@@ -41,7 +41,7 @@ onClickOutside(target, (event: any) => {
 
 const onReset = async () => {
   await useStore.userStore.logout();
-  router.replace("/login");
+  router.replace("/homepage/home");
 };
 </script>
 

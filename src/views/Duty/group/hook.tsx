@@ -1,5 +1,5 @@
 import { message } from "@/utils/message";
-import { reactive, ref, onMounted, h } from "vue";
+import { reactive, ref, computed, h } from "vue";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import type { TableColumns } from "@pureadmin/table";
 interface TableColumnList extends Array<TableColumns> { }
@@ -9,6 +9,7 @@ import addGroupForm from "./group-form.vue";
 import { addDialog } from "@/components/Dialog";
 import dutyApi from "@/api/duty";
 import { GetUserInfo } from '@/utils/auth'
+import useStore from "@/store";
 
 interface FormItemProps {
   group_name: string;
@@ -39,20 +40,8 @@ interface GroupFormProps {
 export type { FormItemProps, FormProps, GroupFormProps, GroupFormItemProps };
 
 export function useRole() {
-  const form = reactive({
-    name: "",
-    department_id: "",
-  });
-  const dataList = ref([]);
-  const loading = ref(true);
   const formRef = ref();
-  const pagination = reactive<PaginationProps>({
-    total: 0,
-    pageSize: 10,
-    currentPage: 1,
-    background: true,
-    align: "center",
-  });
+  const club_id = computed(() => useStore.clubStore.getCurrentClub().club_id);
   const columns: TableColumnList = [
     {
       label: "序号",
@@ -102,38 +91,6 @@ export function useRole() {
       `
   });
 
-  function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
-  }
-
-  function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
-  }
-
-  function handleOffline(row) {
-    message(`${row.username}已被强制下线`, { type: "success" });
-    onSearch();
-  }
-
-  /** 取消选择 */
-  async function onSearch() {
-    loading.value = true;
-
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
-  }
-
-  const resetForm = formEl => {
-    if (!formEl) return;
-    formEl.resetFields();
-    onSearch();
-  };
-
-  onMounted(() => {
-    onSearch();
-  });
-
   function openDialog(title = "新增", group_name) {
     addDialog({
       title: `${title}小组值日信息`,
@@ -144,8 +101,8 @@ export function useRole() {
           date_time: "",
           arranger_id: GetUserInfo().user_id ?? "",
           group_name: group_name ?? "",
-          club_id: 1,
-          is_mixed: true,
+          club_id: club_id.value,
+          is_mixed: false,
         }
       },
       width: "40%",
@@ -173,12 +130,12 @@ export function useRole() {
 
   function openAddDialog(group_name = "", isNowGroup = false) {
     addDialog({
-      title: '新建分组',
+      title: isNowGroup ? '新增成员' : '新建分组',
       props: {
         formInline: {
           group_name: group_name ?? "",
           member_id: "",
-          club_id: 1,
+          club_id:  club_id.value,
         },
         isNowGroup: isNowGroup
       },
@@ -206,20 +163,9 @@ export function useRole() {
   }
 
   return {
-    form,
-    loading,
     columns,
-    dataList,
-    pagination,
-    onSearch,
-    resetForm,
     loadingConfig,
-    handleOffline,
-    handleSizeChange,
-    handleCurrentChange,
     openDialog,
     openAddDialog
   };
 }
-
-
