@@ -20,7 +20,7 @@ export function useUserColumns() {
     const searchStatus = ref(false) // 用于检测是否处在检索状态
     const tableLoading = ref(true)
     const btnLoading = ref(false)
-    const radioStatus = computed(() => useStore.publicStore.getRadioStatus())
+    const radioStatus = computed(() => useStore.adminStore.getRadioStatus())
 
     // 搜索框输入内容
     const query = ref({
@@ -239,7 +239,7 @@ export function useUserColumns() {
                                 // 预设密码
                                 changePwd({
                                     user_id: item.user_id,
-                                    pwd: useStore.publicStore.getDefaultPwd()
+                                    pwd: useStore.adminStore.getDefaultPwd()
                                 })
                             } else {
                                 // 自定义密码

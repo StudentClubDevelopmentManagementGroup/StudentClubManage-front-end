@@ -16,15 +16,15 @@ const props = withDefaults(defineProps<userProps>(), {
 const ruleFormRef = ref();
 const newFormInline = ref(props.formInline);
 
-const defaultPwd = computed(() => useStore.publicStore.getDefaultPwd());
+const defaultPwd = computed(() => useStore.adminStore.getDefaultPwd());
 const radioStatus = ref(true);
 
 const handleBtnChange = (val) => {
-  useStore.publicStore.setPwd(val);
+  useStore.adminStore.setPwd(val);
 };
 
 const handleRadioChange = (val) => {
-  useStore.publicStore.setRadioStatus(val);
+  useStore.adminStore.setRadioStatus(val);
 };
 
 function getRef() {

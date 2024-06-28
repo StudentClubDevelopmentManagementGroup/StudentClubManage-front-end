@@ -16,7 +16,7 @@ export const userUpdatePwdRules = reactive(<FormRules>{
         required: true,
         trigger: "blur",
         validator: (rule, value, callback) => {
-            if (!useStore.publicStore.getRadioStatus()) {
+            if (!useStore.adminStore.getRadioStatus()) {
                 if (!value) {
                     callback(new Error("密码不能为空"));
                 } else if (!REGEXP_PWD[1].test(value)) {
@@ -40,10 +40,10 @@ export const userUpdatePwdRules = reactive(<FormRules>{
         required: true,
         trigger: "blur",
         validator: (rule, value, callback) => {
-            if (!useStore.publicStore.getRadioStatus()) {
+            if (!useStore.adminStore.getRadioStatus()) {
                 if (!value) {
                     callback(new Error("不能为空"));
-                } else if (value !== useStore.publicStore.getPwd()) {
+                } else if (value !== useStore.adminStore.getPwd()) {
                     callback(new Error("与新密码输入不一致"))
                 }
             }

@@ -8,7 +8,7 @@ import { useNavigationStore } from "@/store/navigation"
 import { useClubStore } from "@/store/club"
 import { useDepartmentStore } from "@/store/department"
 import { useRegistrationStore } from "@/store/registration"
-import { usePublicStore } from "@/store/public"
+import { useAdminStore } from "@/store/admin"
 import { useFileStore } from "@/store/file";
 import { useHomePageStore } from "@/store/homepage";
 
@@ -25,7 +25,7 @@ export const registerStore = () => {
     useStore.clubStore = useClubStore()
     useStore.departmentStore = useDepartmentStore()
     useStore.registrationStore = useRegistrationStore()
-    useStore.publicStore = usePublicStore()
+    useStore.adminStore = useAdminStore()
     useStore.fileStore = useFileStore()
     useStore.homepageStore = useHomePageStore()
 }
