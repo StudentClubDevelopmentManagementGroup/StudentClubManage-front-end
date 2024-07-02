@@ -16,27 +16,12 @@ const formRef = ref();
 const userInfo = computed(() => useStore.userStore.getUserInfo);
 const roleSuperAdmin = computed(() => useStore.clubStore.getRoleSuperAdmin());
 const isShowManagementBtn = computed(
-  () =>
-    useStore.clubStore.getRoleSuperAdmin() ||
-    useStore.clubStore.getRoleClubMember()
+  () => useStore.clubStore.getRoleSuperAdmin() || useStore.clubStore.getRoleClubMember()
 );
 
 const logout = async () => {
   await useStore.userStore.logout();
-  router.replace("/homepage/home");
-};
-
-const handleSuperAdmin = () => {
-  useStore.clubStore.setCurrentRole("超级管理员");
-  useStore.permissionStore.getPermissionRoutes();
-  useStore.permissionStore.getRoutes();
-  router.push(useStore.permissionStore.getFirstRoute);
-};
-
-const handleClickBtn = () => {
-  if (!useStore.userStore.getUserInfo) {
-    router.push("/login");
-  }
+  router.replace("/login");
 };
 
 function openDialog(title) {
@@ -64,8 +49,6 @@ function openDialog(title) {
         useStore.permissionStore.getPermissionRoutes();
         useStore.permissionStore.getRoutes();
         router.push(useStore.permissionStore.getFirstRoute);
-      } else {
-        console.log("进入了其他");
       }
       chores();
     },
@@ -85,20 +68,13 @@ onMounted(() => {
           <navbar />
         </div>
         <div class="btn-container flex items-center">
-          <el-button
-            v-if="roleSuperAdmin"
-            class="!pr-2 !pl-2"
-            @click="handleSuperAdmin()"
-            type="primary"
-          >
-            【进入管理端】
-          </el-button>
+          <router-link to="/ad">
+            <el-button v-if="roleSuperAdmin" class="!pr-2 !pl-2" type="primary">
+              【进入管理端】
+            </el-button>
+          </router-link>
 
-          <el-divider
-            v-if="roleSuperAdmin"
-            direction="vertical"
-            border-style="solid"
-          />
+          <el-divider v-if="roleSuperAdmin" direction="vertical" border-style="solid" />
 
           <el-button
             class="!pr-2 !pl-2"
@@ -114,24 +90,35 @@ onMounted(() => {
             border-style="solid"
           />
 
-          <el-button
-            class="!pr-2 !pl-2"
-            :icon="User"
-            type="primary"
-            @click="handleClickBtn"
-            >{{ userInfo.name ? userInfo.name : "未登录" }}</el-button
-          >
+          <template v-if="!userInfo">
+            <el-button
+              class="!pr-2 !pl-2"
+              :icon="User"
+              type="primary"
+              @click="() => router.push('/login')"
+            >
+              未登录
+            </el-button>
+          </template>
+
+          <template v-else>
+            <router-link to="/homepage/personal">
+              <el-button class="!pr-2 !pl-2" :icon="User" type="primary">
+                {{ userInfo.name }}
+              </el-button>
+            </router-link>
+          </template>
 
           <el-divider direction="vertical" border-style="solid" />
 
-          <!-- <el-button
+          <el-button
             v-if="userInfo.name"
             class="!pr-2 !pl-2"
             :icon="SwitchButton"
             type="primary"
             @click="logout"
-            >注销</el-button
-          > -->
+            >退出登录</el-button
+          >
         </div>
       </div>
     </div>
@@ -139,9 +126,7 @@ onMounted(() => {
       v-if="!route.fullPath.includes('/homepage/personal')"
       class="down-wrapper container__mwidth"
     >
-      <div
-        class="container-width flex items-center justify-end m-auto h-[92px]"
-      >
+      <div class="container-width flex items-center justify-end m-auto h-[92px]">
         <search class="!w-[636px]" />
       </div>
     </div>

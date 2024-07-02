@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import useStore from "@/store";
 import Layout from "@/layout"
 import homePageLayout from "@/views/HomePage"
+import AdminPageLayout from "@/views/admin-management/layout"
 
 export const constantRoutes = [
     {
@@ -306,6 +307,68 @@ export const homePageRoutes = [
     },
 ]
 
+export const adminPageRoutes = [
+    {
+        path: "/ad",
+        component: AdminPageLayout,
+        redirect: "/ad/club",
+        meta: {
+            icon: "hugeicons:nano-technology",
+        },
+        children: [{
+            path: "/ad/club",
+            name: "AdminClubManagement",
+            component: () => import('@/views/admin-management/club/index'),
+            meta: {
+                title: '基地管理',
+                icon: "hugeicons:nano-technology",
+            }
+        }]
+    },
+    {
+        path: "/ad/department",
+        component: AdminPageLayout,
+        meta: {
+            icon: "ri:school-fill",
+        },
+        children: [{
+            path: "/ad/department",
+            name: "AdminDepartmentManagement",
+            component: () => import('@/views/admin-management/department/index'),
+            meta: { title: '院系管理', icon: "ri:school-line" }
+        }]
+    },
+    {
+        path: "/ad/user",
+        component: AdminPageLayout,
+        meta: {
+            icon: "tdesign:usergroup",
+        },
+        children: [{
+            path: "/ad/user",
+            name: "AdminUserManagement",
+            component: () => import('@/views/admin-management/user/index'),
+            meta: {
+                title: '用户管理',
+                icon: "tdesign:usergroup",
+            }
+        }]
+    },
+    {
+        path: "/ad/log",
+        component: AdminPageLayout,
+        meta: {
+            icon: "octicon:log-16"
+        },
+        children: [{
+            path: "/ad/log",
+            name: "AdminLog",
+            component: () => import('@/views/admin-management/log/index'),
+            meta: { title: '操作日志', icon: "octicon:log-16", }
+        }]
+    },
+]
+
 export const refreshRoutes = [
     {
         path: "/refresh",
@@ -314,7 +377,7 @@ export const refreshRoutes = [
     }
 ]
 
-const MergedRoutes = [...constantRoutes, ...homePageRoutes, ...refreshRoutes]
+const MergedRoutes = [...constantRoutes, ...homePageRoutes, ...adminPageRoutes, ...refreshRoutes]
 let HomePageInitFlag = true // 标记是否首次加载界面
 
 const router = createRouter({

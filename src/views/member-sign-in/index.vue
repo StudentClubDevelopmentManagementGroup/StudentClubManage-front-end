@@ -41,7 +41,6 @@ const {
   handleSearch,
   handleReset,
   handleAdd,
-  handleExport,
   handleCheck,
   isMoreThanNDays,
 } = useColumns();

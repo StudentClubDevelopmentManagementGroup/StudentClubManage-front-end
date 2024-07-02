@@ -54,11 +54,12 @@ const handleSelectionChange = (val) => {
   }
 };
 
-watch(currentClub, (newValue, oldValue) => {
+watch(currentClub, (newValue) => {
   currentSelection.value = newValue;
 });
 
 onMounted(async () => {
+  useStore.clubStore.clearOptionsList()
   useStore.clubStore.isAvailable();
   if (isSuperAdmin.value) {
     if (status && !currentClub.value) {
