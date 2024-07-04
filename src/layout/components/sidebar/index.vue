@@ -40,7 +40,6 @@ const toggleSideBar = () => {
     <el-scrollbar wrap-class="scrollbar-wrapper" class="pc">
       <el-menu
         router
-        unique-opened
         mode="vertical"
         popper-class="pure-scrollbar"
         class="outer-most select-none"

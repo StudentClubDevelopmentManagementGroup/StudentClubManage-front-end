@@ -122,7 +122,16 @@ export const asyncRoutes = [
             meta: {
                 title: "值日表设置",
             },
-        },]
+        }, {
+            path: "/run/manage",
+            name: "User",
+            component: () => import('@/views/user'),
+            meta: {
+                // icon: "ri:file-user-fill",
+                title: "基地人员管理",
+            },
+        }
+        ]
     },
     {
         path: "/develop",
@@ -147,23 +156,6 @@ export const asyncRoutes = [
                 title: "年终汇报",
             },
         },]
-    }, {
-        path: "/user",
-        component: Layout,
-        redirect: "/user/manage",
-        meta: {
-            icon: "ri:file-user-fill",
-            title: "基地人员管理",
-        },
-        children: [{
-            path: "/user/manage",
-            name: "User",
-            component: () => import('@/views/user'),
-            meta: {
-                icon: "ri:file-user-fill",
-                title: "基地人员管理",
-            },
-        }]
     }, {
         path: "/introduce",
         component: Layout,
