@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-const TITLE = ref("桂林电子科技大学");
+const TITLE = ref("");
 </script>
 
 <template>

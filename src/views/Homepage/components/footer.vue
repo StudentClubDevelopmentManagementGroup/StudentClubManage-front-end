@@ -14,7 +14,7 @@ const route = useRoute();
       </div>
       <div style="flex: 2" class="text-white flex flex-col">
         <div>
-          版权所有：桂林电子科技大学　校址：中国广西桂林金鸡路1号　邮编：541004　传真：0773-2290083
+           
         </div>
         <div>占位符</div>
       </div>

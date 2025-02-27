@@ -31,9 +31,9 @@ const route = useRoute();
             </keep-alive>
           </router-view>
         </el-main>
-        <el-footer>
+<!--        <el-footer>
           <feet />
-        </el-footer>
+        </el-footer> -->
       </el-container>
     </el-scrollbar>
   </div>
