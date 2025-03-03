@@ -57,6 +57,14 @@ export default {
             data
         })
     },
+	//基地改变招新状态
+	changestate(data) {
+	    return request({
+	        url: '/club/recruitment/change',
+	        method: 'post',
+	        data
+	    })
+	},
 }
 
 

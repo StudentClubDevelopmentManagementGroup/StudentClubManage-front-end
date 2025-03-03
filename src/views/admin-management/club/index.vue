@@ -31,6 +31,7 @@ const {
   handleUnDelete,
   openDialog,
   openDeleteDialog,
+  toggleRecruitment,
 } = useClubColumns();
 
 const router = useRouter();
@@ -177,6 +178,10 @@ onMounted(() => {
               <el-button type="success" :size="size" @click="handleClick(row)">
                 进入详情
               </el-button>
+			  
+			  <el-button type="warning" :size="size" @click="toggleRecruitment(row)" text>
+				{{ row.state ? '开放招新' : '停止招新' }}
+			  </el-button>
             </div>
           </template>
         </pure-table>

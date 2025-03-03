@@ -37,16 +37,6 @@ const chartData = [
     value: 99,
     percent: "-20%",
     data: [61, 102, 95, 15, 66, 15, 45]
-  },
-  {
-    icon: Smile,
-    bgColor: "#f6f4fe",
-    color: "#7846e5",
-    duration: 100,
-    name: "用户满意度",
-    value: 120,
-    percent: "+5%",
-    data: [90]
   }
 ];
 

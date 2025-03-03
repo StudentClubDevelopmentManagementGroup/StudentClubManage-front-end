@@ -245,6 +245,22 @@ export function useClubColumns() {
                 })
         })
     }
+	
+	//更改招新状态
+	const toggleRecruitment = (val: { club_name: string, department_id: string | number }) => {
+	    return new Promise((resolve, reject) => {
+	        baseApi.changestate(val)
+	            .then((data) => {
+	                message("更改基地招新情况成功", { type: "success" })
+	                onLoading()
+	                fetchTableData()
+	            })
+	            .catch((error) => {
+	                message("更改基地招新情况失败", { type: "error" })
+	                console.warn(error);
+	            })
+	    })
+	}
 
     // 检索
     const handleSearch = () => {
@@ -402,6 +418,7 @@ export function useClubColumns() {
         handleReset,
         handleUnDelete,
         openDialog,
-        openDeleteDialog
+        openDeleteDialog,
+		toggleRecruitment
     }
 }

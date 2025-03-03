@@ -10,8 +10,8 @@ import roundChart from "./components/round.vue";
   <div>
     <el-row :gutter="24" justify="space-around">
       <re-col
-        v-for="(item, index) in chartData"
-        :key="index"
+        v-for="(item, index) in chartData.slice(0, 3)" 
+		:key="index"
         class="mb-[18px]"
         :value="6"
         :md="12"

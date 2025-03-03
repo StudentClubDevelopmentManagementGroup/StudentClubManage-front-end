@@ -38,12 +38,12 @@ const responsiveStorageNameSpace = () => getConfig().ResponsiveStorageNameSpace;
 
 const CONFIG = {
   development: {
-    baseUrl: 'http://129.204.250.70:8888',
-    serverUrl: 'http://129.204.250.70:8888',
-    logo: 'http://129.204.250.70:8888/icon.jpeg',
-    avatar: 'http://129.204.250.70:8888/header4.gif',
-    emptyImg: 'http://129.204.250.70:8888/empty.png',
-    qrCodeUrlPrefix: 'http://129.204.250.70:8888?target=',
+    baseUrl: 'http://localhost:8888',
+    serverUrl: 'http://localhost:8888',
+    logo: 'http://localhost:8888/icon.jpeg',
+    avatar: 'http://localhost:8888/header4.gif',
+    emptyImg: 'http://localhost:8888/empty.png',
+    qrCodeUrlPrefix: 'http://localhost:8888?target=',
     superAdmin: ["/welcome", "/teacher", "/run", "/develop", "/user", "/introduce","/member"],
     admin: ["/welcome", "/run", "/develop", "/user", "/introduce", "/member"],
     member: ["/welcome", "/member"]
