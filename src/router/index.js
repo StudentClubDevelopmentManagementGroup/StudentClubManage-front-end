@@ -294,7 +294,16 @@ export const homePageRoutes = [
                     hidden: true,
                     title: "个人信息",
                 },
-            }
+            },
+			{
+			        path: "/homepage/recruitment",
+			        name: "HomepageRecruitmentList",
+			        component: () => import('@/views/homepage/recruitment/index.vue'),
+			        meta: {
+			          hidden: true,
+			          title: "招新公告列表",
+			        }
+			},
         ]
     },
 ]

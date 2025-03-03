@@ -29,6 +29,13 @@ export default {
             params: { ...req }
         })
     },
+	getRecruitmentNotice(req) {
+	    return request({
+	        url: '/club/announcement/recruitment',
+	        method: 'get',
+	        params: { ...req }
+	    })
+	},
     getNowNotice(clubId) {
         return request({
             url: '/club/announcement/latest',

@@ -53,7 +53,16 @@ const fetchDataList3 = () => {
     page_size: 4,
   };
   // TODO：获取招新信息列表
-  return new Promise((resolve, reject) => {});
+  return new Promise((resolve, reject) => {
+	  announcementApi
+	    .getRecruitmentNotice(body)
+	    .then((data) => {
+	      list3.value = data.records;
+	    })
+	    .catch((err) => {
+	      console.warn(err);
+	    });
+  });
 };
 
 const fetchDataList4 = () => {
@@ -175,18 +184,32 @@ onMounted(() => {
       <div class="flex-1">
         <el-card class="!border-0" shadow="never">
           <template #header>
-            <div
-              class="text-xl text-blue-800 font-semibold ml-4 pt-3 pb-3 flex justify-between"
-            >
+            <div class="text-xl text-blue-800 font-semibold ml-4 pt-3 pb-3 flex justify-between">
               <div>招新信息</div>
               <router-link to="/homepage/list">
-                <el-button class="!p-2" v-ripple text
-                  >更多<el-icon><DArrowRight /></el-icon
-                ></el-button>
+                <el-button class="!p-2" v-ripple text>
+                  更多<el-icon><DArrowRight /></el-icon>
+                </el-button>
               </router-link>
             </div>
           </template>
           <template v-if="list3.length !== 0" v-for="item in list3" :key="item">
+            <div class="relative group rounded-lg p-3 pb-7 bg-white shadow-lg hover:bg-sky-500 hover:ring-sky-500">
+              <router-link :to="`/homepage/recruitment?announcementId=${item.announcement_id}`">
+                <el-text 
+                  class="!text-black !font-semibold !text-lg group-hover:!text-white"
+                  line-clamp="1"
+                >
+                  {{ item.title }}
+                </el-text>
+              </router-link>
+              <el-text class="w-full !text-base group-hover:text-white" line-clamp="1">
+                {{ item.summary }}
+              </el-text>
+              <el-text class="w-[100px] !text-base absolute end-1 bottom-1 group-hover:text-white">
+                {{ item.publish_time?.slice(0, 10) }}
+              </el-text>
+            </div>
           </template>
           <template v-else>
             <div class="p-8 text-grey text-xl text-gray-500 text-center">暂无数据</div>
