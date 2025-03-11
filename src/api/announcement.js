@@ -36,6 +36,13 @@ export default {
 	        params: { ...req }
 	    })
 	},
+	getActivityNotice(req) {
+	    return request({
+	        url: '/club/announcement/activity',
+	        method: 'get',
+	        params: { ...req }
+	    })
+	},
     getNowNotice(clubId) {
         return request({
             url: '/club/announcement/latest',
