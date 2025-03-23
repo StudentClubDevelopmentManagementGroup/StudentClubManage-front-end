@@ -195,7 +195,7 @@ onMounted(() => {
           <template #header>
             <div class="text-xl text-blue-800 font-semibold ml-4 pt-3 pb-3 flex justify-between">
               <div>招新信息</div>
-              <router-link to="/homepage/list">
+              <router-link to="/homepage/recruitment">
                 <el-button class="!p-2" v-ripple text>
                   更多<el-icon><DArrowRight /></el-icon>
                 </el-button>
@@ -233,7 +233,7 @@ onMounted(() => {
               class="text-xl text-blue-800 font-semibold ml-4 pt-3 pb-3 flex justify-between"
             >
               <div>活动/比赛信息</div>
-              <router-link to="/homepage/list">
+              <router-link to="/homepage/activity">
                 <el-button class="!p-2" v-ripple text
                   >更多<el-icon><DArrowRight /></el-icon
                 ></el-button>
@@ -246,7 +246,7 @@ onMounted(() => {
                <div 
                  v-for="item in list4" 
                  :key="item.announcement_id"
-                 class="relative group rounded-lg p-3 pb-7 bg-white shadow-lg hover:bg-sky-500 hover:ring-sky-500 mb-3"
+                 class="relative group rounded-lg p-3 pb-7 bg-white shadow-lg hover:bg-sky-500 hover:ring-sky-500"
                >
                  <router-link
                    :to="`/homepage/detail?announcementId=${item.announcement_id}`"
