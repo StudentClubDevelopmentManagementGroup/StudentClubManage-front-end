@@ -99,4 +99,32 @@ export default {
             params: { file_id }
         })
     },
+	addReport(formData) {
+	    return request({
+	      url: '/club/report/add',
+	      method: 'post',
+	      data: formData,
+	      headers: {
+	        'Content-Type': 'multipart/form-data'
+	      }
+	    });
+	  },
+	  getReports(clubId, pageNum = 1, pageSize = 10) {
+	    return request({
+	      url: '/club/report/list',
+	      method: 'post',
+	      data: {
+	        club_id: clubId,
+	        page_num: pageNum,
+	        page_size: pageSize
+	      }
+	    });
+	  },
+	  deleteReport(reportId) {
+	    return request({
+	      url: '/club/report/del',
+	      method: 'post',
+	      params: { report_id: reportId }
+	    });
+	  }
 }
