@@ -27,11 +27,12 @@ const reportForm = ref<ReportForm>({
 });
 
 const reportTypeOptions = [
-  { label: "竞赛", value: "竞赛" },
+  { label: "奖项", value: "奖项" },
   { label: "论文", value: "论文" },
   { label: "学习情况", value: "学习情况" },
   { label: "参加的比赛", value: "参加的比赛" },
   { label: "采访", value: "采访" },
+  { label: "软著", value: "软著" },
   { label: "其他", value: "其他" }
 ];
 

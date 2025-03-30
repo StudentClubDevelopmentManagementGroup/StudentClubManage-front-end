@@ -25,45 +25,6 @@ const props = defineProps<{
   refreshFlag: number;
 }>();
 
-// 新增代码开始
-const dateDialogVisible = ref(false);
-const dateRange = ref<[string, string]>(['', '']); // [startDate, endDate]
-
-const showDateDialog = () => {
-  dateRange.value = ['', ''];
-  dateDialogVisible.value = true;
-};
-
-const generateReport = async () => {
-  try {
-    const [startDate, endDate] = dateRange.value;
-    if (!startDate || !endDate) {
-      ElMessage.warning('请选择完整的时间范围');
-      return;
-    }
-
-    const startTime = `${startDate} 00:00:00`;
-    const endTime = `${endDate} 23:59:59`;
-
-    // 调用生成接口
-    const { data: fileUrl }  = await announcementApi.generateSummaryReport({
-      club_id: props.clubId,
-      startTime,
-      endTime
-    });
-    
-	// 2. 等待1秒
-	await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    ElMessage.success('报告生成成功，请自行下载');
-    dateDialogVisible.value = false;
-	await loadData();
-  } catch (error) {
-    ElMessage.error('报告生成失败：' + (error as Error).message);
-  }
-};
-// 新增代码结束
-
 const reports = ref<ReportItem[]>([]);
 const loading = ref(false);
 const currentPage = ref(1);
@@ -167,52 +128,6 @@ watch(
 
 <template>
   <div class="report-list-container">
-    <!-- 新增操作栏 -->
-    <div class="action-bar">
-      <el-button 
-        type="primary" 
-        @click="showDateDialog"
-      >
-        <i class="el-icon-document-add" /> 生成总结报告
-      </el-button>
-    </div>
-
-    <!-- 日期选择对话框 -->
-    <el-dialog
-      v-model="dateDialogVisible"
-      title="选择时间范围"
-      width="500px"
-    >
-      <el-form label-width="100px">
-        <el-form-item label="开始日期" required>
-          <el-date-picker
-            v-model="dateRange[0]"
-            type="date"
-            placeholder="选择开始日期"
-            value-format="YYYY-MM-DD"
-          />
-        </el-form-item>
-        <el-form-item label="结束日期" required>
-          <el-date-picker
-            v-model="dateRange[1]"
-            type="date"
-            placeholder="选择结束日期"
-            value-format="YYYY-MM-DD"
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dateDialogVisible = false">取消</el-button>
-        <el-button 
-          type="primary"
-          :disabled="!dateRange[0] || !dateRange[1]"
-          @click="generateReport"
-        >
-          生成报告
-        </el-button>
-      </template>
-    </el-dialog>
-
     <el-table 
       :data="reports" 
       v-loading="loading"
@@ -311,14 +226,6 @@ watch(
 <style scoped>
 .report-list-container {
   padding: 20px;
-}
-
-/* 新增样式 */
-.action-bar {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
 }
 
 .file-list {
