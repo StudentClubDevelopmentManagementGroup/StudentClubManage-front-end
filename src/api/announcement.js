@@ -92,13 +92,6 @@ export default {
             params: { draftId }
         })
     },
-    getFile(file_id) {
-        return request({
-            url: '/club/announcement/file/get',
-            method: 'get',
-            params: { file_id }
-        })
-    },
 	addReport(formData) {
 	    return request({
 	      url: '/club/report/add',
@@ -120,11 +113,18 @@ export default {
 	      }
 	    });
 	  },
-	  deleteReport(reportId) {
+	  deleteReport(reportId,clubId) {
 	    return request({
 	      url: '/club/report/del',
 	      method: 'post',
-	      params: { report_id: reportId }
+	      params: { report_id: reportId,club_id: clubId}
 	    });
-	  }
+	  },
+	  generateSummaryReport(req) {
+	    return request({
+	      url: '/club/report/summary',
+	      method: 'post',
+	      data: req
+	    });
+	}
 }
