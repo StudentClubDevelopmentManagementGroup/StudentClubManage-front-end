@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import type { UploadUserFile } from "element-plus";
-import { Download } from '@element-plus/icons-vue';
+import { Download, Search } from '@element-plus/icons-vue';
 import announcementApi from "@/api/announcement";
 import { ElMessage, ElMessageBox } from "element-plus";
 import dayjs from "dayjs";
@@ -25,9 +25,15 @@ const props = defineProps<{
   refreshFlag: number;
 }>();
 
-// 新增代码开始
+// 搜索相关
+const searchKeyword = ref("");
+const currentPage = ref(1);
+const pageSize = ref(10);
+const total = ref(0);
+
+// 生成报告相关
 const dateDialogVisible = ref(false);
-const dateRange = ref<[string, string]>(['', '']); // [startDate, endDate]
+const dateRange = ref<[string, string]>(['', '']);
 
 const showDateDialog = () => {
   dateRange.value = ['', ''];
@@ -45,30 +51,23 @@ const generateReport = async () => {
     const startTime = `${startDate} 00:00:00`;
     const endTime = `${endDate} 23:59:59`;
 
-    // 调用生成接口
-    const { data: fileUrl }  = await announcementApi.generateSummaryReport({
+    const { data: fileUrl } = await announcementApi.generateSummaryReport({
       club_id: props.clubId,
       startTime,
       endTime
     });
     
-	// 2. 等待1秒
-	await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise(resolve => setTimeout(resolve, 1000));
     ElMessage.success('报告生成成功，请自行下载');
     dateDialogVisible.value = false;
-	await loadData();
+    await loadData();
   } catch (error) {
     ElMessage.error('报告生成失败：' + (error as Error).message);
   }
 };
-// 新增代码结束
 
 const reports = ref<ReportItem[]>([]);
 const loading = ref(false);
-const currentPage = ref(1);
-const pageSize = ref(10);
-const total = ref(0);
 
 const parseFileName = (url: string) => {
   try {
@@ -84,11 +83,22 @@ const parseFileName = (url: string) => {
 const loadData = async () => {
   try {
     loading.value = true;
-    const res = await announcementApi.getReports(
-      props.clubId,
-      currentPage.value,
-      pageSize.value
-    );
+    let res;
+    
+    if (searchKeyword.value) {
+      res = await announcementApi.getReportsBykeyword(
+        props.clubId,
+        currentPage.value,
+        pageSize.value,
+        searchKeyword.value
+      );
+    } else {
+      res = await announcementApi.getMemberReports(
+        props.clubId,
+        currentPage.value,
+        pageSize.value
+      );
+    }
     
     const responseData = res || {};
     reports.value = (responseData.records || []).map(item => ({
@@ -108,6 +118,17 @@ const loadData = async () => {
   }
 };
 
+const handleSearch = () => {
+  currentPage.value = 1;
+  loadData();
+};
+
+const clearSearch = () => {
+  searchKeyword.value = "";
+  currentPage.value = 1;
+  loadData();
+};
+
 const confirmDelete = async (reportId: string) => {
   try {
     await ElMessageBox.confirm("确定要删除该成果汇报吗？", "警告", {
@@ -116,7 +137,7 @@ const confirmDelete = async (reportId: string) => {
       type: "warning",
     });
     
-    await announcementApi.deleteReport(reportId,props.clubId);
+    await announcementApi.deleteReport(reportId, props.clubId);
     ElMessage.success("删除成功");
     
     if (reports.value.length === 1 && currentPage.value > 1) {
@@ -167,11 +188,27 @@ watch(
 
 <template>
   <div class="report-list-container">
-    <!-- 新增操作栏 -->
+    <!-- 操作栏 - 调整后的布局 -->
     <div class="action-bar">
+      <div class="search-group">
+        <el-input
+          v-model="searchKeyword"
+          placeholder="输入文件名关键词搜索"
+          clearable
+          style="width: 300px; margin-right: 10px"
+          @keyup.enter="handleSearch"
+        >
+          <template #append>
+            <el-button :icon="Search" @click="handleSearch" />
+          </template>
+        </el-input>
+        <el-button @click="clearSearch">清空搜索</el-button>
+      </div>
+      
       <el-button 
         type="primary" 
         @click="showDateDialog"
+        class="generate-btn"
       >
         <i class="el-icon-document-add" /> 生成总结报告
       </el-button>
@@ -313,12 +350,21 @@ watch(
   padding: 20px;
 }
 
-/* 新增样式 */
 .action-bar {
-  margin-bottom: 20px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
   gap: 10px;
+}
+
+.generate-btn {
+  margin-left: auto;
 }
 
 .file-list {
@@ -346,5 +392,23 @@ watch(
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .action-bar {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .search-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .generate-btn {
+    width: 100%;
+    margin-left: 0;
+  }
 }
 </style>

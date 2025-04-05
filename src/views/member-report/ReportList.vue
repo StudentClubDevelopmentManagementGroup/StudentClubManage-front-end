@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import type { UploadUserFile } from "element-plus";
-import { Download } from '@element-plus/icons-vue';
+import { Download, Search } from '@element-plus/icons-vue';
 import announcementApi from "@/api/announcement";
 import { ElMessage, ElMessageBox } from "element-plus";
 import dayjs from "dayjs";
@@ -30,6 +30,7 @@ const loading = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
+const searchKeyword = ref("");
 
 const parseFileName = (url: string) => {
   try {
@@ -45,11 +46,22 @@ const parseFileName = (url: string) => {
 const loadData = async () => {
   try {
     loading.value = true;
-    const res = await announcementApi.getReports(
-      props.clubId,
-      currentPage.value,
-      pageSize.value
-    );
+    let res;
+    
+    if (searchKeyword.value) {
+      res = await announcementApi.getReportsBykeyword(
+        props.clubId,
+        currentPage.value,
+        pageSize.value,
+        searchKeyword.value
+      );
+    } else {
+      res = await announcementApi.getMemberReports(
+        props.clubId,
+        currentPage.value,
+        pageSize.value
+      );
+    }
     
     const responseData = res || {};
     reports.value = (responseData.records || []).map(item => ({
@@ -69,6 +81,17 @@ const loadData = async () => {
   }
 };
 
+const handleSearch = () => {
+  currentPage.value = 1;
+  loadData();
+};
+
+const clearSearch = () => {
+  searchKeyword.value = "";
+  currentPage.value = 1;
+  loadData();
+};
+
 const confirmDelete = async (reportId: string) => {
   try {
     await ElMessageBox.confirm("确定要删除该成果汇报吗？", "警告", {
@@ -77,7 +100,7 @@ const confirmDelete = async (reportId: string) => {
       type: "warning",
     });
     
-    await announcementApi.deleteReport(reportId,props.clubId);
+    await announcementApi.deleteReport(reportId, props.clubId);
     ElMessage.success("删除成功");
     
     if (reports.value.length === 1 && currentPage.value > 1) {
@@ -128,6 +151,21 @@ watch(
 
 <template>
   <div class="report-list-container">
+    <div class="search-bar mb-4">
+      <el-input
+        v-model="searchKeyword"
+        placeholder="输入文件名关键词搜索"
+        clearable
+        style="width: 300px; margin-right: 10px"
+        @keyup.enter="handleSearch"
+      >
+        <template #append>
+          <el-button :icon="Search" @click="handleSearch" />
+        </template>
+      </el-input>
+      <el-button @click="clearSearch">清空搜索</el-button>
+    </div>
+
     <el-table 
       :data="reports" 
       v-loading="loading"
@@ -226,6 +264,12 @@ watch(
 <style scoped>
 .report-list-container {
   padding: 20px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .file-list {
