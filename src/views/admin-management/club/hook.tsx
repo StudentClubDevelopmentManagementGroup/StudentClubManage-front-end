@@ -60,7 +60,8 @@ export function useClubColumns() {
         {
             label: "学院",
             prop: "department_name",
-            minWidth: 150,
+            minWidth: 100,  // 改为固定宽度
+        showOverflowTooltip: true // 添加溢出提示
         },
         {
             label: "成员数",
@@ -70,11 +71,13 @@ export function useClubColumns() {
         {
             label: "社团负责人",
             prop: "manager",
+			width: 200,
             cellRenderer: ({ row }) => <div> {row.manager === null ? "未设置" : row.manager}</div>,
         },
         {
             label: "招新状态",
             prop: "state",
+			width: 85,
             cellRenderer: ({ row }) => {
                 if (!row.state) {
                     // 招新中
@@ -88,6 +91,7 @@ export function useClubColumns() {
         {
             label: "启用状态",
             prop: "is_deleted",
+			width: 85,
             cellRenderer: ({ row }) => {
                 if (row.is_deleted) {
                     // 已逻辑删除
@@ -101,7 +105,7 @@ export function useClubColumns() {
         {
             label: "操作",
             fixed: "right",
-            width: 350,
+            width: 400,
             slot: "operation",
         },
     ];
@@ -120,6 +124,7 @@ export function useClubColumns() {
               L 15 15
             " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
           `
+
     });
 
     // 统一的访问 API 的参数来源

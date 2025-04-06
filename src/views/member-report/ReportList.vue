@@ -3,7 +3,7 @@
 import { ref, onMounted, watch } from "vue";
 import type { UploadUserFile } from "element-plus";
 import { Download, Search } from '@element-plus/icons-vue';
-import announcementApi from "@/api/announcement";
+import reportApi from "@/api/report";
 import { ElMessage, ElMessageBox } from "element-plus";
 import dayjs from "dayjs";
 
@@ -49,14 +49,14 @@ const loadData = async () => {
     let res;
     
     if (searchKeyword.value) {
-      res = await announcementApi.getReportsBykeyword(
+      res = await reportApi.getReportsBykeyword(
         props.clubId,
         currentPage.value,
         pageSize.value,
         searchKeyword.value
       );
     } else {
-      res = await announcementApi.getMemberReports(
+      res = await reportApi.getMemberReports(
         props.clubId,
         currentPage.value,
         pageSize.value
@@ -100,7 +100,7 @@ const confirmDelete = async (reportId: string) => {
       type: "warning",
     });
     
-    await announcementApi.deleteReport(reportId, props.clubId);
+    await reportApi.deleteReport(reportId, props.clubId);
     ElMessage.success("删除成功");
     
     if (reports.value.length === 1 && currentPage.value > 1) {

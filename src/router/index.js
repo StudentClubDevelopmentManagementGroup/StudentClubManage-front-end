@@ -86,15 +86,31 @@ export const asyncRoutes = [
             },
         }]
     },
-    {
+	{
         path: "/run",
         component: Layout,
-        redirect: "/run/signin",
+        redirect: "/run",
         meta: {
             icon: "ri:artboard-line",
             title: "基地运营",
         },
-        children: [{
+        children: [
+			{
+			path: "/run/club",
+			name: "ClubSimManagement",
+			component: () => import('@/views/admin-management/simclub/index'),
+			meta: {
+			    title: "基地管理",
+			},
+		}, {
+		    path: "/run/manage",
+		    name: "User",
+		    component: () => import('@/views/user'),
+		    meta: {
+		        // icon: "ri:file-user-fill",
+		        title: "基地人员管理",
+		    },
+		}, {
             path: "/run/signin",
             name: "SignIn",
             component: () => import('@/views/sign-in'),
@@ -121,14 +137,6 @@ export const asyncRoutes = [
             component: () => import('@/views/duty'),
             meta: {
                 title: "值日表设置",
-            },
-        }, {
-            path: "/run/manage",
-            name: "User",
-            component: () => import('@/views/user'),
-            meta: {
-                // icon: "ri:file-user-fill",
-                title: "基地人员管理",
             },
         }
         ]

@@ -3,7 +3,7 @@
 import { ref, computed } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import useStore from "@/store";
-import announcementApi from "@/api/announcement";
+import reportApi from "@/api/report";
 import ReportList from "./ReportList.vue";
 
 interface ReportForm {
@@ -76,7 +76,7 @@ const submitForm = async () => {
   });
 
   try {
-    await announcementApi.addReport(formData);
+    await reportApi.addReport(formData);
     ElMessage.success("提交成功");
     resetForm();
     refreshKey.value++;

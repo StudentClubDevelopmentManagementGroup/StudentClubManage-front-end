@@ -9,6 +9,13 @@ export default {
             data: { department_id, club_name, page_num, page_size }
         })
     },
+	getBaseOwn({club_id, club_name, page_num, page_size }) {
+	    return request({
+	        url: '/club/select_own',
+	        method: 'post',
+	        data: {club_id, page_num, page_size }
+	    })
+	},
     // 查询基地基础信息
     getBaseInfo({ department_id, club_name, page_num, page_size }) {
         return request({
