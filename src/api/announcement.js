@@ -43,6 +43,13 @@ export default {
 	        params: { ...req }
 	    })
 	},
+	getIntroduceNotice(req) {
+	    return request({
+	        url: '/club/announcement/introduce',
+	        method: 'get',
+	        params: { ...req }
+	    })
+	},
     getNowNotice(clubId) {
         return request({
             url: '/club/announcement/latest',
@@ -92,6 +99,13 @@ export default {
             params: { draftId }
         })
     },
+	getIntroduceDraft(club_id, page_num, page_size) {
+	    return request({
+	        url: '/club/announcement/draft/introduce',
+	        method: 'get',
+	        params: { club_id, page_num, page_size }
+	    })
+	},
 	addReport(formData) {
 	    return request({
 	      url: '/club/report/add',
