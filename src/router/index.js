@@ -321,6 +321,15 @@ export const homePageRoutes = [
 			          title: "招新公告查询界面",
 			        }
 			},
+			{
+			        path: "/homepage/introduce",
+			        name: "Homepageintroduce",
+			        component: () => import('@/views/homepage/introduce/index.vue'),
+			        meta: {
+			          hidden: true,
+			          title: "社团简介界面",
+			        }
+			},
         ]
     },
 ]

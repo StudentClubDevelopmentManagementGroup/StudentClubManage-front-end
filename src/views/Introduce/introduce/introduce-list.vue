@@ -91,7 +91,7 @@ function handleCurrentChange(val: number) {
   <PureTableBar
     :columns="noticeColumns"
     @refresh="getNoticeData"
-    title="公告表"
+    title="简介表"
   >
     <template #right>
       <el-button type="primary" @click="exportFile" :icon="Download" v-ripple>
