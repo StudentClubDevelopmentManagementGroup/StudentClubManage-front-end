@@ -1,12 +1,12 @@
 import request from '@/utils/request'
 
 export default {
-	  getReports(clubId) {
+	  getAnalyse(clubId) {
 	    return request({
 	      url: '/ai/chat',
 	      method: 'post',
-	      data: {
-	        club_id: clubId,
+	      params: {
+	        club_id: clubId
 	      }
 	    });
 	  },

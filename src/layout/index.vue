@@ -127,6 +127,12 @@ onMounted(()=>{
   opacity: 0.3;
 }
 
+/* 在全局样式中添加 */
+:root {
+  --header-height: 60px; /* 根据实际 header 高度调整 */
+}
+
+
 .re-screen {
   margin-top: 12px;
 }

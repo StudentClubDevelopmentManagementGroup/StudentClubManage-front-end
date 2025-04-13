@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, onMounted, nextTick } from "vue";
+import { useRoute } from "vue-router";
 import useStore from "@/store";
 import Footer from "./footer/index.vue";
 import backTop from "@/assets/back_top.svg?component";
@@ -7,21 +8,23 @@ import backTop from "@/assets/back_top.svg?component";
 const hideFooter = computed(() => useStore.settingStore.getHideFooter);
 const fixedHeader = computed(() => useStore.settingStore.getFixedHeader);
 const hideTabs = computed(() => useStore.settingStore.getHideTabs);
-const layout = computed(() => useStore.appStore.getLayout === "vertical");
-const getSectionStyle = computed(() => {
-  return [
-    hideTabs.value && layout ? "padding-top: 47px;" : "",
-    !hideTabs.value && layout ? "padding-top: 102px;" : "",
-    hideTabs.value && !layout.value ? "padding-top: 47px;" : "",
-    !hideTabs.value && !layout.value ? "padding-top: 102px;" : "",
-    fixedHeader.value
-      ? ""
-      : `padding-top: 0;${
-          hideTabs.value
-            ? "min-height: calc(100vh - 47px);"
-            : "min-height: calc(100vh - 102px);"
-        }`,
-  ];
+const layout = computed(() => useStore.appStore.getLayout);
+const route = useRoute();
+
+// 使用 ref 获取滚动容器
+const scrollbarRef = ref();
+const scrollWrapper = ref<HTMLElement>();
+
+// 动态计算容器样式
+const getSectionStyle = computed(() => ({
+  paddingTop: fixedHeader.value ? (hideTabs.value ? "47px" : "102px") : "0",
+  minHeight: fixedHeader.value ? "auto" : `calc(100vh - ${hideTabs.value ? "47px" : "102px"})`
+}));
+
+// 确保滚动容器存在
+onMounted(async () => {
+  await nextTick();
+  scrollWrapper.value = scrollbarRef.value?.wrap$;
 });
 </script>
 
@@ -31,27 +34,50 @@ const getSectionStyle = computed(() => {
     :style="getSectionStyle"
   >
     <router-view v-slot="{ Component }">
-      <el-scrollbar
-        v-if="fixedHeader"
-        :wrap-style="{
-          display: 'flex',
-          'flex-wrap': 'wrap',
-          'max-width': '100%',
-          margin: '0 auto',
-          transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-        }"
-        :view-style="{
-          display: 'flex',
-          flex: 'auto',
-          overflow: 'hidden',
-          'flex-direction': 'column',
-        }"
-      >
-        <el-backtop title="回到顶部" target=".app-main .el-scrollbar__wrap">
-          <backTop />
-        </el-backtop>
+      <template v-if="fixedHeader">
+        <el-scrollbar
+          ref="scrollbarRef"
+          wrap-class="scrollbar-wrapper"
+          view-class="scrollbar-view"
+        >
+          <!-- 使用函数式 target 确保元素存在 -->
+          <el-backtop
+            v-if="scrollWrapper"
+            title="回到顶部"
+            :target="() => scrollWrapper"
+          >
+            <backTop />
+          </el-backtop>
+          <div class="grow">
+            <transition 
+              :name="route.meta.transition || 'fade'" 
+              mode="out-in"
+            >
+              <keep-alive v-if="$route.meta.keepAlive" :include="$route.name">
+                <component
+                  :is="Component"
+                  :key="$route.path"
+                  class="main-content"
+                />
+              </keep-alive>
+              <component
+                v-else
+                :is="Component"
+                :key="$route.path"
+                class="main-content"
+              />
+            </transition>
+          </div>
+          <Footer v-if="!hideFooter" />
+        </el-scrollbar>
+      </template>
+
+      <template v-else>
         <div class="grow">
-          <transition name="fade" mode="out-in">
+          <transition 
+            :name="route.meta.transition || 'fade'"
+            mode="out-in"
+          >
             <keep-alive v-if="$route.meta.keepAlive" :include="$route.name">
               <component
                 :is="Component"
@@ -67,46 +93,53 @@ const getSectionStyle = computed(() => {
             />
           </transition>
         </div>
-        <Footer v-if="!hideFooter" />
-      </el-scrollbar>
-      <div v-else class="grow">
-        <transition name="fade" mode="out-in">
-          <keep-alive v-if="$route.meta.keepAlive" :include="$route.name">
-            <component
-              :is="Component"
-              :key="$route.path"
-              class="main-content"
-            />
-          </keep-alive>
-          <component
-            v-else
-            :is="Component"
-            :key="$route.path"
-            class="main-content"
-          />
-        </transition>
-      </div>
+      </template>
     </router-view>
   </section>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .app-main {
   position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow-y: hidden;
-  padding-top: 102px;
+  height: calc(100vh - var(--header-height, 60px));
+  overflow: hidden;
+
+  .scrollbar-wrapper {
+    height: 100% !important;
+    overflow-x: hidden !important;
+    
+    .scrollbar-view {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 24px;
+    background: #f5f7f9;
+  }
 }
 
 .app-main-nofixed-header {
-  position: relative;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  width: 100%;
+
+  .grow {
+    flex: 1;
+    overflow-y: auto;
+  }
 }
 
-.main-content {
-  margin: 24px;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
