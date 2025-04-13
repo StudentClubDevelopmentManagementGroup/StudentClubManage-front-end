@@ -23,7 +23,7 @@ const chartData = [
     bgColor: "#fff5f4",
     color: "#e85f33",
     duration: 1600,
-    name: "签到数量",
+    name: "签到时长",
     value: 80,
     percent: "+10%",
     data: [16, 48, 55, 88, 21, 73, 79]
