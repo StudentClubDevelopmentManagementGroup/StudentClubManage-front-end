@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, h, toRaw, reactive, onMounted, computed } from "vue";
 import { useRoute } from 'vue-router';
 import { chartData, barChartData } from "./data";
@@ -28,21 +28,41 @@ const fetchAIData = async () => {
     loading.value = true;
     const data = await announcementApi.getAnalyse(club_id.value); // 传递实际值
     
-    // 安全更新基础数据
-    if (data?.ann) {
-      chartData[2].value = data.ann.thisMonthNum || 0;
-      chartData[2].percent = calculatePercent(
-        data.ann.thisMonthNum,
-        data.ann.lastMonthNum
-      );
+   // 安全更新基础数据
+   if (data?.user_yearly) {
+      // 处理基地人数
+      const yearly = data.user_yearly;
+      chartData[0].value = yearly.tnum || 0;
+      chartData[0].percent = calculatePercent(yearly.tnum, yearly.lnum);
     }
-    // 更新签到数据
+    if (data?.ann) {
+      // 处理基地人数
+      const ann = data.ann;
+      chartData[2].value = ann.thisMonthNum || 0;
+      chartData[2].percent = calculatePercent(ann.thisMonthNum, ann.lastMonthNum);
+    }
+
     if (data?.att_list) {
       const sortedAtt = [...data.att_list].sort((a, b) => a.day_of_week - b.day_of_week);
-      console.log(data.att_list);
-      chartData[1].data = sortedAtt.map(item => item.tnum || 0);
-      console.log(chartData);
-
+      
+      // 计算签到时长总和
+      const sumTnum = sortedAtt.reduce((sum, item) => sum + (item.tnum || 0), 0);
+      const sumLnum = sortedAtt.reduce((sum, item) => sum + (item.lnum || 0), 0);
+      chartData[1].value = sumTnum;
+      chartData[1].percent = calculatePercent(sumTnum, sumLnum);
+      
+      // 处理签到数量数据
+      const lastWeekAtt = sortedAtt.map(item => item.lnum || 0);
+      const thisWeekAtt = sortedAtt.map(item => item.tnum || 0);
+      barChartData[0].questionData = [...lastWeekAtt, ...thisWeekAtt];
+    }
+    if (data?.user_list) {
+      const sortedUser = [...data.user_list].sort((a, b) => a.day_of_week - b.day_of_week);
+      
+      // 处理用户数量数据
+      const lastWeekUser = sortedUser.map(item => item.lnum || 0);
+      const thisWeekUser = sortedUser.map(item => item.tnum || 0);
+      barChartData[0].requireData = [...lastWeekUser, ...thisWeekUser];
     }
     // 设置AI回答
     aiAnswer.value = data?.message?.replace(/\n/g, '\n\n') || '暂无分析结果';
@@ -53,11 +73,14 @@ const fetchAIData = async () => {
     loading.value = false;
   }
 };
-// 计算百分比变化（添加除零保护）
-const calculatePercent = (current, previous) => {
-  if (!previous || previous === 0) return 'N/A';
+// 修改后的 calculatePercent 函数（添加除零保护）
+const calculatePercent = (current: number, previous: number) => {
+  if (previous === 0) {
+    if (current === 0) return '0%';
+    return previous >= 0 ? '+∞%' : '-∞%';
+  }
   const change = ((current - previous) / previous * 100).toFixed(0);
-  return `${change > 0 ? '+' : ''}${change}%`;
+  return `${Number(change) > 0 ? '+' : ''}${change}%`;
 };
 // 组件挂载时获取数据
 onMounted(() => {
