@@ -3,11 +3,12 @@ import GroupLine from "@iconify-icons/ri/group-line";
 import Question from "@iconify-icons/ri/question-answer-line";
 import CheckLine from "@iconify-icons/ri/chat-check-line";
 import Smile from "@iconify-icons/ri/star-smile-line";
+import { reactive } from "vue";
 
 const days = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 
 /** 需求人数、提问数量、解决数量、用户满意度 */
-const chartData = [
+const chartData = reactive([
   {
     icon: GroupLine,
     bgColor: "#effaff",
@@ -38,19 +39,19 @@ const chartData = [
     percent: "-20%",
     data: [61, 102, 95, 15, 66, 15, 45]
   }
-];
+]);
 
 /** 分析概览 */
-const barChartData = [
+const barChartData = reactive([
   {
     requireData: [2101, 5288, 4239, 4962, 6752, 5208, 7450,2101, 3280, 4400, 4962, 5752, 6889, 7600],
     questionData: [2216, 1148, 1255, 1788, 4821, 1973, 4379,2116, 3148, 3255, 3788, 4821, 4970, 5390]
   },
 
-];
+]);
 
 /** 解决概率 */
-const progressData = [
+const progressData = reactive([
   {
     week: "周一",
     percentage: 85,
@@ -93,7 +94,7 @@ const progressData = [
     duration: 80,
     color: "#26ce83"
   }
-].reverse();
+].reverse());
 
 
 export { chartData, barChartData, progressData };

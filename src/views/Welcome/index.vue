@@ -26,7 +26,7 @@ const fetchAIData = async () => {
     }
     
     loading.value = true;
-    const { data } = await announcementApi.getAnalyse(club_id.value); // 传递实际值
+    const data = await announcementApi.getAnalyse(club_id.value); // 传递实际值
     
     // 安全更新基础数据
     if (data?.ann) {
@@ -39,7 +39,10 @@ const fetchAIData = async () => {
     // 更新签到数据
     if (data?.att_list) {
       const sortedAtt = [...data.att_list].sort((a, b) => a.day_of_week - b.day_of_week);
-      chartData[1].data = sortedAtt.map(item => item.tNum || 0);
+      console.log(data.att_list);
+      chartData[1].data = sortedAtt.map(item => item.tnum || 0);
+      console.log(chartData);
+
     }
     // 设置AI回答
     aiAnswer.value = data?.message?.replace(/\n/g, '\n\n') || '暂无分析结果';
