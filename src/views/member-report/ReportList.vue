@@ -25,6 +25,38 @@ const props = defineProps<{
   refreshFlag: number;
 }>();
 
+// 新增：选中报告列表
+const selectedReports = ref<ReportItem[]>([]);
+const handleSelectionChange = (selected: ReportItem[]) => {
+  selectedReports.value = selected;
+};
+
+// 新增：批量下载方法
+const batchDownload = async () => {
+  const filesToDownload: ReportFile[] = [];
+  selectedReports.value.forEach(report => {
+    filesToDownload.push(...report.report_file);
+  });
+
+  if (filesToDownload.length === 0) {
+    ElMessage.warning('请先选择要下载的文件');
+    return;
+  }
+
+  // 逐个下载文件
+  for (const file of filesToDownload) {
+    const link = document.createElement('a');
+    link.href = file.url;
+    link.setAttribute('download', file.name);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  ElMessage.success('已开始批量下载');
+};
+
 const reports = ref<ReportItem[]>([]);
 const loading = ref(false);
 const currentPage = ref(1);
@@ -151,19 +183,32 @@ watch(
 
 <template>
   <div class="report-list-container">
-    <div class="search-bar mb-4">
-      <el-input
-        v-model="searchKeyword"
-        placeholder="输入文件名关键词搜索"
-        clearable
-        style="width: 300px; margin-right: 10px"
-        @keyup.enter="handleSearch"
-      >
-        <template #append>
-          <el-button :icon="Search" @click="handleSearch" />
-        </template>
-      </el-input>
-      <el-button @click="clearSearch">清空搜索</el-button>
+    <div class="action-bar">
+      <div class="search-group">
+        <el-input
+          v-model="searchKeyword"
+          placeholder="输入文件名关键词搜索"
+          clearable
+          style="width: 300px; margin-right: 10px"
+          @keyup.enter="handleSearch"
+        >
+          <template #append>
+            <el-button :icon="Search" @click="handleSearch" />
+          </template>
+        </el-input>
+        <el-button @click="clearSearch">清空搜索</el-button>
+      </div>
+      
+      <div class="action-buttons">
+        <el-button 
+          type="primary" 
+          @click="batchDownload"
+          :disabled="selectedReports.length === 0"
+          class="download-btn"
+        >
+          <i class="el-icon-download" /> 下载
+        </el-button>
+      </div>
     </div>
 
     <el-table 
@@ -171,7 +216,11 @@ watch(
       v-loading="loading"
       stripe
       border
+      @selection-change="handleSelectionChange"
     >
+      <!-- 新增选择列 -->
+      <el-table-column type="selection" width="55" align="center" />
+      
       <el-table-column 
         prop="report_type" 
         label="类型" 
@@ -266,10 +315,22 @@ watch(
   padding: 20px;
 }
 
-.search-bar {
+.action-bar {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
 }
 
 .file-list {
@@ -279,7 +340,7 @@ watch(
 }
 
 .file-tag {
-  max-width: 250px;
+  max-width: 450px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -288,14 +349,35 @@ watch(
 
 .download-btn {
   margin-left: 8px;
-  padding: 0;
+  padding: 1;
   height: auto;
-  color: #409eff;
 }
 
 .pagination-container {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .action-bar {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .search-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .action-buttons {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .download-btn {
+    width: 100%;
+    margin-left: 0;
+  }
 }
 </style>

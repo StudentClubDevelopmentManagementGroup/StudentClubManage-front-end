@@ -25,6 +25,38 @@ const props = defineProps<{
   refreshFlag: number;
 }>();
 
+// 选中报告列表
+const selectedReports = ref<ReportItem[]>([]);
+const handleSelectionChange = (selected: ReportItem[]) => {
+  selectedReports.value = selected;
+};
+
+// 批量下载方法
+const batchDownload = async () => {
+  const filesToDownload: ReportFile[] = [];
+  selectedReports.value.forEach(report => {
+    filesToDownload.push(...report.report_file);
+  });
+
+  if (filesToDownload.length === 0) {
+    ElMessage.warning('请先选择要下载的文件');
+    return;
+  }
+
+  // 逐个下载文件
+  for (const file of filesToDownload) {
+    const link = document.createElement('a');
+    link.href = file.url;
+    link.setAttribute('download', file.name);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  ElMessage.success('已开始批量下载');
+};
+
 // 搜索相关
 const searchKeyword = ref("");
 const currentPage = ref(1);
@@ -204,13 +236,24 @@ watch(
         <el-button @click="clearSearch">清空搜索</el-button>
       </div>
       
-      <el-button 
-        type="primary" 
-        @click="showDateDialog"
-        class="generate-btn"
-      >
-        <i class="el-icon-document-add" /> 生成总结报告
-      </el-button>
+      <div class="action-buttons">
+        <el-button 
+          type="primary" 
+          @click="batchDownload"
+          :disabled="selectedReports.length === 0"
+          class="download-btn"
+        >
+          <i class="el-icon-download" /> 下载
+        </el-button>
+        
+        <el-button 
+          type="primary" 
+          @click="showDateDialog"
+          class="generate-btn"
+        >
+          <i class="el-icon-document-add" /> 生成总结报告
+        </el-button>
+      </div>
     </div>
 
     <!-- 日期选择对话框 -->
@@ -254,7 +297,10 @@ watch(
       v-loading="loading"
       stripe
       border
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column type="selection" width="55" align="center" />
+      
       <el-table-column 
         prop="report_type" 
         label="类型" 
@@ -362,6 +408,11 @@ watch(
   gap: 10px;
 }
 
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
 .generate-btn {
   margin-left: auto;
 }
@@ -373,7 +424,7 @@ watch(
 }
 
 .file-tag {
-  max-width: 250px;
+  max-width: 450px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -382,9 +433,8 @@ watch(
 
 .download-btn {
   margin-left: 8px;
-  padding: 0;
+  padding: 1;
   height: auto;
-  color: #409eff;
 }
 
 .pagination-container {
@@ -393,7 +443,6 @@ watch(
   justify-content: flex-end;
 }
 
-/* 响应式调整 */
 @media (max-width: 768px) {
   .action-bar {
     flex-direction: column;
@@ -405,7 +454,13 @@ watch(
     justify-content: space-between;
   }
   
-  .generate-btn {
+  .action-buttons {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .generate-btn,
+  .download-btn {
     width: 100%;
     margin-left: 0;
   }
