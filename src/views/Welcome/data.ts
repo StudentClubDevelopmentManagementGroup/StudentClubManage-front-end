@@ -17,7 +17,7 @@ const chartData = reactive([
     name: "基地人数",
     value: 180,
     percent: "+33%",
-    data: [100, 134, 124, 90, 140, 133, 180] // 平滑折线图数据
+    data: [0, 0, 0, 0, 0, 0, 0] // 平滑折线图数据
   },
   {
     icon: Question,
@@ -27,7 +27,7 @@ const chartData = reactive([
     name: "签到时长",
     value: 80,
     percent: "+10%",
-    data: [16, 48, 55, 88, 21, 73, 79]
+    data: [0,0, 0, 0, 0, 0, 0]
   },
   {
     icon: CheckLine,
@@ -37,7 +37,7 @@ const chartData = reactive([
     name: "活动数量",
     value: 99,
     percent: "-20%",
-    data: [61, 102, 95, 15, 66, 15, 45]
+    data: [0,0, 0, 0,0, 0, 0]
   }
 ]);
 

@@ -26,7 +26,7 @@ const fetchAIData = async () => {
     }
     
     loading.value = true;
-    const data = await announcementApi.getAnalyse(club_id.value); // 传递实际值
+    const data = await announcementApi.getData(club_id.value); // 传递实际值
     
    // 安全更新基础数据
    if (data?.user_yearly) {
