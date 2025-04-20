@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, h, toRaw, reactive, onMounted, computed } from "vue";
-import { useRoute } from 'vue-router';
+import { ref, reactive, onMounted, computed } from "vue";
 import { chartData, barChartData } from "./data";
 import ReCol from "@/components/ReCol";
 import lineChart from "./components/line.vue";
@@ -9,143 +8,128 @@ import roundChart from "./components/round.vue";
 import announcementApi from "@/api/ai.js";
 import useStore from "@/store";
 
-// 响应式数据
 const aiAnswer = ref('');
 const loading = ref(false);
-
 const clubStore = useStore.clubStore;
 const club_id = computed(() => clubStore.getCurrentClub().club_id);
-// 使用计算属性获取club_id
 
-// 获取AI分析报告
+const processData = (data: any) => {
+  if (data?.user_yearly) {
+    const yearly = data.user_yearly;
+    chartData[0].value = yearly.tnum || 0;
+    chartData[0].percent = calculatePercent(yearly.tnum, yearly.lnum);
+  }
+  if (data?.ann) {
+    const ann = data.ann;
+    chartData[2].value = ann.thisMonthNum || 0;
+    chartData[2].percent = calculatePercent(ann.thisMonthNum, ann.lastMonthNum);
+  }
+  if (data?.att_list) {
+    const sortedAtt = [...data.att_list].sort((a, b) => a.day_of_week - b.day_of_week);
+    const sumTnum = sortedAtt.reduce((sum, item) => sum + (item.tnum || 0), 0);
+    const sumLnum = sortedAtt.reduce((sum, item) => sum + (item.lnum || 0), 0);
+    chartData[1].value = sumTnum;
+    chartData[1].percent = calculatePercent(sumTnum, sumLnum);
+    const lastWeekAtt = sortedAtt.map(item => item.lnum || 0);
+    const thisWeekAtt = sortedAtt.map(item => item.tnum || 0);
+    barChartData[0].questionData = [...lastWeekAtt, ...thisWeekAtt];
+  }
+  if (data?.user_list) {
+    const sortedUser = [...data.user_list].sort((a, b) => a.day_of_week - b.day_of_week);
+    const lastWeekUser = sortedUser.map(item => item.lnum || 0);
+    const thisWeekUser = sortedUser.map(item => item.tnum || 0);
+    barChartData[0].requireData = [...lastWeekUser, ...thisWeekUser];
+  }
+  aiAnswer.value = data?.message?.replace(/\n/g, '\n\n') || '暂无分析结果';
+};
+
 const fetchAIData = async () => {
   try {
-    if (!club_id.value) {
-      console.error('未获取到有效的基地ID');
-      return;
-    }
-    
+    if (!club_id.value) return;
     loading.value = true;
-    const data = await announcementApi.getData(club_id.value); // 传递实际值
-    
-   // 安全更新基础数据
-   if (data?.user_yearly) {
-      // 处理基地人数
-      const yearly = data.user_yearly;
-      chartData[0].value = yearly.tnum || 0;
-      chartData[0].percent = calculatePercent(yearly.tnum, yearly.lnum);
-    }
-    if (data?.ann) {
-      // 处理基地人数
-      const ann = data.ann;
-      chartData[2].value = ann.thisMonthNum || 0;
-      chartData[2].percent = calculatePercent(ann.thisMonthNum, ann.lastMonthNum);
-    }
-
-    if (data?.att_list) {
-      const sortedAtt = [...data.att_list].sort((a, b) => a.day_of_week - b.day_of_week);
-      
-      // 计算签到时长总和
-      const sumTnum = sortedAtt.reduce((sum, item) => sum + (item.tnum || 0), 0);
-      const sumLnum = sortedAtt.reduce((sum, item) => sum + (item.lnum || 0), 0);
-      chartData[1].value = sumTnum;
-      chartData[1].percent = calculatePercent(sumTnum, sumLnum);
-      
-      // 处理签到数量数据
-      const lastWeekAtt = sortedAtt.map(item => item.lnum || 0);
-      const thisWeekAtt = sortedAtt.map(item => item.tnum || 0);
-      barChartData[0].questionData = [...lastWeekAtt, ...thisWeekAtt];
-    }
-    if (data?.user_list) {
-      const sortedUser = [...data.user_list].sort((a, b) => a.day_of_week - b.day_of_week);
-      
-      // 处理用户数量数据
-      const lastWeekUser = sortedUser.map(item => item.lnum || 0);
-      const thisWeekUser = sortedUser.map(item => item.tnum || 0);
-      barChartData[0].requireData = [...lastWeekUser, ...thisWeekUser];
-    }
-    // 设置AI回答
-    aiAnswer.value = data?.message?.replace(/\n/g, '\n\n') || '暂无分析结果';
+    const data = await announcementApi.getData(club_id.value);
+    processData(data);
   } catch (error) {
-    console.error('获取AI数据失败:', error);
-    aiAnswer.value = '分析报告生成失败，请稍后重试';
+    console.error('获取数据失败:', error);
+    aiAnswer.value = '数据加载失败，请稍后重试';
   } finally {
     loading.value = false;
   }
 };
-// 修改后的 calculatePercent 函数（添加除零保护）
-const calculatePercent = (current: number, previous: number) => {
-  if (previous === 0) {
-    if (current === 0) return '0%';
-    return previous >= 0 ? '+∞%' : '-∞%';
+
+const fetchAIAnalyse = async () => {
+  try {
+    if (!club_id.value) return;
+    loading.value = true;
+    const data = await announcementApi.getAnalyse(club_id.value);
+    processData(data);
+  } catch (error) {
+    console.error('实时分析失败:', error);
+    aiAnswer.value = '实时分析失败，请稍后重试';
+  } finally {
+    loading.value = false;
   }
+};
+
+const calculatePercent = (current: number, previous: number) => {
+  if (previous === 0) return current === 0 ? '0%' : '±∞%';
   const change = ((current - previous) / previous * 100).toFixed(0);
   return `${Number(change) > 0 ? '+' : ''}${change}%`;
 };
-// 组件挂载时获取数据
-onMounted(() => {
-  if (club_id.value) {
-    fetchAIData();
-  } else {
-    console.warn('未找到有效的俱乐部信息');
-  }
-});
+
+onMounted(() => club_id.value && fetchAIData());
 </script>
+
 <template>
   <div>
     <el-row :gutter="24" justify="space-around">
       <re-col
-              v-for="(item, index) in chartData.slice(0, 3)" 
-      		:key="index"
-              class="mb-[18px]"
-              :value="6"
-              :md="12"
-              :sm="12"
-              :xs="24"
-              :initial="{
-                opacity: 0,
-                y: 100,
-              }"
-              :enter="{
-                opacity: 1,
-                y: 0,
-                transition: {
-                  delay: 80 * (index + 1),
-                },
-              }"
+        v-for="(item, index) in chartData.slice(0, 3)"
+        :key="index"
+        class="mb-[18px]"
+        :value="6"
+        :md="12"
+        :sm="12"
+        :xs="24"
+        :initial="{ opacity: 0, y: 100 }"
+        :enter="{
+          opacity: 1,
+          y: 0,
+          transition: { delay: 80 * (index + 1) },
+        }"
+      >
+        <el-card class="line-card p-3" shadow="never">
+          <div class="flex justify-between">
+            <span class="text-md font-medium">
+              {{ item.name }}
+            </span>
+            <div
+              class="w-8 h-8 flex justify-center items-center rounded-md"
+              :style="item.bgColor"
             >
-              <el-card class="line-card p-3" shadow="never" >
-                <div class="flex justify-between">
-                  <span class="text-md font-medium">
-                    {{ item.name }}
-                  </span>
-                  <div
-                    class="w-8 h-8 flex justify-center items-center rounded-md"
-                    :style="item.bgColor"
-                  >
-                    <IconifyIconOffline
-                      :icon="item.icon"
-                      :color="item.color"
-                      width="18"
-                    />
-                  </div>
-                </div>
-                <div class="flex justify-between items-start mt-3">
-                  <div class="w-1/2">
-                    <h3>{{ item.value }}</h3>
-                    <p class="font-medium text-green-500">{{ item.percent }}</p>
-                  </div>
-                  <lineChart
-                    v-if="item.data.length > 1"
-                    class="!w-1/2"
-                    :color="item.color"
-                    :data="item.data"
-                  />
-                  <roundChart v-else class="!w-1/2" :data="item.data" />
-                </div>
-              </el-card>
-            </re-col>
-      <!-- 分析概览图表 -->
+              <IconifyIconOffline
+                :icon="item.icon"
+                :color="item.color"
+                width="18"
+              />
+            </div>
+          </div>
+          <div class="flex justify-between items-start mt-3">
+            <div class="w-1/2">
+              <h3>{{ item.value }}</h3>
+              <p class="font-medium text-green-500">{{ item.percent }}</p>
+            </div>
+            <lineChart
+              v-if="item.data.length > 1"
+              class="!w-1/2"
+              :color="item.color"
+              :data="item.data"
+            />
+            <roundChart v-else class="!w-1/2" :data="item.data" />
+          </div>
+        </el-card>
+      </re-col>
+
       <re-col class="mb-[18px]" :value="24" :xs="24">
         <el-card class="bar-card p-6" shadow="never">
           <div class="flex justify-between">
@@ -159,7 +143,7 @@ onMounted(() => {
           </div>
         </el-card>
       </re-col>
-      <!-- 新增AI分析结果 -->
+
       <re-col class="mb-[18px]" :value="24" :xs="24">
         <el-card 
           class="ai-card p-6" 
@@ -169,7 +153,14 @@ onMounted(() => {
         >
           <div class="flex justify-between mb-4">
             <span class="text-md font-medium">AI分析报告</span>
-            <el-tag type="success" effect="plain">实时分析</el-tag>
+            <el-button 
+              type="success" 
+              plain 
+              @click="fetchAIAnalyse"
+              :loading="loading"
+            >
+              实时分析
+            </el-button>
           </div>
           <div 
             class="ai-content bg-gray-50 p-4 rounded-md max-h-[400px] overflow-y-auto"
@@ -182,6 +173,7 @@ onMounted(() => {
     </el-row>
   </div>
 </template>
+
 <style lang="scss" scoped>
 .ai-card {
   .ai-content {
