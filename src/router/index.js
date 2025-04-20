@@ -107,7 +107,6 @@ export const asyncRoutes = [
 		    name: "User",
 		    component: () => import('@/views/user'),
 		    meta: {
-		        // icon: "ri:file-user-fill",
 		        title: "基地人员管理",
 		    },
 		}, {

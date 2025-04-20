@@ -86,14 +86,14 @@ const loadData = async () => {
     let res;
     
     if (searchKeyword.value) {
-      res = await announcementApi.getReportsBykeyword(
+      res = await announcementApi.getSummaryBykeyword(
         props.clubId,
         currentPage.value,
         pageSize.value,
         searchKeyword.value
       );
     } else {
-      res = await announcementApi.getMemberReports(
+      res = await announcementApi.getSummaryList(
         props.clubId,
         currentPage.value,
         pageSize.value
@@ -188,7 +188,6 @@ watch(
 
 <template>
   <div class="report-list-container">
-    <!-- 操作栏 - 调整后的布局 -->
     <div class="action-bar">
       <div class="search-group">
         <el-input
