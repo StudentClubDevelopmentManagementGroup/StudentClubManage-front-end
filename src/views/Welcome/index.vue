@@ -166,7 +166,7 @@ onMounted(() => club_id.value && fetchAIData());
             class="ai-content bg-gray-50 p-4 rounded-md max-h-[400px] overflow-y-auto"
             :style="{ whiteSpace: 'pre-wrap' }"
           >
-            {{ aiAnswer }}
+            {{ aiAnswer.replace(/(#{2,})|\*{2,}|-{3,}/g, '').replace(/\n{3,}/g, '\n\n') }}
           </div>
         </el-card>
       </re-col>
