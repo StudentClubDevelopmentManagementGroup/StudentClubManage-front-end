@@ -74,7 +74,7 @@ watch(checked, bool => {
             <span>基地管理系统</span>
           </div>
           <div class="desc">
-            <h4>让社团管理更加简单</h4>
+            <h4>让基地管理更加简单</h4>
           </div>
         </div>
         <div class="bottom">

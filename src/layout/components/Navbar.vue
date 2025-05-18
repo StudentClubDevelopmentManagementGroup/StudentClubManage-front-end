@@ -72,7 +72,7 @@ watch(
       </div>
       <search id="header-search"></search>
 
-      <el-dropdown class="nitoce">
+<!--      <el-dropdown class="nitoce">
         <div class="dropdown-badge">
           <el-badge :value="messageNum" :max="99" class="message-badge" type="danger">
             <span class="header-notice-icon">
@@ -90,7 +90,7 @@ watch(
             <el-dropdown-item command="e" divided>新会议通知</el-dropdown-item>
           </el-dropdown-menu>
         </template>
-      </el-dropdown>
+      </el-dropdown> -->
       <span id="fullScreen" class="fullscreen-icon navbar-bg-hover" @click="toggle">
         <IconifyIconOffline :icon="screenIcon" />
       </span>
