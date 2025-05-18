@@ -109,7 +109,7 @@ const getCode = () => {
 
     <el-form-item prop="user_id">
       <el-input
-        placeholder="请输入工号/学号"
+        placeholder="请输入学号/工号"
         v-model="registForm.user_id"
         clearable
       >

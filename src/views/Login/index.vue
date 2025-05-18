@@ -96,7 +96,7 @@ watch(checked, bool => {
             <el-input
               v-model="loginForm.user_id"
               clearable
-              placeholder="请输入学号"
+              placeholder="请输入学号/工号"
             >
               <template #prefix>
                 <IconifyIconOffline

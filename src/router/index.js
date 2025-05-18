@@ -73,7 +73,7 @@ export const asyncRoutes = [
         redirect: "/welcome/index",
         meta: {
             icon: "ri:bar-chart-box-fill",
-            title: "首页",
+            title: "基地首页",
             hiddenTab: true,
         },
         children: [{
@@ -82,7 +82,7 @@ export const asyncRoutes = [
             component: () => import('@/views/welcome'),
             meta: {
                 icon: "ri:bar-chart-box-fill",
-                title: "首页",
+                title: "基地首页",
             },
         }]
     },
