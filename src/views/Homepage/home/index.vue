@@ -37,7 +37,7 @@ const fetchDataList2 = () => {
   // TODO: 获取公告信息列表
   return new Promise((resolve, reject) => {
     announcementApi
-      .getAllNotice(body)
+      .getOtherNotice(body)
       .then((data) => {
         list2.value = data.records;
       })
@@ -204,7 +204,7 @@ onMounted(() => {
           </template>
           <template v-if="list3.length !== 0" v-for="item in list3" :key="item">
             <div class="relative group rounded-lg p-3 pb-7 bg-white shadow-lg hover:bg-sky-500 hover:ring-sky-500">
-              <router-link :to="`/homepage/recruitment?announcementId=${item.announcement_id}`">
+              <router-link :to="`/homepage/detail?announcementId=${item.announcement_id}`">
                 <el-text 
                   class="!text-black !font-semibold !text-lg group-hover:!text-white"
                   line-clamp="1"

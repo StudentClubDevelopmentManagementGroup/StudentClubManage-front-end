@@ -107,7 +107,7 @@ export function useColumns() {
     const fetchTableData = () => {
         return new Promise((resolve, reject) => {
             announcementApi
-                .getAllNotice(getDataParams.value)
+                .getOtherNotice(getDataParams.value)
                 .then((data) => {
                     tableData.value = data.records;
                     pagination.total = parseInt(data.total_item);

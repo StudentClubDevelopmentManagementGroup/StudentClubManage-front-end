@@ -65,7 +65,7 @@ const onBack = () => {
     :model="emailForm"
   >
     <el-form-item prop="user_id">
-      <el-input placeholder="请输入学号" v-model="emailForm.user_id" clearable>
+      <el-input placeholder="请输入学号/工号" v-model="emailForm.user_id" clearable>
         <template #prefix>
           <IconifyIconOffline
             :icon="User"

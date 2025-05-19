@@ -312,15 +312,6 @@ export const homePageRoutes = [
 			        }
 			},
 			{
-			        path: "/homepage/activity",
-			        name: "HomepageRecruitmentList",
-			        component: () => import('@/views/homepage/activity/index.vue'),
-			        meta: {
-			          hidden: true,
-			          title: "招新公告查询界面",
-			        }
-			},
-			{
 			        path: "/homepage/introduce",
 			        name: "Homepageintroduce",
 			        component: () => import('@/views/homepage/introduce/index.vue'),
