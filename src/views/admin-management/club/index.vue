@@ -47,8 +47,8 @@ const handleClick = (row) => {
     role: "超级管理员",
   });
   delay(600).then(() => {
+	router.push('/welcome');
     message("切换基地成功：" + row.club_name, { type: "success" });
-    // router.push(router.currentRoute.value.path);
   });
 };
 

@@ -102,7 +102,7 @@ onMounted(() => {
             <div
               class="text-xl text-blue-800 font-semibold ml-4 pt-3 pb-3 flex justify-between"
             >
-              <div>社团信息</div>
+              <div>基地信息</div>
               <router-link to="/homepage/clublist">
                 <el-button class="!p-2" v-ripple text
                   >更多<el-icon><DArrowRight /></el-icon

@@ -371,19 +371,19 @@ export const adminPageRoutes = [
             }
         }]
     },
-    {
-        path: "/ad/log",
-        component: AdminPageLayout,
-        meta: {
-            icon: "octicon:log-16"
-        },
-        children: [{
-            path: "/ad/log",
-            name: "AdminLog",
-            component: () => import('@/views/admin-management/log/index'),
-            meta: { title: '操作日志', icon: "octicon:log-16", }
-        }]
-    },
+    // {
+    //     path: "/ad/log",
+    //     component: AdminPageLayout,
+    //     meta: {
+    //         icon: "octicon:log-16"
+    //     },
+    //     children: [{
+    //         path: "/ad/log",
+    //         name: "AdminLog",
+    //         component: () => import('@/views/admin-management/log/index'),
+    //         meta: { title: '操作日志', icon: "octicon:log-16", }
+    //     }]
+    // },
 ]
 
 export const refreshRoutes = [
